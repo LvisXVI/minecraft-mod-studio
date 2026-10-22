@@ -9,4 +9,5 @@ dist/
 build/
 target/
 .runtime/
+Mod-Studio.exe
 node_modules/

@@ -4,7 +4,7 @@ Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Skizze, Textur, Vo
 
 ## Portable Windows-App
 
-Lade `Mod-Studio-Portable.zip` herunter, entpacke es und starte `start-mod-studio.bat`. Beim ersten Start entpackt die App das mitgelieferte Node.js, JDK und Gradle in den eigenen `.runtime`-Ordner. Anschließend startet sie die lokale Website im Standardbrowser. JDK und Gradle ändern weder System-Java noch PATH oder globale Umgebungsvariablen. Das PowerShell-Fenster muss während der Nutzung geöffnet bleiben.
+Lade `Mod-Studio-Portable.zip` herunter, entpacke es und starte `Mod-Studio.exe` (alternativ `start-mod-studio.bat`). Beim ersten Start entpackt die App das mitgelieferte Node.js, JDK und Gradle in den eigenen `.runtime`-Ordner. Anschließend startet sie die lokale Website im Standardbrowser. JDK und Gradle ändern weder System-Java noch PATH oder globale Umgebungsvariablen. Das PowerShell-Fenster muss während der Nutzung geöffnet bleiben.
 
 Projekte und geschützte ChatGPT-Zugangsdaten liegen unter `%LOCALAPPDATA%\ModStudio`. Der Server bindet ausschließlich an `127.0.0.1`. Die ChatGPT-Anmeldung nutzt den öffentlichen Sign-in-with-ChatGPT-Ablauf von OpenAI. Ollama kann optional als lokaler KI-Anbieter verwendet werden; wenn es installiert ist, startet Mod Studio den lokalen Dienst bei Bedarf und zeigt verfügbare Modelle im Editor. Modellgewichte werden nicht mit dem App-Paket ausgeliefert. ChatGPT-Anmeldung und erster Mod-Build benötigen Internet. Projektdateien bleiben lokal; beim ersten Build lädt Gradle Minecraft-/Fabric-Abhängigkeiten aus deren offiziellen Repositories.
 
@@ -23,3 +23,8 @@ Der Server nutzt Node.js-Bordmittel. Tailwind wird beim Entwickeln in eine stati
 Für das portable Windows-Paket `npm run dist:portable` ausführen. Das erstellt `dist/Mod-Studio-Portable.zip` mit Website, Launcher, Schriftdatei und den drei geprüften Laufzeitarchiven.
 
 Drittlizenzen und Laufzeitprüfsummen stehen unter `licenses/`; die Originalarchive von Node, Temurin und Gradle enthalten ihre Upstream-Hinweise.
+
+## Vollständiger Projektstatus
+
+Funktionsinventar, geprüfte Abläufe, Build-Ergebnisse, Paketdetails sowie bekannte Grenzen und offene Arbeiten stehen in [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md). Geplante Mehr-Loader- und Versionsunterstützung ist dort von bereits baubaren Zielen getrennt.
+Die Vision für alle Mod-Inhaltstypen und den Ausbau zu weiteren Loadern/Versionen ist in [docs/ROADMAP.md](docs/ROADMAP.md) beschrieben.
