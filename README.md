@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/media/mod-studio-hero.png" alt="Mod Studio: Minecraft Java Mod Creator" width="100%">
+<img src="docs/media/mod-studio-ui.png" alt="Echte Mod-Studio-Oberfläche: Projektleiste, Minecraft-Java-Editor und Skizzenvorschau" width="100%">
 
 # Mod Studio
 
@@ -16,15 +16,9 @@
 
 ---
 
-Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. ChatGPT ist optional; Ollama kann als lokaler KI-Anbieter genutzt werden.
+Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. ChatGPT ist optional; Ollama kann als lokaler KI-Anbieter genutzt werden. Das Titelbild zeigt die echte Mod-Studio-Oberfläche.
 
 Unter **Einstellungen → Hintergrund** kannst du animierte Glaskugeln, Smaragd-Aurora, Raster, Kristall-Nebel, Ozeanfluss oder Redstone-Signal auswählen. Die Auswahl bleibt lokal gespeichert; **Aus** schaltet Effekte ab und reduzierte Bewegung hält Animationen an.
-
-## Die Werkbank
-
-| Textur und Vorschau | Java-Projekt | Eigene Websitegrafiken |
-|:--:|:--:|:--:|
-| <img src="docs/media/mod-studio-sketch.png" alt="Neu erstelltes Mod-Studio-Konzeptbild: Texturraster und Voxelvorschau" width="300"> | <img src="docs/media/mod-studio-code.png" alt="Neu erstelltes Mod-Studio-Konzeptbild: Java-Editor, Ressourcen und Vorschau" width="300"> | Für Mod Studio erstellte Konzeptbilder, keine Modspire-Grafiken. |
 
 ## Was du heute bauen kannst
 
