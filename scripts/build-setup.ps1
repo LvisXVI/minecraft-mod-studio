@@ -17,6 +17,7 @@ internal static class ModStudioSetup
         System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
         setupPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
         splash = new LoadingForm("Mod Studio wird installiert");
+        splash.Shown += (sender, e) => splash.PlayOpeningAnimation();
         splash.Shown += (sender, e) => System.Threading.Tasks.Task.Run((System.Action)Install);
         System.Windows.Forms.Application.Run(splash);
     }

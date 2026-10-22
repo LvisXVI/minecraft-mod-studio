@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $root = [System.IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
-$ui = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'launcher-ui.cs') -Raw
+$ui = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'launcher-ui.cs') -Raw -Encoding UTF8
 $entry = @'
 internal static class ModStudioLauncher
 {
@@ -16,6 +16,7 @@ internal static class ModStudioLauncher
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         splash = new LoadingForm("Mod Studio startet");
+        splash.Shown += (sender, e) => splash.PlayOpeningAnimation();
         splash.Shown += (sender, e) => System.Threading.Tasks.Task.Run((Action)Start);
         splash.FormClosing += (sender, e) => { if (!exiting && server != null && !server.HasExited) { e.Cancel = true; splash.Hide(); } };
         Application.Run(splash);
@@ -172,7 +173,7 @@ $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path -LiteralPath $compiler)) { $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
 if (-not (Test-Path -LiteralPath $compiler)) { throw 'Der Windows-.NET-Compiler wurde nicht gefunden.' }
 $sourcePath = Join-Path $env:TEMP 'mod-studio-launcher-build.cs'
-[System.IO.File]::WriteAllText($sourcePath, $ui + $entry, [System.Text.UTF8Encoding]::new($false))
-& $compiler /nologo /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
+[System.IO.File]::WriteAllText($sourcePath, $ui + $entry, [System.Text.UTF8Encoding]::new($true))
+& $compiler /nologo /codepage:65001 /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
 if ($LASTEXITCODE -ne 0) { throw "Launcher-Kompilierung fehlgeschlagen: $LASTEXITCODE" }
 Write-Host "Windows-Launcher mit Ladebildschirm erstellt: $output"

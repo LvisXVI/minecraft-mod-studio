@@ -15,11 +15,11 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
     const width = canvas.width;
     const height = canvas.height;
     const cell = width / SIZE;
-    context.fillStyle = '#f0f1f3';
+    context.fillStyle = '#202426';
     context.fillRect(0, 0, width, canvas.height);
     for (let y = 0; y < SIZE; y += 1) {
       for (let x = 0; x < SIZE; x += 1) {
-        context.fillStyle = (x + y) % 2 === 0 ? '#f3f4f6' : '#e8eaed';
+        context.fillStyle = (x + y) % 2 === 0 ? '#24292b' : '#1c2022';
         context.fillRect(x * cell, y * cell, cell, cell);
         const pixel = pixels[y * SIZE + x];
         if (pixel) {
@@ -28,7 +28,7 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
         }
       }
     }
-    context.strokeStyle = 'rgba(26, 38, 53, .12)';
+    context.strokeStyle = 'rgba(220, 230, 224, .11)';
     context.lineWidth = 1;
     for (let index = 0; index <= SIZE; index += 1) {
       const pos = Math.round(index * cell) + 0.5;
@@ -134,6 +134,7 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
   const height = canvas.height;
   const texture = pixels?.length === SIZE * SIZE ? pixels : Array(SIZE * SIZE).fill(null);
   context.clearRect(0, 0, width, height);
+  if (!element) return;
   const centerX = width / 2;
   const centerY = height * 0.54;
   const scale = width * 0.4;

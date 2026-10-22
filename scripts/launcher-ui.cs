@@ -15,6 +15,9 @@ internal sealed class LoadingForm : Form
     private readonly Label percentage;
     private readonly Panel progressFill;
     private readonly Panel progressTrack;
+    private readonly Timer openingTimer;
+    private Point finalLocation;
+    private readonly Stopwatch openingClock;
     private int progressValue;
 
     public LoadingForm(string title)
@@ -25,9 +28,20 @@ internal sealed class LoadingForm : Form
         ShowInTaskbar = true;
         TopMost = true;
         ClientSize = new Size(560, 330);
+        Opacity = 0;
         BackColor = Color.FromArgb(12, 13, 14);
         Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
         Padding = new Padding(1);
+        finalLocation = Point.Empty;
+        openingClock = new Stopwatch();
+        openingTimer = new Timer { Interval = 15 };
+        openingTimer.Tick += (sender, e) => {
+            double progress = Math.Min(1.0, openingClock.Elapsed.TotalMilliseconds / 360.0);
+            double eased = 1.0 - Math.Pow(1.0 - progress, 3.0);
+            Opacity = eased;
+            Top = finalLocation.Y + (int)Math.Round((1.0 - eased) * 14.0);
+            if (progress >= 1.0) { openingTimer.Stop(); Opacity = 1.0; Location = finalLocation; }
+        };
 
         var frame = new Panel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(12, 13, 14), Padding = new Padding(32) };
         Controls.Add(frame);
@@ -64,6 +78,14 @@ internal sealed class LoadingForm : Form
         frame.Controls.Add(percentage);
         var local = new Label { Text = "PROJEKTE BLEIBEN AUF DIESEM GERÄT", AutoSize = true, Location = new Point(0, 294), ForeColor = Color.FromArgb(104, 111, 113), Font = new Font("Consolas", 7.5F) };
         frame.Controls.Add(local);
+    }
+
+    public void PlayOpeningAnimation()
+    {
+        finalLocation = Location;
+        Top = finalLocation.Y + 14;
+        openingClock.Restart();
+        openingTimer.Start();
     }
 
     protected override void OnPaint(PaintEventArgs e)

@@ -1,6 +1,6 @@
 {
   "name": "minecraft-ai-mod-creator",
-  "version": "0.1.0-alpha.4",
+  "version": "0.1.0-alpha.5",
   "private": true,
   "type": "module",
   "description": "A local-first workbench for creating Minecraft Java mods with ChatGPT, sketches, and editable assets.",

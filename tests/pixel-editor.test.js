@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPixelEditor } from '../public/editor.js';
+import { createPixelEditor, renderVoxelPreview } from '../public/editor.js';
 
 test('pixel editor draws within the canvas bounds and commits a painted pixel', () => {
   const handlers = new Map();
@@ -28,4 +28,11 @@ test('pixel editor draws within the canvas bounds and commits a painted pixel', 
   assert.equal(committed.pixels[136], '#465E84');
   assert.equal(committed.pixels.filter(Boolean).length, 1);
   editor.destroy();
+});
+
+test('empty voxel preview stays empty until a mod element exists', () => {
+  const calls = [];
+  const context = { clearRect: (...args) => calls.push(['clearRect', ...args]) };
+  renderVoxelPreview({ width: 360, height: 360, getContext: () => context }, Array(256).fill(null), null);
+  assert.deepEqual(calls, [['clearRect', 0, 0, 360, 360]]);
 });
