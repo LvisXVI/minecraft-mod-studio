@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
-import { mkdir, rename, rm } from 'node:fs/promises';
+import { mkdir, readdir, rename, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { execFile } from 'node:child_process';
@@ -13,6 +13,26 @@ const RELEASES_API = 'https://api.github.com/repos/LvisXVI/minecraft-mod-studio/
 const INSTALLER_NAME = 'Mod-Studio-Setup.exe';
 const CHECKSUMS_NAME = 'SHA256SUMS.txt';
 const MAX_INSTALLER_BYTES = 1_000_000_000;
+const UPDATE_ARTIFACT = /^Mod-Studio-Setup-\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?\.(?:exe|partial)$/i;
+
+export async function cleanupUpdateArtifacts(directory) {
+  const root = resolve(directory);
+  let entries;
+  try { entries = await readdir(root, { withFileTypes: true }); }
+  catch (error) { if (error?.code === 'ENOENT') return 0; throw error; }
+  const artifacts = entries.filter((entry) => entry.isFile() && UPDATE_ARTIFACT.test(entry.name));
+  await Promise.all(artifacts.map((entry) => rm(join(root, entry.name), { force: true })));
+  return artifacts.length;
+}
+
+export function buildInstallerCleanupScript(directory) {
+  const root = resolve(directory);
+  if (basename(root).toLowerCase() !== 'updates' || basename(dirname(root)).toLowerCase() !== 'modstudio') {
+    throw new Error('Der Mod-Studio-Update-Cache muss im eigenen updates-Ordner liegen.');
+  }
+  const quotedRoot = quotePowerShell(root).replace(/'/g, "''");
+  return `param([int]$SetupPid);$ErrorActionPreference='SilentlyContinue';Wait-Process -Id $SetupPid -ErrorAction SilentlyContinue;$cleanup='Wait-Process -Id '+$PID+' -ErrorAction SilentlyContinue; if(Test-Path -LiteralPath ${quotedRoot}){Remove-Item -LiteralPath ${quotedRoot} -Recurse -Force}';$encoded=[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cleanup));Start-Process -FilePath 'powershell.exe' -WindowStyle Hidden -ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-EncodedCommand',$encoded)`;
+}
 
 export function createUpdateService({ currentVersion, fetchImpl = fetch, downloadDir = join(tmpdir(), 'ModStudio', 'updates'), launchInstaller = launchWindowsInstaller } = {}) {
   if (!isVersion(currentVersion)) throw new TypeError('Die installierte App-Version ist ungültig.');
@@ -58,6 +78,7 @@ export function createUpdateService({ currentVersion, fetchImpl = fetch, downloa
     const { release, version, installer, checksums } = await findRelease();
     if (compareVersions(version, currentVersion) <= 0) throw new Error('Mod Studio ist bereits auf dem neuesten Stand.');
     await mkdir(downloadDir, { recursive: true });
+    await cleanupUpdateArtifacts(downloadDir);
 
     const suffix = `${version}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
     const partialPath = join(downloadDir, `Mod-Studio-Setup-${suffix}.partial`);
@@ -79,7 +100,7 @@ export function createUpdateService({ currentVersion, fetchImpl = fetch, downloa
       if (hash.digest('hex') !== expected) throw new Error('Die SHA-256-Prüfsumme des Updates stimmt nicht überein.');
       await rm(installerPath, { force: true });
       await rename(partialPath, installerPath);
-      await launchInstaller(installerPath);
+      await launchInstaller(installerPath, downloadDir);
       return { version, installerPath, releaseUrl: release.html_url };
     } catch (error) {
       await rm(partialPath, { force: true }).catch(() => {});
@@ -122,6 +143,12 @@ function compareVersions(left, right) {
 }
 
 async function launchWindowsInstaller(path) {
-  const escaped = path.replace(/'/g, "''");
-  await execFileAsync('powershell.exe', ['-NoProfile', '-WindowStyle', 'Hidden', '-Command', `Start-Process -FilePath '${escaped}'`], { windowsHide: true });
+  const escaped = quotePowerShell(path);
+  const cleanupPath = join(dirname(path), 'cleanup-update.ps1');
+  await writeFile(cleanupPath, buildInstallerCleanupScript(dirname(path)), { encoding: 'utf8', mode: 0o600 });
+  const cleanup = quotePowerShell(cleanupPath);
+  const command = `$setup=Start-Process -FilePath ${escaped} -PassThru;Start-Process -FilePath 'powershell.exe' -WindowStyle Hidden -ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',${cleanup},'-SetupPid',[string]$setup.Id)`;
+  await execFileAsync('powershell.exe', ['-NoProfile', '-WindowStyle', 'Hidden', '-Command', command], { windowsHide: true });
 }
+
+function quotePowerShell(value) { return `'${String(value).replace(/'/g, "''")}'`; }

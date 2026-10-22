@@ -4,6 +4,8 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $ui = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'launcher-ui.cs') -Raw -Encoding UTF8
+$cleanupSource = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'install-cleanup.cs') -Raw -Encoding UTF8
+$cleanupSource = [System.Text.RegularExpressions.Regex]::Replace($cleanupSource, '(?m)^using [^;]+;\r?\n', '')
 $source = @'
 internal static class ModStudioSetup
 {
@@ -117,6 +119,8 @@ internal static class ModStudioSetup
     private static void Launch(string launcher, string workingDirectory)
     {
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = launcher, WorkingDirectory = workingDirectory, UseShellExecute = true });
+        string installationRoot = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Programs", "ModStudio");
+        InstallCleanup.CleanupPreviousVersions(installationRoot, workingDirectory);
         if (splash.IsHandleCreated) splash.BeginInvoke(new System.Action(() => { splash.SetProgress(100, "Fertig."); splash.Close(); }));
     }
 }
@@ -135,7 +139,8 @@ $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path -LiteralPath $compiler)) { $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
 if (-not (Test-Path -LiteralPath $compiler)) { throw 'Der Windows-.NET-Compiler wurde nicht gefunden.' }
 $sourcePath = Join-Path $env:TEMP 'mod-studio-setup-build.cs'
-[System.IO.File]::WriteAllText($sourcePath, $ui + $source, [System.Text.UTF8Encoding]::new($true))
+$cleanupImports = "using System.Collections.Generic;`r`nusing System.Text.RegularExpressions;`r`n"
+[System.IO.File]::WriteAllText($sourcePath, $cleanupImports + $ui + $cleanupSource + $source, [System.Text.UTF8Encoding]::new($true))
 & $compiler /nologo /codepage:65001 /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
 if ($LASTEXITCODE -ne 0) { throw "Setup-Kompilierung fehlgeschlagen: $LASTEXITCODE" }
 $stream = [System.IO.File]::Open($output, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)

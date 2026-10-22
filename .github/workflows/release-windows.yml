@@ -50,5 +50,5 @@ jobs:
             dist/SHA256SUMS.txt `
             --repo $env:GITHUB_REPOSITORY `
             --title "Mod Studio $version" `
-            --notes "Neu in Alpha 5: kompaktere Startansicht mit direkt sichtbarem Erstellen-Button, verständlicher Mod-Assistent mit mehr Platz, aufgeräumte Textur- und 3D-Vorschau sowie ein sanft animierter Launcher. UTF-8-Texte im Startbildschirm sind korrigiert. Projekte und Zugangsdaten bleiben lokal." `
+            --notes "Neu in Alpha 6: Updates räumen alte Mod-Studio-Installationsversionen und Setup-Dateien aus dem dedizierten Update-Cache auf, sobald die neue Version gestartet ist. Projekte und Einstellungen bleiben erhalten." `
             --prerelease

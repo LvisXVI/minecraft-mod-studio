@@ -1,10 +1,43 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createUpdateService } from '../server/updates.js';
+import { buildInstallerCleanupScript, cleanupUpdateArtifacts, createUpdateService } from '../server/updates.js';
+
+test('update cache cleanup removes only obsolete Mod Studio setup files', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'mod-studio-update-cleanup-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  await writeFile(join(directory, 'Mod-Studio-Setup-0.1.0-alpha.4.exe'), 'old setup');
+  await writeFile(join(directory, 'Mod-Studio-Setup-0.1.0-alpha.4-1761111111111-a1b2c3.partial'), 'old partial');
+  await writeFile(join(directory, 'notes.txt'), 'keep');
+  await mkdir(join(directory, 'Mod-Studio-Setup-0.1.0-alpha.3.exe'));
+
+  assert.equal(await cleanupUpdateArtifacts(directory), 2);
+  await assert.rejects(readFile(join(directory, 'Mod-Studio-Setup-0.1.0-alpha.4.exe')), { code: 'ENOENT' });
+  await assert.rejects(readFile(join(directory, 'Mod-Studio-Setup-0.1.0-alpha.4-1761111111111-a1b2c3.partial')), { code: 'ENOENT' });
+  assert.equal(await readFile(join(directory, 'notes.txt'), 'utf8'), 'keep');
+  assert.equal((await readdir(directory)).includes('Mod-Studio-Setup-0.1.0-alpha.3.exe'), true);
+});
+
+test('installer cleanup waits for setup exit and targets only the dedicated update cache', async (t) => {
+  const temporary = await mkdtemp(join(tmpdir(), 'mod-studio-cleanup-script-'));
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const directory = join(temporary, 'ModStudio', 'updates');
+  const script = buildInstallerCleanupScript(directory);
+
+  assert.match(script, /param\(\[int\]\$SetupPid\)/);
+  assert.match(script, /Wait-Process -Id \$SetupPid/);
+  assert.match(script, /Remove-Item -LiteralPath .*updates.* -Recurse -Force/);
+  assert.throws(() => buildInstallerCleanupScript(join(temporary, 'projects', 'updates')), /eigenen updates-Ordner/i);
+  if (process.platform === 'win32') {
+    const inner = Buffer.from(script, 'utf16le').toString('base64');
+    const parser = `$generated=[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('${inner}'));[void][scriptblock]::Create($generated)`;
+    execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(parser, 'utf16le').toString('base64')], { windowsHide: true });
+  }
+});
 import { createServer } from '../server/http.js';
 
 const API = 'https://api.github.com/repos/LvisXVI/minecraft-mod-studio/releases?per_page=30';
