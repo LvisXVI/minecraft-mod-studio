@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="docs/media/mod-studio-ui.png" alt="Echte Mod-Studio-Oberfläche: Projektleiste, Minecraft-Java-Editor und Skizzenvorschau" width="100%">
-
 # Mod Studio
 
 ### Deine Idee wird zum editierbaren Minecraft-Java-Projekt.
@@ -16,7 +14,7 @@
 
 ---
 
-Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. ChatGPT ist optional; Ollama kann als lokaler KI-Anbieter genutzt werden. Das Titelbild zeigt die echte Mod-Studio-Oberfläche.
+Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. ChatGPT ist optional; Ollama kann als lokaler KI-Anbieter genutzt werden. Die Website zeigt eine eigens aufgebaute UI-Vorschau des Arbeitsbereichs; sie verwendet keinen Screenshot der Landingpage als Produktbild.
 
 Unter **Einstellungen → Hintergrund** kannst du animierte Glaskugeln, Smaragd-Aurora, Raster, Kristall-Nebel, Ozeanfluss oder Redstone-Signal auswählen. Die Auswahl bleibt lokal gespeichert; **Aus** schaltet Effekte ab und reduzierte Bewegung hält Animationen an.
 
