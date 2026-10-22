@@ -1,6 +1,8 @@
 # Mod Studio — Minecraft Java
 
-Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Skizze, Textur, Vorschau, Eigenschaften, Quellcode und der optionale ChatGPT-Dialog gehören zu einem Projekt. Die Anwendung dient der Mod-Erstellung und ist kein Modpack-Manager oder Modkatalog.
+Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Skizze, Textur, Vorschau, Eigenschaften, Quellcode, aktive Erstellungszeit und der optionale ChatGPT-Dialog gehören zu einem Projekt. Die Anwendung dient der Mod-Erstellung und ist kein Modpack-Manager oder Modkatalog.
+
+Die Oberfläche folgt der aktuellen Designvorlage mit einer abgerundeten Glas-Seitenleiste, gestapelter Headline, leuchtendem Limettengrün und einer transparenten Live-Vorschau. Über das Hintergrundsymbol kannst du zwischen schwebenden Glaskugeln, Smaragd-Aurora, animiertem Raster und einem statischen Hintergrund wählen. Die Einstellung bleibt lokal im Browser gespeichert; bei reduzierter Bewegung werden Animationen angehalten.
 
 ## Windows-Installer und Portable-App
 

@@ -14,6 +14,7 @@
   </head>
   <body>
     <div class="app-shell">
+      <div id="background-effects" class="background-effects" aria-hidden="true"><span class="ambient-orb orb-a"></span><span class="ambient-orb orb-b"></span><span class="ambient-orb orb-c"></span><span class="ambient-orb orb-d"></span><span class="ambient-orb orb-e"></span><span class="ambient-orb orb-f"></span><span class="ambient-orb orb-g"></span><span class="ambient-orb orb-h"></span></div>
       <aside class="sidebar" aria-label="Projekt-Navigation">
         <a class="brand" href="/" aria-label="Mod Studio Startseite">
           <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5 5h12v12H5zM23 5h12v12H23zM5 23h12v12H5zM23 23h12v12H23z"/><path d="M17 11h6M11 17v6M29 17v6M17 29h6"/></svg></span>
@@ -50,7 +51,9 @@
             <span id="target-status" class="target-status"></span>
           </div>
           <div class="topbar-actions">
+            <div id="time-tracker" class="time-tracker" hidden title="Time Spent Creating Mods — aktive Zeit für dieses Projekt"><span class="time-tracker-dot" aria-hidden="true"></span><span class="time-tracker-label">Time Spent Creating Mods</span><strong id="project-time">0 min</strong></div>
             <span id="save-status" class="save-status"><span class="save-dot"></span>Gespeichert</span>
+            <button class="icon-button" id="appearance-button" aria-label="Hintergrundanimationen einstellen" title="Hintergrundanimationen" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6.6"/><path d="M10 1.5v2m0 13v2m8.5-8.5h-2m-13 0h-2m13.5-6-1.4 1.4m-9.2 9.2L2 16m12-1.2 1.4 1.4m-9.2-9.2L4.8 5.6"/></svg></button>
             <button class="icon-button" id="help-button" aria-label="Hilfe" title="Tastenkürzel: Strg/⌘+S speichern, Strg/⌘+Z rückgängig" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M8.1 7.3a2 2 0 1 1 3.4 1.4c-.9.7-1.5 1.1-1.5 2.4M10 13.8v.1"/></svg></button>
           </div>
         </header>
@@ -58,7 +61,7 @@
         <section id="empty-state" class="empty-state grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(420px,1.08fr)]" aria-labelledby="hero-title">
           <div class="empty-copy">
             <p class="eyebrow"><span class="eyebrow-rule"></span>MINECRAFT JAVA · MOD-EDITOR</p>
-            <h1 id="hero-title">Du denkst dir Mods aus.<br><em>Hier baust du sie.</em></h1>
+            <h1 id="hero-title">Du<br>denkst<br>dir<br>Mods<br>aus.<br><em>Hier<br>baust du<br>sie.</em></h1>
             <p>Skizziere, bearbeite echten Java-Code und baue dein Mod-Projekt lokal.</p>
             <button class="button button-primary empty-cta" id="empty-create-button" type="button">Projekt erstellen <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></button>
             <div class="empty-footnote"><span class="status-dot"></span>Deine Projekte und Dateien bleiben lokal.</div>
@@ -157,6 +160,19 @@
         <div class="modal-actions"><button class="button button-outline" id="cancel-dialog-button" type="button">Abbrechen</button><button class="button button-primary" type="submit">Projekt erstellen <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></button></div>
       </form>
     </dialog>
+      <dialog id="appearance-dialog" class="modal-dialog appearance-dialog">
+        <form method="dialog" class="modal-card">
+          <div class="modal-heading"><div><p class="eyebrow"><span class="eyebrow-rule"></span>ANSICHT</p><h2>Hintergrund</h2></div><button class="icon-button" id="close-appearance-dialog" aria-label="Schließen" type="submit"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg></button></div>
+          <p class="appearance-description">Wähle eine ruhige Animation für deine Mod-Werkstatt.</p>
+          <fieldset class="background-options" aria-label="Animierter Hintergrund">
+            <label class="background-choice"><input type="radio" name="background-style" value="orbs"><span class="background-preview preview-orbs" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>Schwebende Kugeln</strong><small>Langsam treibende Glaskreise</small></span></label>
+            <label class="background-choice"><input type="radio" name="background-style" value="aurora"><span class="background-preview preview-aurora" aria-hidden="true"></span><span><strong>Smaragd-Aurora</strong><small>Weiches, wanderndes Licht</small></span></label>
+            <label class="background-choice"><input type="radio" name="background-style" value="grid"><span class="background-preview preview-grid" aria-hidden="true"></span><span><strong>Animiertes Raster</strong><small>Feine Linien mit Lichtimpuls</small></span></label>
+            <label class="background-choice"><input type="radio" name="background-style" value="off"><span class="background-preview preview-off" aria-hidden="true"></span><span><strong>Aus</strong><small>Statischer Hintergrund</small></span></label>
+          </fieldset>
+          <div class="modal-actions"><button class="button button-outline" value="close">Fertig</button></div>
+        </form>
+      </dialog>
     <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
   </body>
 </html>

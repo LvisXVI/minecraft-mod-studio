@@ -1,6 +1,6 @@
 # Mod Studio — Projektstatus
 
-Stand: 22. Oktober 2026 · Version `0.1.0-alpha.3` (ChatGPT-Modellauswahl, moderne Oberfläche und Windows-Setup)
+Stand: 22. Oktober 2026 · Version `0.1.0-alpha.3` (ChatGPT-Modellauswahl, anpassbare Glasoberfläche und Windows-Setup)
 
 Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als strukturierte Projekte entwerfen, zeichnen, bearbeiten, exportieren und für den derzeit unterstützten Zieladapter bauen. Es ist bewusst ein Autorentool, kein Modpack-Manager und kein Modkatalog.
 
@@ -10,9 +10,10 @@ Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als stru
 - **Portable Laufzeiten:** Das ZIP enthält Node.js 24.21.0, Eclipse Temurin JDK 25.0.4.1+1 samt Compiler und Gradle 9.8.2. Beim ersten Start werden sie in den App-eigenen `.runtime`-Ordner entpackt. Die Installation verändert weder System-Java noch PATH und lädt diese Laufzeiten nicht auf dem Ziel-PC nach. Minecraft-/Fabric-Build-Abhängigkeiten werden beim ersten Build aus den offiziellen Repositories geladen.
 - **Windows-Setup:** `Mod-Studio-Setup.exe` enthält das vollständige portable Paket und installiert es app-lokal unter `%LOCALAPPDATA%\Programs\ModStudio\0.1.0-alpha.3`. Node.js, JDK, Gradle und Website sind bereits eingebettet; der Setup-Vorgang lädt keine Laufzeiten nach und startet anschließend die App. `Mod-Studio.exe` zeigt einen eigenen Ladebildschirm, entpackt die lokalen Laufzeiten mit Fortschritt und hält den Server ohne Konsolenfenster im Infobereich aktiv. `start-mod-studio.bat` bleibt als Startoption mit sichtbarer Konsole verfügbar.
 - **Projektbearbeitung:** Java-Projekte, Items und Blöcke mit Namen, Kennungen, Beschreibungen und jeweils passenden Eigenschaften. Änderungen werden lokal gespeichert; Projekte lassen sich erneut öffnen.
+- **Zeitstatistik:** „Time Spent Creating Mods“ zählt aktive Zeit pro Projekt. Der Zähler pausiert, wenn das Browserfenster verborgen ist, den Fokus verliert oder fünf Minuten keine Eingabe erhält; Zeit wird mit dem lokalen Projekt gespeichert und bleibt nach einem Neustart erhalten.
 - **Skizze und Vorschau:** 16×16-Pixeltextur mit Stift, Radierer, Füllwerkzeug, Farbpalette, Rückgängig/Wiederholen und Leeren. Textur, Pixelvorschau und Voxel-/isometrische Vorschau verwenden dieselben gespeicherten Pixel. Die Vorschau ist projektgebunden; der leere Startzustand gibt keine erfundene fertige Mod-Textur als Nutzerprojekt aus.
 - **ChatGPT:** Lokaler Sign-in-with-ChatGPT-OAuth-Ablauf mit PKCE, State-/Nonce-Prüfung und OIDC/JWKS-Validierung. Kontoanmeldung und einmalige ChatGPT-Planfreigabe werden getrennt dargestellt; Modellwechsel startet keine OAuth-Freigabe. Verfügbare ChatGPT-Modelle erscheinen im Auswahlfeld, die Auswahl bleibt lokal über App-Neustarts erhalten. Zugangsdaten verbleiben beim lokalen Dienst und werden auf Windows mit DPAPI für den aktuellen Benutzer geschützt. Die Browseroberfläche erhält keine gespeicherten Tokens. API-Antworten werden als überprüfbarer Änderungsvorschlag angezeigt; erst Anwenden aktualisiert das Projekt. Responses-API-Aufrufe setzen `store: false`.
-- **Oberfläche:** Startansicht und Arbeitsbereich orientieren sich an der Nutzerreferenz: dunkle Glasflächen, zurückhaltende smaragdgrüne Lichtakzente, abgerundete Seitenleiste und Vorschau sowie gut getrennte Code-/Skizzenbereiche. Der erste Eindruck zeigt weiterhin nur eine leere echte Skizzenfläche, keine erfundene Mod-Textur.
+- **Oberfläche:** Startansicht orientiert sich an der jüngsten Vorlage: tiefschwarzer Hintergrund, schmale abgerundete Glas-Seitenleiste, gestapelte Headline, limettengrüne Akzente, schwebende Glaskugeln und transparente Live-Vorschau. Über die Hintergrundauswahl stehen schwebende Kugeln, Smaragd-Aurora, animiertes Raster und „Aus“ bereit; die Auswahl bleibt lokal gespeichert. `prefers-reduced-motion` schaltet die Animationen ab. Der erste Eindruck zeigt weiterhin nur eine leere echte Skizzenfläche, keine erfundene Mod-Textur.
 - **Lokale KI mit Ollama (optional):** Erkennt installierte lokale Modelle und kann den lokal laufenden Ollama-Dienst bei Bedarf starten. Die KI bearbeitet das ausgewählte Element; eine 16×16-Skizze wird aus einer strukturierten Vierfarben-Palette deterministisch zu 256 editierbaren Pixeln expandiert. Ein Ende-zu-Ende-HTTP-Test mit Qwen2.5-14B erzeugte eine Amethyst-Skizze mit 256 Pixeln und vier Farben. Modellgewichte werden nicht mitgeliefert.
 - **Quelltext und Export:** Unterstützte Projekte erzeugen Java-/Gradle-Quelltext und Ressourcen aus festen Vorlagen. Nutzer können Quellprojekt-Archive exportieren und ein erfolgreich gebautes JAR herunterladen. KI-generierter Text wird nicht als Build-Skript ausgeführt.
 - **Items:** Textur, Stapelgröße und Feuerresistenz.
@@ -53,6 +54,7 @@ Für Entwicklung: Node.js 20+ installieren, dann `npm install`, `npm run css:bui
 
 - JavaScript-Syntaxprüfungen für Client- und Servermodule bestanden.
 - Tailwind-CSS-Build und lokale Auslieferung der Website-Assets/Geist-Mono-Schrift geprüft.
+- Hintergrundauswahl im Browser geprüft: alle vier Optionen sind wählbar und die Einstellung „Animiertes Raster“ blieb nach Neuladen erhalten; Standard wieder auf „Schwebende Kugeln“ gesetzt.
 - `npm audit`: keine gemeldeten Schwachstellen.
 - Runtime-Archive und ihre Upstream-SHA-256-Werte geprüft; portable ZIP-Inhalte und Launcher-Eintrag geprüft.
 - Echter Fabric-26.2-Build eines gemischten Item-/Block-Mods mit den gebündelten Laufzeiten erfolgreich; JAR-Datei und Inhalt geprüft.

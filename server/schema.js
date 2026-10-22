@@ -25,6 +25,7 @@ export function makeProject(input = {}) {
     activeElementId: null,
     sourceOverrides: {},
     conversation: [],
+    timeSpentMs: 0,
     createdAt: now,
     updatedAt: now,
   });
@@ -95,6 +96,7 @@ export function validateProject(value) {
     activeElementId: elements.some((item) => item.id === requestedActiveId) ? requestedActiveId : (elements[0]?.id || null),
     sourceOverrides,
     conversation,
+    timeSpentMs: Math.floor(finiteNumber(value.timeSpentMs, 0, 315_360_000_000, 0)),
     createdAt: cleanText(value.createdAt, 40) || new Date().toISOString(),
     updatedAt: cleanText(value.updatedAt, 40) || new Date().toISOString(),
   };

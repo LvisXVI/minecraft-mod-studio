@@ -19,6 +19,10 @@ let localModels = [];
 let chatModels = [];
 let selectedChatModel = null;
 let currentSourcePath = null;
+let timerActivityAt = Date.now();
+let timerTickAt = null;
+let timerSaveAt = Date.now();
+let timerDirty = false;
 
 async function initialize() {
   wireShell();
@@ -32,6 +36,9 @@ async function initialize() {
 }
 
 function wireShell() {
+  initializeBackgroundSettings();
+  $('#appearance-button').addEventListener('click', () => $('#appearance-dialog').showModal());
+  document.querySelectorAll('input[name="background-style"]').forEach((input) => input.addEventListener('change', () => setBackgroundStyle(input.value)));
   $('#new-project-button').addEventListener('click', openNewProject);
   $('#empty-create-button').addEventListener('click', openNewProject);
   $('#add-first-element').addEventListener('click', () => addElement('item'));
@@ -67,16 +74,36 @@ function wireShell() {
   $('#send-chat-button').addEventListener('click', sendMessage);
   $('#ai-provider-select').addEventListener('change', refreshAiModelChoices);
   $('#ai-model-select').addEventListener('change', saveSelectedChatModel);
+  for (const eventName of ['pointerdown', 'keydown', 'input', 'wheel']) document.addEventListener(eventName, markTimerActivity, { passive: true });
+  document.addEventListener('visibilitychange', handleTimerPause);
+  window.addEventListener('blur', handleTimerPause);
+  window.addEventListener('focus', () => { markTimerActivity(); refreshAuthStatus(); });
+  setInterval(tickProjectTimer, 1000);
   $('#chat-input').addEventListener('keydown', (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); } });
   document.querySelectorAll('[data-prompt]').forEach((button) => button.addEventListener('click', () => { $('#chat-input').value = button.dataset.prompt; $('#chat-input').focus(); }));
   $('#build-button').addEventListener('click', startBuild);
   $('#assistant-menu-button').addEventListener('click', () => toast('Der Chat bleibt im Projekt gespeichert.'));
-  window.addEventListener('focus', refreshAuthStatus);
   document.addEventListener('keydown', (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); saveNow(); }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openNewProject(); }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') { event.preventDefault(); editor?.undo(); }
   });
+}
+
+function initializeBackgroundSettings() {
+  let selected = 'orbs';
+  try { selected = localStorage.getItem('modstudio.background') || selected; } catch {}
+  setBackgroundStyle(selected, false);
+}
+
+function setBackgroundStyle(style, persist = true) {
+  const supported = ['orbs', 'aurora', 'grid', 'off'];
+  const selected = supported.includes(style) ? style : 'orbs';
+  document.documentElement.dataset.background = selected;
+  document.querySelectorAll('input[name="background-style"]').forEach((input) => { input.checked = input.value === selected; });
+  if (persist) {
+    try { localStorage.setItem('modstudio.background', selected); } catch { toast('Die Hintergrundeinstellung konnte nicht lokal gespeichert werden.'); }
+  }
 }
 
 function openNewProject() { $('#project-name-input').value = 'Neues Mod-Projekt'; $('#project-description-input').value = ''; dialog.showModal(); $('#project-name-input').select(); }
@@ -97,14 +124,17 @@ async function refreshProjects() {
   projectList.replaceChildren(...projects.map((item) => {
     const button = document.createElement('button'); button.type = 'button'; button.className = `project-link${item.id === selectedId ? ' active' : ''}`;
     button.innerHTML = `<span class="project-glyph">${escapeHtml(item.name.slice(0, 1).toUpperCase())}</span><span class="project-link-copy"><strong></strong><small></small></span><span class="project-link-count"></span>`;
-    button.querySelector('strong').textContent = item.name; button.querySelector('small').textContent = `${item.target.loader} · ${item.target.minecraftVersion || 'Version wählen'}`; button.querySelector('.project-link-count').textContent = item.elementCount;
+    button.querySelector('strong').textContent = item.name; button.querySelector('small').textContent = `${formatDuration(item.timeSpentMs)} · ${item.target.loader} · ${item.target.minecraftVersion || 'Version wählen'}`; button.querySelector('.project-link-count').textContent = item.elementCount;
     button.addEventListener('click', () => selectProject(item.id)); return button;
   }));
 }
 
 async function selectProject(id) {
   try {
+    if (project?.id === id) return;
+    if (project && project.id !== id) { tickProjectTimer(); await saveNow(); }
     const result = await api(`/api/projects/${id}`); project = result.project; selectedId = id;
+    timerTickAt = null; timerActivityAt = Date.now(); timerSaveAt = Date.now(); timerDirty = false; renderProjectTime();
     emptyState.hidden = true; workbench.hidden = false; $('#target-controls').hidden = false; $('#project-title').textContent = project.name;
     $('#loader-select').value = project.target.loader; $('#version-select').value = project.target.minecraftVersion || '26.2';
     $('#namespace-prefix').textContent = `${project.namespace}:`;
@@ -196,10 +226,27 @@ function scheduleSave() { setSaveStatus('Änderungen …'); $('#download-jar-but
 async function saveNow() {
   if (!project) return;
   clearTimeout(dirtyTimer);
-  try { const saved=await api(`/api/projects/${project.id}`,{method:'PUT',body:jsonBody(project)}); project=saved.project; setSaveStatus('Gespeichert'); await refreshProjects(); }
+  const projectId=project.id;const savedTime=project.timeSpentMs||0;
+  try { const saved=await api(`/api/projects/${projectId}`,{method:'PUT',body:jsonBody(project)});if(project?.id===projectId){const elapsedDuringSave=Math.max(0,(project.timeSpentMs||0)-savedTime);project=saved.project;project.timeSpentMs+=elapsedDuringSave;timerDirty=elapsedDuringSave>0;renderProjectTime();}setSaveStatus('Gespeichert'); await refreshProjects(); }
   catch(error){setSaveStatus('Speichern fehlgeschlagen');toast(error.message);}
 }
 function setSaveStatus(value){$('#save-status').lastChild.textContent=value;}
+
+function markTimerActivity(){timerActivityAt=Date.now();}
+function handleTimerPause(){tickProjectTimer();timerTickAt=null;if(project&&timerDirty)void saveNow();}
+function tickProjectTimer(){
+  const now=Date.now();
+  const active=Boolean(project&&document.visibilityState==='visible'&&document.hasFocus()&&now-timerActivityAt<5*60_000);
+  if(active){
+    if(timerTickAt){const elapsed=Math.max(0,Math.min(now-timerTickAt,2500));if(elapsed){project.timeSpentMs=(project.timeSpentMs||0)+elapsed;timerDirty=true;}}
+    timerTickAt=now;
+  }else timerTickAt=null;
+  if($('#time-tracker'))$('#time-tracker').classList.toggle('is-running',active);
+  renderProjectTime();
+  if(timerDirty&&now-timerSaveAt>=60_000){timerSaveAt=now;void saveNow();}
+}
+function renderProjectTime(){const tracker=$('#time-tracker');if(!tracker)return;tracker.hidden=!project;$('#project-time').textContent=formatDuration(project?.timeSpentMs||0);}
+function formatDuration(milliseconds){const minutes=Math.floor(Math.max(0,Number(milliseconds)||0)/60_000);if(minutes<60)return `${minutes} min`;const hours=Math.floor(minutes/60);const remainder=minutes%60;return `${hours}h ${String(remainder).padStart(2,'0')}m`;}
 
 async function refreshCapabilityLabel(){try{const info=await api('/api/capabilities');$('#target-status').textContent=info.runtime.ready?'TOOLCHAIN BEREIT':'TOOLCHAIN FEHLT';$('#target-status').classList.toggle('ready',info.runtime.ready);const loader=$('#loader-select');loader.replaceChildren(...info.loaders.map((item)=>{const option=document.createElement('option');option.value=item.id;option.textContent=item.label+(item.status==='supported'?'':' · geplant');option.disabled=item.status!=='supported';return option;}));const version=$('#version-select');version.replaceChildren(...(info.loaders.find((item)=>item.id==='fabric')?.versions||[]).map((value)=>{const option=document.createElement('option');option.value=value;option.textContent=value;return option;}));}catch{}}
 async function changeTarget(){if(!project)return;project.target.loader=$('#loader-select').value;project.target.minecraftVersion=$('#version-select').value;await saveNow();}

@@ -19,7 +19,7 @@ export function createProjectStore(root) {
       if (!entry.isDirectory() || !idPattern.test(entry.name)) continue;
       try {
         const project = await read(entry.name);
-        projects.push({ id: project.id, name: project.name, namespace: project.namespace, updatedAt: project.updatedAt, target: project.target, elementCount: project.elements.length });
+        projects.push({ id: project.id, name: project.name, namespace: project.namespace, updatedAt: project.updatedAt, target: project.target, elementCount: project.elements.length, timeSpentMs: project.timeSpentMs });
       } catch { /* Ignore incomplete atomic writes and malformed project files. */ }
     }
     return projects.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
