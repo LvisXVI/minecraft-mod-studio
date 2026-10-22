@@ -348,3 +348,52 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Soft glass surfaces and focused green light, based on the latest UI reference. */
+:root { --display: "Inter", "Segoe UI", system-ui, sans-serif; }
+body { font-family: "Segoe UI", Inter, system-ui, sans-serif; background: #090c0e; }
+.app-shell { background: radial-gradient(ellipse 44% 52% at 83% 35%, rgba(0, 222, 145, .17), transparent 72%), radial-gradient(ellipse 30% 34% at 76% 80%, rgba(49, 214, 98, .11), transparent 70%), radial-gradient(ellipse 18% 38% at 3% 82%, rgba(35, 200, 112, .08), transparent 72%), #090c0e; }
+.main-column, .topbar { background: transparent; }
+.sidebar { inset: 8px auto 8px 8px; width: 214px; padding: 18px 13px 12px; background: rgba(18, 22, 24, .76); border: 1px solid rgba(191, 213, 204, .18); border-radius: 20px; box-shadow: inset 0 1px rgba(255,255,255,.07), 0 18px 55px rgba(0,0,0,.35); backdrop-filter: blur(24px) saturate(125%); }
+.main-column { margin-left: 230px; width: calc(100% - 230px); }
+.topbar { border-bottom-color: rgba(208, 228, 218, .14); }
+.hero-visual, .assistant-panel, .editor-surface, .code-view, .build-view, .modal-dialog { background: rgba(17, 23, 23, .72); border-color: rgba(198, 224, 213, .2); box-shadow: inset 0 1px rgba(255,255,255,.055), 0 22px 65px rgba(0,0,0,.22); backdrop-filter: blur(18px) saturate(125%); }
+.workflow-node, .composer, .auth-nudge, .build-requirements, .build-log, .modal-platform { background: rgba(8, 13, 14, .62); border-color: rgba(193, 217, 207, .17); backdrop-filter: blur(14px); }
+.button-primary, .send-button { box-shadow: 0 0 24px rgba(143, 255, 68, .28), 0 0 52px rgba(59, 255, 160, .12); }
+.button-primary:hover { box-shadow: 0 0 30px rgba(143, 255, 68, .38), 0 0 60px rgba(59, 255, 160, .18); }
+button, select, input, textarea, .project-link, .new-project-button, .icon-button,
+.account-button, .account-icon, .assistant-mark, .assistant-panel, .assistant-header,
+.composer, .auth-nudge, .chat-message, .candidate-actions, .candidate-apply,
+.candidate-discard, .editor-surface, .texture-editor, .preview-editor, .voxel-preview,
+.asset-strip, .asset-card, .palette-swatch, .file-button, .build-view, .modal-dialog,
+.modal-platform, .platform-mark, .toast, .hero-visual, .workflow-node, .pixel-sample {
+  border-radius: 12px;
+}
+.new-project-button, .candidate-apply, .send-button, .export-button { border-radius: 10px; }
+.brand-mark, .project-glyph, .status-dot, .save-dot, .count-badge { border-radius: 8px; }
+.ai-provider-bar select, .target-select-wrap select { border-radius: 10px; }
+.modal-dialog { border-radius: 18px; }
+.assistant-panel { overflow: clip; }
+.sidebar-footer { border-color: rgba(206, 228, 218, .15); }
+.hero-visual::before, .hero-visual::after { height: 2px; box-shadow: 0 0 12px rgba(198,255,74,.5); }
+.account-button, .project-link, .icon-button, .asset-item, .file-button, .prompt-chips button { transition: background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease; }
+.project-link.active { border-radius: 10px; box-shadow: inset 2px 0 #c6ff4a, 0 0 18px rgba(67,255,147,.08); }
+.account-button:hover, .project-link:hover { background: rgba(207, 230, 218, .08); }
+.new-project-button { box-shadow: 0 0 21px rgba(143,255,68,.24); }
+.auth-nudge { flex-wrap: wrap; }
+#manage-chatgpt-usage { margin-left: auto; color: #bcc3c5; font: 11px/1.4 "Segoe UI", Inter, sans-serif; text-decoration-color: #62696b; text-underline-offset: 3px; }
+#manage-chatgpt-usage:hover { color: #c6ff4a; }
+.auth-nudge button { border-radius: 9px; }
+.toast { font: 12px/1.5 "Segoe UI", Inter, sans-serif; }
+@media (max-width: 1280px) {
+  .sidebar { width: 194px; }
+  .main-column { margin-left: 210px; width: calc(100% - 210px); }
+}
+@media (max-width: 1080px) {
+  .sidebar { inset: 8px auto 8px 8px; width: 64px; padding: 16px 8px 10px; }
+  .main-column { margin-left: 80px; width: calc(100% - 80px); }
+}
+@media (max-width: 720px) {
+  .sidebar { position: sticky; inset: auto; width: calc(100% - 16px); height: 54px; margin: 8px; padding: 0 13px; flex-direction: row; align-items: center; border-radius: 16px; }
+  .main-column { width: 100%; margin: 0; }
+}

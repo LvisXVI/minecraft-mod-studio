@@ -31,6 +31,11 @@ $entries = @(
 )
 Compress-Archive -Path $entries -DestinationPath $archive -CompressionLevel Fastest
 $digest = Get-Sha256Hex $archive
-Set-Content -LiteralPath (Join-Path $dist 'SHA256SUMS.txt') -Value "$digest  Mod-Studio-Portable.zip" -Encoding ascii
+$setup = Join-Path $dist 'Mod-Studio-Setup.exe'
+& (Join-Path $PSScriptRoot 'build-setup.ps1') -PortableArchive $archive -OutputPath $setup
+$setupDigest = Get-Sha256Hex $setup
+@("$setupDigest  Mod-Studio-Setup.exe", "$digest  Mod-Studio-Portable.zip") | Set-Content -LiteralPath (Join-Path $dist 'SHA256SUMS.txt') -Encoding ascii
 Get-Item -LiteralPath $archive | Select-Object FullName,Length
 Write-Host "SHA-256: $digest"
+Get-Item -LiteralPath $setup | Select-Object FullName,Length
+Write-Host "Setup SHA-256: $setupDigest"

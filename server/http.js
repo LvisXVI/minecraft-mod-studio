@@ -16,7 +16,7 @@ export function createServer({ publicDir, projectStore, services }) {
     addSecurityHeaders(res);
     try {
       const url = new URL(req.url || '/', 'http://127.0.0.1');
-      if (req.method === 'GET' && url.pathname === '/api/health') return json(res, 200, { ok: true, version: '0.1.0' });
+      if (req.method === 'GET' && url.pathname === '/api/health') return json(res, 200, { ok: true, version: '0.1.0-alpha.3' });
       if (url.pathname.startsWith('/api/')) return await routeApi(req, res, url, projectStore, services);
       if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { error: 'Diese Anfrage ist nicht verfügbar.' });
       return await serveStatic(req, res, root, url.pathname);
@@ -38,6 +38,7 @@ async function routeApi(req, res, url, store, services) {
   if (req.method === 'POST' && pathname === '/api/auth/start') return json(res, 200, await services.auth.beginSignIn());
   if (req.method === 'POST' && pathname === '/api/auth/signout') return json(res, 200, await services.auth.signOut());
   if (req.method === 'GET' && pathname === '/api/auth/models') return json(res, 200, await services.auth.listModels());
+  if (req.method === 'PUT' && pathname === '/api/auth/model') return json(res, 200, { selectedModel: await services.auth.selectModel((await readJson(req)).model) });
   const projectMatch = pathname.match(/^\/api\/projects\/([0-9a-f-]{36})(?:\/(source|files|build|artifact|ai))?$/i);
   if (!projectMatch) return json(res, 404, { error: 'API-Adresse nicht gefunden.' });
   const [, id, action] = projectMatch;

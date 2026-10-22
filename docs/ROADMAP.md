@@ -4,6 +4,10 @@ Mod Studio soll Nutzern mit unterschiedlichen Kenntnissen erlauben, vollständig
 
 Diese Roadmap beschreibt den gewünschten Produktumfang. Sie ist keine Behauptung, dass die unten aufgeführten Funktionen schon in der Alpha vorhanden sind. Den verifizierten Ist-Stand nennt [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
+## Erstellungsablauf
+
+Die vom Nutzer verlinkte [MCreator-Seite](https://mcreator.net/) zeigt hilfreiche Arbeitsabläufe: geführte Erstellungsdialoge, direkte WYSIWYG-Bearbeitung, eine gemeinsame Asset-Verwaltung, integrierten Quellcode und einen Test-/Build-Schritt. Mod Studio verfolgt dieselbe praktische Abfolge für Minecraft Java, verbindet sie aber mit projektspezifischen editierbaren Skizzen, lokalem Projektbesitz und nachvollziehbaren Generatoren. Der aktuelle Editor hat bereits Projektanlage, Textur-/Voxel-Vorschau, Elementübersicht, Quellcodeansicht und Build-Ausgabe; geführte Wizards und ein eigenständiger Asset-Browser gehören zum weiteren Ausbau. Es werden keine MCreator-Assets oder Oberflächen kopiert.
+
 ## Ziel: Inhalte, die ein Mod typischerweise braucht
 
 Jeder Inhalt wird in einem gemeinsamen Projektmodell gespeichert. Wo ein Inhalt visuell ist, beginnt er mit einer echten, projektgebundenen Skizze oder einem Modell-Editor. Wo er aus Regeln besteht, erhält er einen passenden visuellen beziehungsweise strukturierten Editor. AI-Vorschläge bleiben prüfbare Änderungen, keine undurchsichtigen Komplettüberschreibungen.

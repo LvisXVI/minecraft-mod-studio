@@ -9,6 +9,7 @@ const REQUIRED_SCOPE = 'chatgpt.tokens.use.direct';
 
 export function createChatGPTAuth({ dataDir, vault, openExternal }) {
   const credentialFile = join(dataDir, 'chatgpt.auth');
+  const modelFile = join(dataDir, 'chatgpt.model');
   const hostFile = join(dataDir, 'chatgpt.host');
   let record = null;
   let hostId = null;
@@ -26,6 +27,10 @@ export function createChatGPTAuth({ dataDir, vault, openExternal }) {
       try { record = JSON.parse(vault.decrypt(await readFile(credentialFile, 'utf8'))); }
       catch { record = null; }
     }
+    if (!selectedModel) {
+      try { selectedModel = (await readFile(modelFile, 'utf8')).trim() || null; }
+      catch { selectedModel = null; }
+    }
   }
 
   async function save() {
@@ -38,12 +43,16 @@ export function createChatGPTAuth({ dataDir, vault, openExternal }) {
 
   async function status() {
     await load();
-    return record?.subject ? { connected: true, label: record.email || 'ChatGPT verbunden', detail: 'ChatGPT-Plan freigegeben' } : { connected: false, label: 'ChatGPT verbinden', detail: 'KI-Chat optional' };
+    const planUsageEnabled = Boolean(record?.scopes?.includes(REQUIRED_SCOPE));
+    return record?.subject
+      ? { connected: true, planUsageEnabled, label: record.email || 'ChatGPT verbunden', detail: planUsageEnabled ? 'ChatGPT-Plan freigegeben' : 'Freigabe für ChatGPT-Plan fehlt' }
+      : { connected: false, planUsageEnabled: false, label: 'ChatGPT verbinden', detail: 'KI-Chat optional' };
   }
 
   async function beginSignIn() {
     if (!vault?.available?.()) throw new Error('Die sichere App-Speicherung ist noch nicht bereit.');
     await load();
+    if (record?.subject && record.scopes?.includes(REQUIRED_SCOPE)) return { authorizationUrl: null, connected: true, planUsageEnabled: true };
     if (callbackServer?.listening) callbackServer.close();
     attempt = { state: token(32), nonce: token(32), verifier: token(48), clientId: record?.clientId || 'dynamic_agent_client', startedAt: Date.now() };
     const challenge = createHash('sha256').update(attempt.verifier).digest('base64url');
@@ -81,8 +90,7 @@ export function createChatGPTAuth({ dataDir, vault, openExternal }) {
       if (!tokenResponse.ok) throw new Error('Der ChatGPT-Tokenaustausch wurde abgelehnt.');
       const identity = await verifyIdToken(tokens.id_token, issuedClientId, attempt.nonce);
       const scopes = String(tokens.scope || '').split(/\s+/).filter(Boolean);
-      if (!scopes.includes(REQUIRED_SCOPE)) throw new Error('Die Freigabe zur ChatGPT-Plan-Nutzung wurde nicht erteilt.');
-      record = { clientId: issuedClientId, subject: identity.sub, email: identity.email || '', idToken: tokens.id_token, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: Date.now() + Number(tokens.expires_in || 3600) * 1000, scopes, savedAt: new Date().toISOString() };
+      record = { clientId: issuedClientId, subject: identity.sub, email: identity.email || '', idToken: tokens.id_token, accessToken: tokens.access_token || null, refreshToken: tokens.refresh_token || null, expiresAt: Date.now() + Number(tokens.expires_in || 3600) * 1000, scopes, savedAt: new Date().toISOString() };
       await save(); finish('ChatGPT verbunden', 'Deine Anmeldung ist bereit. Kehre zu Mod Studio zurück.');
     } catch (error) { finish('Anmeldung fehlgeschlagen', htmlSafe(error.message)); }
     finally { closeCallback(); }
@@ -103,7 +111,9 @@ export function createChatGPTAuth({ dataDir, vault, openExternal }) {
   }
 
   async function accessToken() {
-    await load(); if (!record?.accessToken) throw new Error('Verbinde zuerst dein ChatGPT-Konto.');
+    await load(); if (!record?.subject) throw new Error('Verbinde zuerst dein ChatGPT-Konto.');
+    if (!record.scopes?.includes(REQUIRED_SCOPE)) throw new Error('ChatGPT-Plan-Nutzung ist noch nicht freigegeben. Wähle „ChatGPT-Plan freigeben“, um die Berechtigung einmalig zu erteilen.');
+    if (!record.accessToken) throw new Error('Die ChatGPT-Anmeldung ist abgelaufen. Bitte verbinde dein Konto erneut.');
     if (record.expiresAt > Date.now() + 60_000) return record.accessToken;
     const response = await fetch(`${AUTH}/api/accounts/oauth/token`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ grant_type: 'refresh_token', client_id: record.clientId, refresh_token: record.refreshToken, resource: API }) });
     const renewed = await response.json(); if (!response.ok || !renewed.access_token) { record = null; await rm(credentialFile, { force: true }); throw new Error('ChatGPT-Anmeldung abgelaufen. Bitte erneut verbinden.'); }
@@ -113,13 +123,32 @@ export function createChatGPTAuth({ dataDir, vault, openExternal }) {
   async function listModels() {
     const response = await fetch(`${API}/models`, { headers: { Authorization: `Bearer ${await accessToken()}` } }); const data = await response.json();
     if (!response.ok) throw new Error('Die verfügbaren ChatGPT-Modelle konnten nicht geladen werden.');
-    const models = (data.models || data.data || []).filter((item) => item.visibility === undefined || item.visibility === 'list').map((item) => ({ id: item.slug || item.id, name: item.display_name || item.name || item.slug || item.id })).filter((item) => item.id);
-    selectedModel ||= models[0]?.id || null; return { models, selectedModel };
+    const models = (data.models || []).filter((item) => item.visibility === 'list').map((item) => ({ id: item.slug, name: item.display_name || item.slug })).filter((item) => item.id);
+    if (!models.some((item) => item.id === selectedModel)) {
+      selectedModel = models[0]?.id || null;
+      await saveSelectedModel();
+    }
+    return { models, selectedModel };
   }
 
-  async function signOut() { record = null; await rm(credentialFile, { force: true }); closeCallback(); return { connected: false }; }
+  async function selectModel(modelId) {
+    const catalog = await listModels();
+    if (typeof modelId !== 'string' || !catalog.models.some((item) => item.id === modelId)) throw new Error('Dieses Modell ist für dein ChatGPT-Konto nicht verfügbar.');
+    selectedModel = modelId;
+    await saveSelectedModel();
+    return selectedModel;
+  }
+
+  async function saveSelectedModel() {
+    await mkdir(dataDir, { recursive: true });
+    const temporary = `${modelFile}.${process.pid}.tmp`;
+    await writeFile(temporary, selectedModel || '', { flag: 'w' });
+    const { rename } = await import('node:fs/promises'); await rename(temporary, modelFile);
+  }
+
+  async function signOut() { record = null; selectedModel = null; await Promise.all([rm(credentialFile, { force: true }), rm(modelFile, { force: true })]); closeCallback(); return { connected: false }; }
   function closeCallback() { attempt = null; if (callbackServer?.listening) callbackServer.close(); callbackServer = null; }
-  return { status, beginSignIn, signOut, listModels, accessToken, getModel: async () => { if (!selectedModel) await listModels(); return selectedModel; } };
+  return { status, beginSignIn, signOut, listModels, selectModel, accessToken, getModel: async () => { if (!selectedModel) await listModels(); return selectedModel; } };
 }
 
 function token(bytes) { return randomBytes(bytes).toString('base64url'); }

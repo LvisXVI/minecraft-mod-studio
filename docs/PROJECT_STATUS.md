@@ -1,6 +1,6 @@
 # Mod Studio — Projektstatus
 
-Stand: 22. Oktober 2026 · Version `0.1.0-alpha.2` (Dokumentation und Windows-Launcher)
+Stand: 22. Oktober 2026 · Version `0.1.0-alpha.3` (ChatGPT-Modellauswahl, moderne Oberfläche und Windows-Setup)
 
 Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als strukturierte Projekte entwerfen, zeichnen, bearbeiten, exportieren und für den derzeit unterstützten Zieladapter bauen. Es ist bewusst ein Autorentool, kein Modpack-Manager und kein Modkatalog.
 
@@ -8,10 +8,11 @@ Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als stru
 
 - **Lokale Windows-App:** Die Website und ihr Backend laufen nur auf `127.0.0.1` und öffnen sich im normalen Browser. Projekte liegen in `%LOCALAPPDATA%\ModStudio`.
 - **Portable Laufzeiten:** Das ZIP enthält Node.js 24.21.0, Eclipse Temurin JDK 25.0.4.1+1 samt Compiler und Gradle 9.8.2. Beim ersten Start werden sie in den App-eigenen `.runtime`-Ordner entpackt. Die Installation verändert weder System-Java noch PATH und lädt diese Laufzeiten nicht auf dem Ziel-PC nach. Minecraft-/Fabric-Build-Abhängigkeiten werden beim ersten Build aus den offiziellen Repositories geladen.
-- **Windows-Launcher:** `Mod-Studio.exe` startet den mitgelieferten PowerShell-Launcher. Das PowerShell-Fenster bleibt während der Nutzung geöffnet, weil darin der lokale Dienst läuft. `start-mod-studio.bat` bleibt als alternative Startmöglichkeit enthalten. Die EXE ist ein Launcher im vollständigen entpackten App-Ordner und kein eigenständiger Ein-Datei-Installer.
+- **Windows-Setup:** `Mod-Studio-Setup.exe` enthält das vollständige portable Paket und installiert es app-lokal unter `%LOCALAPPDATA%\Programs\ModStudio\0.1.0-alpha.3`. Node.js, JDK, Gradle und Website sind bereits eingebettet; der Setup-Vorgang lädt keine Laufzeiten nach und startet anschließend die App. `Mod-Studio.exe` zeigt einen eigenen Ladebildschirm, entpackt die lokalen Laufzeiten mit Fortschritt und hält den Server ohne Konsolenfenster im Infobereich aktiv. `start-mod-studio.bat` bleibt als Startoption mit sichtbarer Konsole verfügbar.
 - **Projektbearbeitung:** Java-Projekte, Items und Blöcke mit Namen, Kennungen, Beschreibungen und jeweils passenden Eigenschaften. Änderungen werden lokal gespeichert; Projekte lassen sich erneut öffnen.
 - **Skizze und Vorschau:** 16×16-Pixeltextur mit Stift, Radierer, Füllwerkzeug, Farbpalette, Rückgängig/Wiederholen und Leeren. Textur, Pixelvorschau und Voxel-/isometrische Vorschau verwenden dieselben gespeicherten Pixel. Die Vorschau ist projektgebunden; der leere Startzustand gibt keine erfundene fertige Mod-Textur als Nutzerprojekt aus.
-- **ChatGPT:** Lokaler Sign-in-with-ChatGPT-OAuth-Ablauf mit PKCE, State-/Nonce-Prüfung und OIDC/JWKS-Validierung. Zugangsdaten verbleiben beim lokalen Dienst und werden auf Windows mit DPAPI für den aktuellen Benutzer geschützt. Die Browseroberfläche erhält keine gespeicherten Tokens. API-Antworten werden als überprüfbarer Änderungsvorschlag angezeigt; erst Anwenden aktualisiert das Projekt. Responses-API-Aufrufe setzen `store: false`.
+- **ChatGPT:** Lokaler Sign-in-with-ChatGPT-OAuth-Ablauf mit PKCE, State-/Nonce-Prüfung und OIDC/JWKS-Validierung. Kontoanmeldung und einmalige ChatGPT-Planfreigabe werden getrennt dargestellt; Modellwechsel startet keine OAuth-Freigabe. Verfügbare ChatGPT-Modelle erscheinen im Auswahlfeld, die Auswahl bleibt lokal über App-Neustarts erhalten. Zugangsdaten verbleiben beim lokalen Dienst und werden auf Windows mit DPAPI für den aktuellen Benutzer geschützt. Die Browseroberfläche erhält keine gespeicherten Tokens. API-Antworten werden als überprüfbarer Änderungsvorschlag angezeigt; erst Anwenden aktualisiert das Projekt. Responses-API-Aufrufe setzen `store: false`.
+- **Oberfläche:** Startansicht und Arbeitsbereich orientieren sich an der Nutzerreferenz: dunkle Glasflächen, zurückhaltende smaragdgrüne Lichtakzente, abgerundete Seitenleiste und Vorschau sowie gut getrennte Code-/Skizzenbereiche. Der erste Eindruck zeigt weiterhin nur eine leere echte Skizzenfläche, keine erfundene Mod-Textur.
 - **Lokale KI mit Ollama (optional):** Erkennt installierte lokale Modelle und kann den lokal laufenden Ollama-Dienst bei Bedarf starten. Die KI bearbeitet das ausgewählte Element; eine 16×16-Skizze wird aus einer strukturierten Vierfarben-Palette deterministisch zu 256 editierbaren Pixeln expandiert. Ein Ende-zu-Ende-HTTP-Test mit Qwen2.5-14B erzeugte eine Amethyst-Skizze mit 256 Pixeln und vier Farben. Modellgewichte werden nicht mitgeliefert.
 - **Quelltext und Export:** Unterstützte Projekte erzeugen Java-/Gradle-Quelltext und Ressourcen aus festen Vorlagen. Nutzer können Quellprojekt-Archive exportieren und ein erfolgreich gebautes JAR herunterladen. KI-generierter Text wird nicht als Build-Skript ausgeführt.
 - **Items:** Textur, Stapelgröße und Feuerresistenz.
@@ -35,19 +36,18 @@ Der gewünschte spätere Funktionsumfang geht deutlich über Items und Blöcke h
 
 ## Paket und Prüfsummen
 
-Release: [v0.1.0-alpha.2 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.2)
+Release: [v0.1.0-alpha.3 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.3)
 
-- Datei: `Mod-Studio-Portable.zip`
-- Größe: rund 311 MiB (die Release-Notiz nennt die genaue Größe)
-- SHA-256: in der Release-Notiz und der beigefügten `SHA256SUMS.txt` angegeben
+- Dateien: `Mod-Studio-Setup.exe` (einzelner Installer) und `Mod-Studio-Portable.zip` (manuell entpackbar)
+- Größen und SHA-256: in `dist/SHA256SUMS.txt` und im GitHub-Release angegeben
 - Runtime-Archivprüfsummen: [`licenses/runtime-checksums.txt`](../licenses/runtime-checksums.txt)
-- Paketinhalt umfasst Website, lokalen Server, Skripte, Schrift, Lizenzen und Node/JDK/Gradle-Archive. `Mod-Studio.exe` wird beim Erzeugen des Portables aus `scripts/build-launcher.ps1` kompiliert und liegt im entpackten Paket auf der obersten Ebene.
+- Beide Pakete enthalten Website, lokalen Server, Skripte, Schrift, Lizenzen und Node/JDK/Gradle-Archive. Die Setup-EXE bettet das vollständige Portable-ZIP ein; die portable Variante enthält `Mod-Studio.exe` im entpackten Paket auf der obersten Ebene.
 
 ## Einrichtung und Entwicklung
 
-Für Endnutzer: vollständiges ZIP herunterladen, entpacken und `Mod-Studio.exe` starten (oder `start-mod-studio.bat`). Auf Windows kann SmartScreen bei einer nicht signierten Alpha nachfragen. ChatGPT-Anmeldung und erster Minecraft-Build brauchen Internet. Ollama ist optional; ohne Login oder lokales Modell funktionieren manuelle Skizze, Bearbeitung und unterstützter Export weiterhin.
+Für Endnutzer: `Mod-Studio-Setup.exe` herunterladen und starten oder das ZIP entpacken und `Mod-Studio.exe` starten. Auf Windows kann SmartScreen bei einer nicht signierten Alpha nachfragen. ChatGPT-Anmeldung und erster Minecraft-Build brauchen Internet. Ollama ist optional; ohne Login oder lokales Modell funktionieren manuelle Skizze, Bearbeitung und unterstützter Export weiterhin.
 
-Für Entwicklung: Node.js 20+ installieren, dann `npm install`, `npm run css:build` und `npm start`. Das portable Windows-Paket wird mit `npm run dist:portable` erstellt; benötigte verifizierte Runtime-Archive müssen in `.runtime/downloads/` liegen. Der Build kompiliert den `Mod-Studio.exe`-Launcher mit Windows PowerShell/.NET Framework.
+Für Entwicklung: Node.js 20+ installieren, dann `npm install`, `npm run css:build` und `npm start`. Die Windows-Pakete werden mit `npm run dist:portable` erstellt; benötigte verifizierte Runtime-Archive müssen in `.runtime/downloads/` liegen. Der Build kompiliert die Launcher-/Setup-EXE mit Windows PowerShell/.NET Framework.
 
 ## Durchgeführte Prüfungen
 

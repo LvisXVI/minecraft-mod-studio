@@ -2,9 +2,11 @@
 
 Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Skizze, Textur, Vorschau, Eigenschaften, Quellcode und der optionale ChatGPT-Dialog gehören zu einem Projekt. Die Anwendung dient der Mod-Erstellung und ist kein Modpack-Manager oder Modkatalog.
 
-## Portable Windows-App
+## Windows-Installer und Portable-App
 
-Lade `Mod-Studio-Portable.zip` herunter, entpacke es und starte `Mod-Studio.exe` (alternativ `start-mod-studio.bat`). Beim ersten Start entpackt die App das mitgelieferte Node.js, JDK und Gradle in den eigenen `.runtime`-Ordner. Anschließend startet sie die lokale Website im Standardbrowser. JDK und Gradle ändern weder System-Java noch PATH oder globale Umgebungsvariablen. Das PowerShell-Fenster muss während der Nutzung geöffnet bleiben.
+Lade die [aktuelle Windows-Version auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest) herunter und starte `Mod-Studio-Setup.exe`. Sie enthält das vollständige App-Paket einschließlich Node.js, JDK und Gradle, installiert es unter `%LOCALAPPDATA%\Programs\ModStudio\0.1.0-alpha.3` und startet Mod Studio. Auf dem Ziel-PC müssen keine Laufzeiten separat heruntergeladen oder systemweit installiert werden. Die Setup-Datei ist groß, weil alle Laufzeiten enthalten sind. ChatGPT-Anmeldung und der erste Mod-Build benötigen Internet.
+
+Alternativ kannst du `Mod-Studio-Portable.zip` herunterladen, entpacken und darin `Mod-Studio.exe` starten. Beim ersten Start zeigt der Launcher einen eigenen Ladebildschirm und entpackt Node.js, JDK und Gradle in den `.runtime`-Ordner. Danach läuft der lokale Server ohne Konsolenfenster; über das Symbol im Infobereich kannst du Mod Studio öffnen oder beenden. `start-mod-studio.bat` bleibt als Startoption mit sichtbarer Konsole verfügbar. JDK und Gradle ändern weder System-Java noch PATH oder globale Umgebungsvariablen.
 
 Projekte und geschützte ChatGPT-Zugangsdaten liegen unter `%LOCALAPPDATA%\ModStudio`. Der Server bindet ausschließlich an `127.0.0.1`. Die ChatGPT-Anmeldung nutzt den öffentlichen Sign-in-with-ChatGPT-Ablauf von OpenAI. Ollama kann optional als lokaler KI-Anbieter verwendet werden; wenn es installiert ist, startet Mod Studio den lokalen Dienst bei Bedarf und zeigt verfügbare Modelle im Editor. Modellgewichte werden nicht mit dem App-Paket ausgeliefert. ChatGPT-Anmeldung und erster Mod-Build benötigen Internet. Projektdateien bleiben lokal; beim ersten Build lädt Gradle Minecraft-/Fabric-Abhängigkeiten aus deren offiziellen Repositories.
 
@@ -20,7 +22,7 @@ Die aktuelle Fabric-Einrichtung für Minecraft 26.2 verlangt JDK 25. Siehe den o
 
 Der Server nutzt Node.js-Bordmittel. Tailwind wird beim Entwickeln in eine statische lokale CSS-Datei kompiliert. Mit Node.js 20 oder neuer: `npm install`, `npm run css:build` und `npm start`. Zum Entwickeln mit den Build-Werkzeugen die drei Laufzeitarchive nach `.runtime/node`, `.runtime/jdk` und `.runtime/gradle` entpacken oder den portablen Launcher nutzen.
 
-Für das portable Windows-Paket `npm run dist:portable` ausführen. Das erstellt `dist/Mod-Studio-Portable.zip` mit Website, Launcher, Schriftdatei und den drei geprüften Laufzeitarchiven.
+Für die Windows-Pakete `npm run dist:portable` ausführen. Das erstellt `dist/Mod-Studio-Setup.exe`, `dist/Mod-Studio-Portable.zip` und `dist/SHA256SUMS.txt`. Die einzelne Setup-EXE enthält das portable Paket als eingebettete ZIP-Datei; sie benötigt beim Installieren keine Netzwerkverbindung.
 
 Drittlizenzen und Laufzeitprüfsummen stehen unter `licenses/`; die Originalarchive von Node, Temurin und Gradle enthalten ihre Upstream-Hinweise.
 
