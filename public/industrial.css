@@ -374,10 +374,30 @@ html[data-background="aurora"] .background-effects::before { opacity: 1; animati
 html[data-background="aurora"] .background-effects { background: radial-gradient(ellipse 40% 58% at 70% 44%, rgba(41, 255, 0, .09), transparent 78%); }
 html[data-background="grid"] .background-effects::after { opacity: 1; animation: grid-sweep 26s linear infinite alternate; will-change: transform; backface-visibility: hidden; }
 html[data-background="grid"] .background-effects { background: radial-gradient(ellipse 52% 60% at 68% 42%, rgba(129, 255, 51, .055), transparent 82%); }
+html[data-background="crystal"] .background-effects { background: radial-gradient(ellipse 44% 48% at 74% 36%, rgba(87, 202, 255, .09), transparent 78%), #0c0d0e; }
+html[data-background="crystal"] .background-effects::before { inset: -28%; opacity: 1; background: radial-gradient(ellipse 33% 24% at 68% 34%, rgba(60, 195, 255, .2), transparent 72%), radial-gradient(ellipse 26% 34% at 83% 58%, rgba(151, 97, 255, .18), transparent 74%), radial-gradient(ellipse 30% 22% at 46% 69%, rgba(41, 119, 207, .15), transparent 76%); filter: blur(32px); animation: crystal-drift 46s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
+html[data-background="crystal"] .background-effects::after { opacity: .28; background: radial-gradient(circle, rgba(190, 229, 255, .48) 0 1px, transparent 1.6px); background-size: 48px 48px; animation: crystal-stars 34s linear infinite; }
+html[data-background="crystal"] .ambient-orb { opacity: .18; border-color: rgba(147, 198, 255, .24); background: radial-gradient(circle at 33% 28%, rgba(120, 197, 255, .2), rgba(102, 116, 193, .06) 54%, rgba(17, 22, 34, .24) 80%); }
+html[data-background="crystal"] .orb-a, html[data-background="crystal"] .orb-d, html[data-background="crystal"] .orb-f { animation: orb-float 39s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
+html[data-background="flow"] .background-effects { background: radial-gradient(ellipse 52% 52% at 70% 45%, rgba(33, 197, 207, .075), transparent 80%), #0c0d0e; }
+html[data-background="flow"] .background-effects::before { inset: -18%; opacity: 1; background: radial-gradient(ellipse 42% 16% at 54% 44%, rgba(42, 222, 210, .15), transparent 72%), radial-gradient(ellipse 34% 17% at 80% 59%, rgba(53, 147, 226, .15), transparent 74%), radial-gradient(ellipse 38% 18% at 38% 70%, rgba(90, 104, 220, .11), transparent 75%); filter: blur(26px); animation: flow-drift 38s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
+html[data-background="flow"] .background-effects::after { opacity: .19; background: repeating-linear-gradient(165deg, transparent 0 54px, rgba(125, 226, 233, .15) 55px, transparent 57px 104px); animation: flow-lines 28s linear infinite alternate; }
+html[data-background="circuit"] .background-effects { background: radial-gradient(ellipse 42% 54% at 72% 45%, rgba(52, 211, 139, .07), transparent 80%), #0c0d0e; }
+html[data-background="circuit"] .background-effects::before { inset: -16%; opacity: .85; background: radial-gradient(ellipse 30% 22% at 70% 34%, rgba(91, 246, 165, .16), transparent 72%), radial-gradient(ellipse 24% 27% at 82% 66%, rgba(42, 182, 133, .12), transparent 75%); filter: blur(28px); animation: circuit-glow 8s ease-in-out infinite alternate; }
+html[data-background="circuit"] .background-effects::after { opacity: .52; background: repeating-linear-gradient(0deg, transparent 0 29px, rgba(105, 232, 168, .12) 30px, transparent 31px 60px), repeating-linear-gradient(90deg, transparent 0 29px, rgba(105, 232, 168, .12) 30px, transparent 31px 60px); mask-image: linear-gradient(90deg, transparent, #000 24%, #000 80%, transparent); animation: circuit-flow 24s linear infinite; }
+html[data-background="circuit"] .ambient-orb { opacity: .23; width: 6px; height: 6px; aspect-ratio: 1; border: 0; border-radius: 50%; background: #90ffc0; box-shadow: 0 0 13px rgba(111, 255, 173, .7); animation: signal-pulse 3.8s ease-in-out infinite alternate; }
+html[data-background="circuit"] .orb-b { animation-delay: -1.1s; } html[data-background="circuit"] .orb-d { animation-delay: -2.2s; } html[data-background="circuit"] .orb-f { animation-delay: -3s; }
 html[data-background="off"] .background-effects { background: none; }
 @keyframes orb-float { from { transform: translate3d(-11px, -18px, 0); } to { transform: translate3d(16px, 22px, 0); } }
 @keyframes aurora-drift { from { transform: translate3d(-2%, 1%, 0) rotate(-2deg) scale(1); } to { transform: translate3d(3%, -2%, 0) rotate(2deg) scale(1.04); } }
 @keyframes grid-sweep { from { transform: translate3d(0, -2%, 0); } to { transform: translate3d(0, 2%, 0); } }
+@keyframes crystal-drift { from { transform: translate3d(-2%, 1%, 0) rotate(-1.5deg) scale(1); } to { transform: translate3d(3%, -2%, 0) rotate(1.5deg) scale(1.035); } }
+@keyframes crystal-stars { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -24px, 0); } }
+@keyframes flow-drift { from { transform: translate3d(-3%, 2%, 0) rotate(-2deg) scale(1); } to { transform: translate3d(3%, -2%, 0) rotate(2deg) scale(1.06); } }
+@keyframes flow-lines { from { transform: translate3d(-1%, 0, 0); } to { transform: translate3d(1%, -2%, 0); } }
+@keyframes circuit-glow { from { opacity: .48; transform: scale(.98); } to { opacity: .94; transform: scale(1.025); } }
+@keyframes circuit-flow { from { transform: translate3d(0, -2%, 0); } to { transform: translate3d(0, 2%, 0); } }
+@keyframes signal-pulse { from { opacity: .18; transform: scale(.78); } to { opacity: .9; transform: scale(1.22); } }
 .main-column { position: relative; z-index: 1; background: transparent; }
 .topbar { background: rgba(5, 7, 6, .88); backdrop-filter: blur(18px) saturate(115%); }
 .sidebar { z-index: 2; inset: 8px auto 8px 8px; width: min(214px, 17vw); padding: 18px 13px 12px; background: rgba(14, 17, 16, .78); border: 1px solid rgba(191, 213, 204, .18); border-radius: 28px; box-shadow: inset 0 1px rgba(255,255,255,.07), 0 18px 55px rgba(0,0,0,.35); backdrop-filter: blur(24px) saturate(125%); }
@@ -448,6 +468,15 @@ button, select, input, textarea, .project-link, .new-project-button, .icon-butto
 .preview-orbs i:nth-child(1) { left: 13px; top: 8px; }.preview-orbs i:nth-child(2) { left: 44px; top: 21px; width: 23px; height: 23px; }.preview-orbs i:nth-child(3) { left: 28px; top: 29px; width: 11px; height: 11px; }
 .preview-aurora { background: radial-gradient(ellipse at 70% 50%, rgba(46, 255, 103, .53), transparent 64%), radial-gradient(ellipse at 35% 70%, rgba(0, 151, 103, .38), transparent 56%), #060907; }
 .preview-grid { background: repeating-linear-gradient(0deg, rgba(172, 255, 83, .13) 0 1px, transparent 1px 10px), repeating-linear-gradient(90deg, rgba(172, 255, 83, .13) 0 1px, transparent 1px 10px), radial-gradient(ellipse at 60% 50%, rgba(168, 255, 68, .24), transparent 64%), #060907; }
+.preview-crystal { background: radial-gradient(ellipse at 70% 38%, rgba(77, 190, 255, .5), transparent 54%), radial-gradient(ellipse at 40% 74%, rgba(147, 91, 247, .42), transparent 58%), #080d17; animation: preview-crystal 12s ease-in-out infinite alternate; }
+.preview-flow { background: repeating-linear-gradient(165deg, transparent 0 14px, rgba(90, 219, 225, .18) 15px, transparent 17px 31px), radial-gradient(ellipse at 70% 45%, rgba(52, 155, 219, .42), transparent 68%), #081019; background-size: auto, 130% 130%, auto; animation: preview-flow 10s ease-in-out infinite alternate; }
+.preview-circuit { background: repeating-linear-gradient(0deg, transparent 0 9px, rgba(115, 240, 164, .18) 10px, transparent 11px 20px), repeating-linear-gradient(90deg, transparent 0 9px, rgba(115, 240, 164, .18) 10px, transparent 11px 20px), radial-gradient(ellipse at 65% 45%, rgba(51, 185, 125, .42), transparent 65%), #07110e; background-size: auto, auto, 130% 130%; animation: preview-circuit 5s ease-in-out infinite alternate; }
+.preview-crystal::after, .preview-flow::after, .preview-circuit::after { position: absolute; inset: 0; border-radius: inherit; content: ""; pointer-events: none; }
+.preview-crystal::after { background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,.14), transparent 70%); transform: translateX(-125%); animation: preview-glint 8s ease-in-out infinite; }
+@keyframes preview-crystal { to { background-position: 76% 42%, 46% 64%, center; } }
+@keyframes preview-flow { to { background-position: 16px 24px, 54% 48%, center; } }
+@keyframes preview-circuit { to { background-position: 0 18px, 18px 0, 72% 50%; } }
+@keyframes preview-glint { 0%, 45% { transform: translateX(-125%); } 82%, 100% { transform: translateX(125%); } }
 .preview-off { background: #080a09; }
 .update-check-button { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border: 1px solid rgba(198,255,74,.28); border-radius: 999px; background: rgba(198,255,74,.045); color: #c6ff4a; font: 600 11px "Segoe UI", Inter, sans-serif; cursor: pointer; transition: background .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .update-check-button:hover:not(:disabled) { border-color: rgba(198,255,74,.65); background: rgba(198,255,74,.1); box-shadow: 0 0 18px rgba(143,255,68,.1); }

@@ -146,7 +146,7 @@ function initializeBackgroundSettings() {
 }
 
 function setBackgroundStyle(style, persist = true, allowReducedMotion = persist) {
-  const supported = ['orbs', 'aurora', 'grid', 'off'];
+  const supported = ['orbs', 'aurora', 'grid', 'crystal', 'flow', 'circuit', 'off'];
   const selected = supported.includes(style) ? style : 'orbs';
   document.documentElement.dataset.background = selected;
   document.documentElement.dataset.motionOverride = allowReducedMotion && selected !== 'off' ? 'true' : 'false';
