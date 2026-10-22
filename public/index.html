@@ -53,6 +53,7 @@
           <div class="topbar-actions">
             <div id="time-tracker" class="time-tracker" hidden title="Time Spent Creating Mods — aktive Zeit für dieses Projekt"><span class="time-tracker-dot" aria-hidden="true"></span><span class="time-tracker-label">Time Spent Creating Mods</span><strong id="project-time">0 min</strong></div>
             <span id="save-status" class="save-status"><span class="save-dot"></span>Gespeichert</span>
+            <button class="update-check-button" id="update-check-button" type="button" title="Nach einer neuen Mod-Studio-Version suchen"><span aria-hidden="true">↻</span> Updates</button>
             <button class="icon-button" id="appearance-button" aria-label="Hintergrundanimationen einstellen" title="Hintergrundanimationen" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6.6"/><path d="M10 1.5v2m0 13v2m8.5-8.5h-2m-13 0h-2m13.5-6-1.4 1.4m-9.2 9.2L2 16m12-1.2 1.4 1.4m-9.2-9.2L4.8 5.6"/></svg></button>
             <button class="icon-button" id="help-button" aria-label="Hilfe" title="Tastenkürzel: Strg/⌘+S speichern, Strg/⌘+Z rückgängig" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M8.1 7.3a2 2 0 1 1 3.4 1.4c-.9.7-1.5 1.1-1.5 2.4M10 13.8v.1"/></svg></button>
           </div>
@@ -173,6 +174,15 @@
           <div class="modal-actions"><button class="button button-outline" value="close">Fertig</button></div>
         </form>
       </dialog>
+    <dialog id="update-dialog" class="modal-dialog update-dialog">
+      <section class="modal-card" aria-labelledby="update-title">
+        <div class="modal-heading"><div><p class="eyebrow"><span class="eyebrow-rule"></span>MOD STUDIO UPDATE</p><h2 id="update-title">Neue Version verfügbar</h2></div><button class="icon-button" id="close-update-dialog" type="button" aria-label="Schließen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg></button></div>
+        <p class="update-version-line">Version <strong id="update-version"></strong> · Windows</p>
+        <div class="update-notes" id="update-notes">Fehlerkorrekturen und Verbesserungen.</div>
+        <p class="update-data-note">Deine Projekte und Anmeldedaten bleiben lokal gespeichert. Der Installer öffnet sich nach Download und Prüfsummenprüfung.</p>
+        <div class="modal-actions"><button class="button button-outline" id="close-update-button" type="button">Später</button><button class="button button-primary" id="install-update-button" type="button">Jetzt aktualisieren <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v9m0 0 3-3m-3 3L7 9M4 14v3h12v-3"/></svg></button></div>
+      </section>
+    </dialog>
     <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
   </body>
 </html>

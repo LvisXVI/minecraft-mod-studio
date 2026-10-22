@@ -1,0 +1,54 @@
+name: Windows release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  package-and-publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify tag and fetch bundled runtimes
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw "Tag $env:GITHUB_REF_NAME stimmt nicht mit package.json ($version) überein." }
+          $downloads = Join-Path $PWD '.runtime\downloads'
+          New-Item -ItemType Directory -Force -Path $downloads | Out-Null
+          $files = @(
+            @{ Name = 'node-v24.21.0-win-x64.zip'; Url = 'https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip'; Sha = '158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541' },
+            @{ Name = 'temurin-jdk-25-windows-x64.zip'; Url = 'https://api.adoptium.net/v3/binary/version/jdk-25.0.4.1%2B1/windows/x64/jdk/hotspot/normal/eclipse'; Sha = '00c847d804f4a78e9f04f2683faf14fed898535b177b7fc704486cb0284e9283' },
+            @{ Name = 'gradle-9.8.2-bin.zip'; Url = 'https://services.gradle.org/distributions/gradle-9.8.2-bin.zip'; Sha = '21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607' }
+          )
+          foreach ($file in $files) {
+            $path = Join-Path $downloads $file.Name
+            Invoke-WebRequest -Uri $file.Url -OutFile $path
+            $actual = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($actual -ne $file.Sha) { throw "SHA-256 stimmt nicht für $($file.Name)." }
+          }
+      - name: Build Windows packages
+        run: npm run dist:portable
+      - name: Publish prerelease assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          gh release create $env:GITHUB_REF_NAME `
+            dist/Mod-Studio-Setup.exe `
+            dist/Mod-Studio-Portable.zip `
+            dist/SHA256SUMS.txt `
+            --repo $env:GITHUB_REPOSITORY `
+            --title "Mod Studio $version" `
+            --notes "Windows-Setup mit eingebettetem Updater. Projekte und Zugangsdaten bleiben lokal." `
+            --prerelease

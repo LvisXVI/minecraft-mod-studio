@@ -3,9 +3,11 @@ import { execFile } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
+import packageJson from '../package.json' with { type: 'json' };
 import { createServer } from './http.js';
 import { createProjectStore } from './projects.js';
 import { createServices } from './services.js';
+import { createUpdateService } from './updates.js';
 import { createWindowsVault } from './secure-store.js';
 
 const execFileAsync = promisify(execFile);
@@ -14,7 +16,8 @@ const applicationRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 export function createApp({ rootDir = applicationRoot, dataDir = defaultDataDirectory(), runtimeDir = defaultRuntimeDirectory(rootDir), vault = createWindowsVault(), openExternal = openInSystemBrowser } = {}) {
   const projectStore = createProjectStore(join(dataDir, 'projects'));
   const services = createServices({ projectStore, dataDir, runtimeDir, vault, openExternal });
-  const server = createServer({ publicDir: join(rootDir, 'public'), projectStore, services });
+  const updates = createUpdateService({ currentVersion: packageJson.version });
+  const server = createServer({ publicDir: join(rootDir, 'public'), projectStore, services, updates, version: packageJson.version });
   server.once('close', () => services.ai.close());
   return server;
 }

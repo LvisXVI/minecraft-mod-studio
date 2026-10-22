@@ -10,14 +10,14 @@ const MIME_TYPES = {
 };
 const MAX_BODY_BYTES = 2_000_000;
 
-export function createServer({ publicDir, projectStore, services }) {
+export function createServer({ publicDir, projectStore, services, updates, version = '0.1.0-alpha.3' }) {
   const root = resolve(publicDir);
   return createHttpServer(async (req, res) => {
     addSecurityHeaders(res);
     try {
       const url = new URL(req.url || '/', 'http://127.0.0.1');
-      if (req.method === 'GET' && url.pathname === '/api/health') return json(res, 200, { ok: true, version: '0.1.0-alpha.3' });
-      if (url.pathname.startsWith('/api/')) return await routeApi(req, res, url, projectStore, services);
+      if (req.method === 'GET' && url.pathname === '/api/health') return json(res, 200, { ok: true, version });
+      if (url.pathname.startsWith('/api/')) return await routeApi(req, res, url, projectStore, services, updates);
       if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { error: 'Diese Anfrage ist nicht verfügbar.' });
       return await serveStatic(req, res, root, url.pathname);
     } catch (error) {
@@ -28,11 +28,16 @@ export function createServer({ publicDir, projectStore, services }) {
   });
 }
 
-async function routeApi(req, res, url, store, services) {
+async function routeApi(req, res, url, store, services, updates) {
   const pathname = decodeURIComponent(url.pathname);
   if (req.method === 'GET' && pathname === '/api/projects') return json(res, 200, { projects: await store.list() });
   if (req.method === 'POST' && pathname === '/api/projects') return json(res, 201, { project: await store.create(await readJson(req)) });
   if (req.method === 'GET' && pathname === '/api/capabilities') return json(res, 200, await services.capabilities());
+  if (req.method === 'GET' && pathname === '/api/updates') return json(res, 200, await updates.check());
+  if (req.method === 'POST' && pathname === '/api/updates/install') {
+    const result = await updates.install();
+    return json(res, 202, { version: result.version, releaseUrl: result.releaseUrl });
+  }
   if (req.method === 'GET' && pathname === '/api/ai/providers') return json(res, 200, await services.ai.providers());
   if (req.method === 'GET' && pathname === '/api/auth/status') return json(res, 200, await services.auth.status());
   if (req.method === 'POST' && pathname === '/api/auth/start') return json(res, 200, await services.auth.beginSignIn());

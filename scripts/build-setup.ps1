@@ -3,7 +3,7 @@ param(
     [Parameter(Mandatory = $true)][string] $OutputPath
 )
 $ErrorActionPreference = 'Stop'
-$ui = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'launcher-ui.cs') -Raw
+$ui = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'launcher-ui.cs') -Raw -Encoding UTF8
 $source = @'
 internal static class ModStudioSetup
 {
@@ -24,7 +24,7 @@ internal static class ModStudioSetup
     private static void Install()
     {
         string baseDirectory = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Programs", "ModStudio");
-        string installDirectory = System.IO.Path.Combine(baseDirectory, "0.1.0-alpha.3");
+        string installDirectory = System.IO.Path.Combine(baseDirectory, "__INSTALL_VERSION__");
         string stagingDirectory = System.IO.Path.Combine(baseDirectory, ".install-" + System.Guid.NewGuid().ToString("N"));
         string archivePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ModStudio-" + System.Guid.NewGuid().ToString("N") + ".zip");
         try
@@ -105,7 +105,7 @@ internal static class ModStudioSetup
                         if (total == 0 || complete % (4 * 1024 * 1024) < buffer.Length || complete >= total)
                         {
                             int progress = total == 0 ? 95 : 10 + (int)(complete * 85 / total);
-                            splash.SetProgress(progress, "App-Dateien werden installiert · " + (total == 0 ? 100 : (int)(complete * 100 / total)) + "%");
+                            splash.SetProgress(progress, "App-Dateien werden installiert.");
                         }
                     }
                 }
@@ -123,6 +123,10 @@ internal static class ModStudioSetup
 
 $output = [System.IO.Path]::GetFullPath($OutputPath)
 $archive = [System.IO.Path]::GetFullPath($PortableArchive)
+$root = [System.IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+$version = (Get-Content -LiteralPath (Join-Path $root 'package.json') -Raw -Encoding UTF8 | ConvertFrom-Json).version
+if ($version -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') { throw "Ungültige App-Version: $version" }
+$source = $source.Replace('__INSTALL_VERSION__', $version)
 if (-not (Test-Path -LiteralPath $archive -PathType Leaf)) { throw "Portable-Paket fehlt: $archive" }
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $output) | Out-Null
 if (Test-Path -LiteralPath $output) { [System.IO.File]::Delete($output) }
@@ -130,8 +134,8 @@ $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path -LiteralPath $compiler)) { $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
 if (-not (Test-Path -LiteralPath $compiler)) { throw 'Der Windows-.NET-Compiler wurde nicht gefunden.' }
 $sourcePath = Join-Path $env:TEMP 'mod-studio-setup-build.cs'
-[System.IO.File]::WriteAllText($sourcePath, $ui + $source, [System.Text.UTF8Encoding]::new($false))
-& $compiler /nologo /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
+[System.IO.File]::WriteAllText($sourcePath, $ui + $source, [System.Text.UTF8Encoding]::new($true))
+& $compiler /nologo /codepage:65001 /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
 if ($LASTEXITCODE -ne 0) { throw "Setup-Kompilierung fehlgeschlagen: $LASTEXITCODE" }
 $stream = [System.IO.File]::Open($output, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
 try {

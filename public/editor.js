@@ -13,6 +13,7 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
 
   function draw() {
     const width = canvas.width;
+    const height = canvas.height;
     const cell = width / SIZE;
     context.fillStyle = '#f0f1f3';
     context.fillRect(0, 0, width, canvas.height);

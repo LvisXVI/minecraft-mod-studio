@@ -33,10 +33,15 @@ async function initialize() {
   if (wanted && projects.projects.some((entry) => entry.id === wanted)) await selectProject(wanted);
   await refreshCapabilityLabel();
   await refreshAuthStatus();
+  setTimeout(() => checkForUpdates({ silent: true }), 1800);
 }
 
 function wireShell() {
   initializeBackgroundSettings();
+  $('#update-check-button').addEventListener('click', () => checkForUpdates());
+  $('#close-update-dialog').addEventListener('click', () => $('#update-dialog').close());
+  $('#close-update-button').addEventListener('click', () => $('#update-dialog').close());
+  $('#install-update-button').addEventListener('click', installUpdate);
   $('#appearance-button').addEventListener('click', () => $('#appearance-dialog').showModal());
   document.querySelectorAll('input[name="background-style"]').forEach((input) => input.addEventListener('change', () => setBackgroundStyle(input.value)));
   $('#new-project-button').addEventListener('click', openNewProject);
@@ -90,16 +95,61 @@ function wireShell() {
   });
 }
 
-function initializeBackgroundSettings() {
-  let selected = 'orbs';
-  try { selected = localStorage.getItem('modstudio.background') || selected; } catch {}
-  setBackgroundStyle(selected, false);
+async function checkForUpdates({ silent = false } = {}) {
+  const button = $('#update-check-button');
+  const original = button.innerHTML;
+  button.disabled = true;
+  button.innerHTML = '<span aria-hidden="true">↻</span> Prüfe …';
+  try {
+    const result = await api('/api/updates');
+    if (!result.updateAvailable) {
+      if (!silent) toast(`Mod Studio ist aktuell (${result.currentVersion}).`);
+      return;
+    }
+    $('#update-version').textContent = result.latestVersion;
+    $('#update-notes').textContent = result.releaseNotes.trim() || 'Fehlerkorrekturen und Verbesserungen.';
+    $('#update-dialog').showModal();
+  } catch (error) {
+    if (!silent) toast(error.message);
+  } finally {
+    button.disabled = false;
+    button.innerHTML = original;
+  }
 }
 
-function setBackgroundStyle(style, persist = true) {
+async function installUpdate() {
+  const button = $('#install-update-button');
+  const original = button.innerHTML;
+  button.disabled = true;
+  button.textContent = 'Update wird geladen und geprüft …';
+  try {
+    const result = await api('/api/updates/install', { method: 'POST' });
+    $('#update-dialog').close();
+    toast(`Setup für ${result.version} wurde geprüft und gestartet. Folge den Installationsschritten.`);
+  } catch (error) {
+    toast(error.message);
+  } finally {
+    button.disabled = false;
+    button.innerHTML = original;
+  }
+}
+
+function initializeBackgroundSettings() {
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  let selected = prefersReducedMotion ? 'off' : 'orbs';
+  let hasSavedPreference = false;
+  try {
+    const saved = localStorage.getItem('modstudio.background');
+    if (saved) { selected = saved; hasSavedPreference = true; }
+  } catch {}
+  setBackgroundStyle(selected, false, hasSavedPreference);
+}
+
+function setBackgroundStyle(style, persist = true, allowReducedMotion = persist) {
   const supported = ['orbs', 'aurora', 'grid', 'off'];
   const selected = supported.includes(style) ? style : 'orbs';
   document.documentElement.dataset.background = selected;
+  document.documentElement.dataset.motionOverride = allowReducedMotion && selected !== 'off' ? 'true' : 'false';
   document.querySelectorAll('input[name="background-style"]').forEach((input) => { input.checked = input.value === selected; });
   if (persist) {
     try { localStorage.setItem('modstudio.background', selected); } catch { toast('Die Hintergrundeinstellung konnte nicht lokal gespeichert werden.'); }
