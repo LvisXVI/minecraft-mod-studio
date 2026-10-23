@@ -1,5 +1,6 @@
 import { api, jsonBody } from './api.js';
 import { createPixelEditor, renderVoxelPreview } from './editor.js';
+import { createBlockbenchProject, importBlockbenchProject } from './blockbench.js';
 
 const $ = (selector) => document.querySelector(selector);
 const projectList = $('#project-list');
@@ -23,15 +24,16 @@ let timerActivityAt = Date.now();
 let timerTickAt = null;
 let timerSaveAt = Date.now();
 let timerDirty = false;
+let targetCatalog = null;
 
 async function initialize() {
   wireShell();
+  await refreshCapabilityLabel();
   await refreshProjects();
   const params = new URLSearchParams(location.search);
   const wanted = params.get('project');
   const projects = await api('/api/projects').catch(() => ({ projects: [] }));
   if (wanted && projects.projects.some((entry) => entry.id === wanted)) await selectProject(wanted);
-  await refreshCapabilityLabel();
   await refreshAuthStatus();
   setTimeout(() => checkForUpdates({ silent: true }), 1800);
 }
@@ -54,6 +56,9 @@ function wireShell() {
   $('#cancel-dialog-button').addEventListener('click', () => dialog.close());
   $('#close-dialog-button').addEventListener('click', () => dialog.close());
   $('#export-button').addEventListener('click', exportProject);
+  $('#blockbench-open-button').addEventListener('click', openBlockbench);
+  $('#blockbench-import-button').addEventListener('click', () => $('#blockbench-file-input').click());
+  $('#blockbench-file-input').addEventListener('change', importBlockbenchModel);
   $('#undo-button').addEventListener('click', () => editor?.undo());
   $('#redo-button').addEventListener('click', () => editor?.redo());
   $('#clear-canvas-button').addEventListener('click', () => editor?.clear());
@@ -69,7 +74,7 @@ function wireShell() {
     project.sourceOverrides[currentSourcePath] = $('#code-output').value;
     scheduleSave();
   });
-  $('#loader-select').addEventListener('change', changeTarget);
+  $('#loader-select').addEventListener('change', changeLoader);
   $('#version-select').addEventListener('change', changeTarget);
   $('#element-name').addEventListener('input', updateElementField);
   $('#element-identifier').addEventListener('input', updateElementField);
@@ -186,7 +191,7 @@ async function selectProject(id) {
     const result = await api(`/api/projects/${id}`); project = result.project; selectedId = id;
     timerTickAt = null; timerActivityAt = Date.now(); timerSaveAt = Date.now(); timerDirty = false; renderProjectTime();
     emptyState.hidden = true; workbench.hidden = false; $('#target-controls').hidden = false; $('#project-title').textContent = project.name;
-    $('#loader-select').value = project.target.loader; $('#version-select').value = project.target.minecraftVersion || '26.2';
+    $('#loader-select').value = project.target.loader; renderVersionChoices(project.target.loader, project.target.minecraftVersion || targetCatalog?.defaultVersion || '26.2');
     $('#namespace-prefix').textContent = `${project.namespace}:`;
     renderChat(); renderElements(); await refreshProjects();
     if (editor) editor.destroy();
@@ -233,6 +238,7 @@ async function deleteSelectedElement() {
 
 function updateSelection() {
   const element = selectedElement();
+  $('#blockbench-actions').hidden = !element;
   $('#delete-element-button').hidden = !element;
   $('#selected-element-label').textContent = element ? `${element.kind === 'block' ? 'BLOCK' : 'ITEM'} / ${element.identifier}` : 'Noch kein Element';
   $('#element-inspector').hidden = !element; $('#element-name').value = element?.name || ''; $('#element-identifier').value = element?.identifier || ''; $('#element-description').value = element?.description || '';
@@ -265,12 +271,12 @@ function updateElementDescription() {
 }
 
 function onTextureChange(texture) { const element = selectedElement(); if (!element) return; element.texture = texture; drawPreview(); renderElements(); scheduleSave(); }
-function drawPreview() { const element = selectedElement(); renderVoxelPreview($('#voxel-canvas'), element?.texture?.pixels || Array(256).fill(null), element, previewRotation); $('#preview-empty').hidden = Boolean(element && element.texture.pixels.some(Boolean)); }
+function drawPreview() { const element = selectedElement(); renderVoxelPreview($('#voxel-canvas'), element?.texture?.pixels || Array(256).fill(null), element, previewRotation); $('#preview-empty').hidden = Boolean(element && element.texture.pixels.some(Boolean)); $('#model-preview-caption').textContent = element?.javaModel?.elements?.length ? `Blockbench-Geometrie · ${element.javaModel.elements.length} Cubes` : 'Modellvorschau aus deiner Textur'; }
 function renderPalette() {
   const palette = $('#palette'); palette.replaceChildren();
   for (const color of editor.getPalette()) { const button = document.createElement('button'); button.type='button'; button.className='palette-swatch'; button.style.background=color; button.setAttribute('aria-label',`Farbe ${color}`); button.addEventListener('click',()=>{editor.setColor(color);$('#color-picker').value=color;$('#color-swatch').style.background=color;}); palette.append(button); }
 }
-function paintThumbnail(canvas, pixels) { const ctx=canvas.getContext('2d'); const image=ctx.createImageData(16,16); pixels.forEach((color,index)=>{if(!color)return;const n=parseInt(color.slice(1),16),at=index*4;image.data[at]=(n>>16)&255;image.data[at+1]=(n>>8)&255;image.data[at+2]=n&255;image.data[at+3]=255;});ctx.putImageData(image,0,0); }
+function paintThumbnail(canvas, pixels) { const ctx=canvas.getContext('2d'); const image=ctx.createImageData(16,16); pixels.forEach((color,index)=>{if(!color)return;const n=parseInt(color.slice(1,7),16),at=index*4;image.data[at]=(n>>16)&255;image.data[at+1]=(n>>8)&255;image.data[at+2]=n&255;image.data[at+3]=color.length===9?parseInt(color.slice(7,9),16):255;});ctx.putImageData(image,0,0); }
 
 function scheduleSave() { setSaveStatus('Änderungen …'); $('#download-jar-button').hidden=true; clearTimeout(dirtyTimer); dirtyTimer=setTimeout(saveNow,500); }
 async function saveNow() {
@@ -298,13 +304,87 @@ function tickProjectTimer(){
 function renderProjectTime(){const tracker=$('#time-tracker');if(!tracker)return;tracker.hidden=!project;$('#project-time').textContent=formatDuration(project?.timeSpentMs||0);}
 function formatDuration(milliseconds){const minutes=Math.floor(Math.max(0,Number(milliseconds)||0)/60_000);if(minutes<60)return `${minutes} min`;const hours=Math.floor(minutes/60);const remainder=minutes%60;return `${hours}h ${String(remainder).padStart(2,'0')}m`;}
 
-async function refreshCapabilityLabel(){try{const info=await api('/api/capabilities');$('#target-status').textContent=info.runtime.ready?'TOOLCHAIN BEREIT':'TOOLCHAIN FEHLT';$('#target-status').classList.toggle('ready',info.runtime.ready);const loader=$('#loader-select');loader.replaceChildren(...info.loaders.map((item)=>{const option=document.createElement('option');option.value=item.id;option.textContent=item.label+(item.status==='supported'?'':' · geplant');option.disabled=item.status!=='supported';return option;}));const version=$('#version-select');version.replaceChildren(...(info.loaders.find((item)=>item.id==='fabric')?.versions||[]).map((value)=>{const option=document.createElement('option');option.value=value;option.textContent=value;return option;}));}catch{}}
-async function changeTarget(){if(!project)return;project.target.loader=$('#loader-select').value;project.target.minecraftVersion=$('#version-select').value;await saveNow();}
+async function refreshCapabilityLabel(){try{targetCatalog=await api('/api/capabilities');const loader=$('#loader-select');const selected=project?.target.loader||targetCatalog.defaultLoader;loader.replaceChildren(...targetCatalog.loaders.map((item)=>{const option=document.createElement('option');option.value=item.id;option.textContent=`${item.label} · ${item.versions.length} Versionen`;option.disabled=item.versions.length===0;return option;}));loader.value=selected;if(project)renderVersionChoices(selected,project.target.minecraftVersion||targetCatalog.defaultVersion);updateTargetStatus();}catch{$('#target-status').textContent='VERSIONEN OFFLINE';$('#target-status').title='Die Versionsliste konnte nicht geladen werden. Bereits gespeicherte Projekte bleiben verfügbar.';}}
+function renderVersionChoices(loaderId, preferredVersion){const loader=targetCatalog?.loaders.find((item)=>item.id===loaderId);const supported=[...(loader?.versions||[])].sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}));const options=supported.map((value)=>{const option=document.createElement('option');option.value=value;option.textContent=value;return option;});if(preferredVersion&&!supported.includes(preferredVersion)){const saved=document.createElement('option');saved.value=preferredVersion;saved.textContent=`${preferredVersion} · für diesen Loader nicht gelistet`;saved.selected=true;options.unshift(saved);}$('#version-select').replaceChildren(...options);if(preferredVersion&&supported.includes(preferredVersion))$('#version-select').value=preferredVersion;else if(!preferredVersion&&supported.length)$('#version-select').value=supported[0];updateTargetStatus();}
+async function changeLoader(){if(!project)return;const loader=$('#loader-select').value;const previousVersion=$('#version-select').value;const info=targetCatalog?.loaders.find((item)=>item.id===loader);const version=info?.versions.includes(previousVersion)?previousVersion:info?.versions[0];renderVersionChoices(loader,version);project.target.loader=loader;project.target.minecraftVersion=version||previousVersion;updateTargetStatus();await saveNow();}
+async function changeTarget(){if(!project)return;project.target.loader=$('#loader-select').value;project.target.minecraftVersion=$('#version-select').value;updateTargetStatus();await saveNow();}
+function updateTargetStatus(){const status=$('#target-status');if(!status||!targetCatalog)return;const loader=targetCatalog.loaders.find((item)=>item.id===$('#loader-select').value);const version=$('#version-select').value;const buildSupported=Boolean(loader?.buildVersions?.includes(version));const runtimeReady=Boolean(targetCatalog.runtime.ready);status.textContent=buildSupported?(runtimeReady?'BUILD BEREIT':'TOOLCHAIN FEHLT'):'BUILD-ADAPTER FEHLT';status.classList.toggle('ready',buildSupported&&runtimeReady);status.title=buildSupported?`Build-Unterstützung für ${loader.label} ${version}${runtimeReady?' ist bereit.':' ist vorhanden, die eingebettete Laufzeit fehlt.'}`:`${loader?.label||'Dieser Loader'} ${version||''} ist in der Versionsauswahl verfügbar. Der Generator baut aktuell nur Fabric 26.2; Quellprojekt und Skizzen bleiben trotzdem editierbar.`;}
 function showView(view){currentView=view;document.querySelectorAll('.mode-tab').forEach((button)=>{button.classList.toggle('active',button.dataset.view===view);button.setAttribute('aria-selected',String(button.dataset.view===view));});$('#design-view').hidden=view!=='design';$('#code-view').hidden=view!=='code';$('#build-view').hidden=view!=='build';if(view==='code')refreshSource();if(view==='build')refreshBuildStatus();}
 
 async function refreshSource(){if(!project)return;try{const result=await api(`/api/projects/${project.id}/files`);$('#file-list').replaceChildren();const pre=$('#code-output');for(const file of result.files){const button=document.createElement('button');button.className='file-button';button.textContent=file.path;button.addEventListener('click',()=>showSourceFile(file));$('#file-list').append(button);}if(result.files.length){const source=result.files.find((file)=>file.path.endsWith('ModEntry.java'))||result.files[0];showSourceFile(source);}}catch(error){toast(error.message);}}
 function showSourceFile(file){const pre=$('#code-output');currentSourcePath=file.path;$('#open-file-label').textContent=file.path;const editable=file.path.endsWith('.java');pre.readOnly=!editable;pre.placeholder=editable?'Java-Quellcode wird hier gespeichert.':'Diese Datei wird vom Projektmodell erzeugt.';pre.value=editable?(project.sourceOverrides?.[file.path]??file.content??''):(file.content||'[Binärdatei: Textur]');}
 async function exportProject(){if(!project)return;try{const response=await fetch(`/api/projects/${project.id}/source`);if(!response.ok)throw new Error('Das Quellprojekt konnte nicht exportiert werden.');const blob=await response.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${project.namespace}-source.zip`;a.click();URL.revokeObjectURL(url);toast('Quellprojekt exportiert.');}catch(error){toast(error.message);}}
+function openBlockbench() {
+  const element = selectedElement();
+  if (!element) return toast('Wähle zuerst ein Item oder einen Block aus.');
+  const projectFile = createBlockbenchProject(element, textureDataUrl(element.texture.pixels));
+  downloadText(`${element.identifier}.bbmodel`, JSON.stringify(projectFile, null, 2), 'application/json');
+  window.open('https://web.blockbench.net/', '_blank', 'noopener,noreferrer');
+  toast('Blockbench-Projekt gespeichert. Ziehe die .bbmodel-Datei in den Blockbench-Tab.');
+}
+async function importBlockbenchModel(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file || !project || !selectedElement()) return;
+  try {
+    if (file.size > 1024 * 1024) throw new Error('Die Blockbench-Datei ist größer als 1 MB.');
+    let imported = JSON.parse(await file.text());
+    let texturePixels = null;
+    if (/\.bbmodel$/i.test(file.name) || imported.meta?.model_format) {
+      const result = importBlockbenchProject(imported);
+      imported = result.javaModel;
+      if (result.textureSource) texturePixels = await textureFromDataUrl(result.textureSource);
+    }
+    const nextProject = structuredClone(project);
+    const element = nextProject.elements.find((entry) => entry.id === nextProject.activeElementId);
+    element.javaModel = imported;
+    if (texturePixels) element.texture = { size: 16, pixels: texturePixels };
+    const saved = await api(`/api/projects/${project.id}`, { method: 'PUT', body: jsonBody(nextProject) });
+    project = saved.project;
+    renderElements();
+    updateSelection();
+    await refreshProjects();
+    setSaveStatus('Gespeichert');
+    toast(`Blockbench-Modell übernommen: ${element.javaModel.elements?.length || 0} Cubes. Es wird beim nächsten Build verwendet.`);
+  } catch (error) {
+    toast(error.message || 'Das Blockbench-Modell konnte nicht importiert werden.');
+  }
+}
+function textureDataUrl(pixels) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 16; canvas.height = 16;
+  const context = canvas.getContext('2d');
+  const image = context.createImageData(16, 16);
+  pixels.forEach((color, index) => {
+    if (!color) return;
+    const rgb = Number.parseInt(color.slice(1, 7), 16); const at = index * 4;
+    image.data[at] = (rgb >> 16) & 255; image.data[at + 1] = (rgb >> 8) & 255; image.data[at + 2] = rgb & 255; image.data[at + 3] = color.length === 9 ? Number.parseInt(color.slice(7, 9), 16) : 255;
+  });
+  context.putImageData(image, 0, 0);
+  return canvas.toDataURL('image/png');
+}
+async function textureFromDataUrl(source) {
+  if (typeof source !== 'string' || !source.startsWith('data:image/')) throw new Error('Die eingebettete Blockbench-Textur kann nicht gelesen werden.');
+  const image = new Image();
+  image.src = source;
+  await image.decode();
+  if (image.naturalWidth !== 16 || image.naturalHeight !== 16) throw new Error('Die Blockbench-Textur muss 16 × 16 Pixel groß sein.');
+  const canvas = document.createElement('canvas'); canvas.width = 16; canvas.height = 16;
+  const context = canvas.getContext('2d', { willReadFrequently: true }); context.drawImage(image, 0, 0);
+  const rgba = context.getImageData(0, 0, 16, 16).data;
+  const pixels = Array.from({ length: 256 }, (_, index) => {
+    const offset = index * 4; const red = rgba[offset], green = rgba[offset + 1], blue = rgba[offset + 2], alpha = rgba[offset + 3];
+    if (alpha === 0) return null;
+    return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}${alpha === 255 ? '' : alpha.toString(16).padStart(2, '0')}`.toUpperCase();
+  });
+  return pixels;
+}
+function downloadText(name, content, type) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const link = document.createElement('a');
+  link.href = url; link.download = name; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 async function refreshBuildStatus(){if(!project)return;try{const status=await api(`/api/projects/${project.id}/build`);$('#build-requirements').textContent=status.message;$('#build-button').disabled=!status.ready;const download=$('#download-jar-button');download.hidden=!status.artifactAvailable;if(status.artifactAvailable){download.href=`/api/projects/${project.id}/artifact`;download.download=status.artifactName;}}catch(error){$('#build-requirements').textContent=error.message;}}
 async function startBuild(){await refreshBuildStatus();if($('#build-button').disabled){toast('Dieses Ziel ist noch nicht als vollständig baubar freigeschaltet.');return;}const button=$('#build-button'),log=$('#build-log'),download=$('#download-jar-button');button.disabled=true;download.hidden=true;log.replaceChildren();log.textContent='Build startet …\n';try{const response=await fetch(`/api/projects/${project.id}/build`,{method:'POST'});if(!response.ok){const error=await response.json().catch(()=>({}));throw new Error(error.error||'Build fehlgeschlagen.');}const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';while(true){const {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const events=buffer.split('\n\n');buffer=events.pop()||'';for(const raw of events){const event=raw.match(/^event: (.+)$/m)?.[1];const data=raw.split('\n').find(line=>line.startsWith('data: '))?.slice(6);if(!event||!data)continue;const payload=JSON.parse(data);if(event==='log'){log.append(document.createTextNode(payload.text));log.scrollTop=log.scrollHeight;}if(event==='complete'){log.append(document.createTextNode(payload.ok?'\nBUILD ERFOLGREICH':'\nBUILD FEHLGESCHLAGEN'));if(payload.ok&&payload.artifact){download.href=`/api/projects/${project.id}/artifact`;download.download=payload.filename;download.hidden=false;}toast(payload.ok?'Mod erfolgreich gebaut.':'Der Build ist fehlgeschlagen. Sieh dir die Ausgabe an.');}}}}catch(error){log.append(document.createTextNode(`\n${error.message}`));toast(error.message);}finally{button.disabled=false;await refreshBuildStatus();}}
 

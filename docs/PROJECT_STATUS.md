@@ -1,6 +1,6 @@
 # Mod Studio — Projektstatus
 
-Stand: 22. Oktober 2026 · Version `0.1.0-alpha.6` (Updater mit Bereinigung alter Installationsreste)
+Stand: 23. Oktober 2026 · Version `0.1.0-alpha.6` (Updater mit Bereinigung alter Installationsreste)
 
 Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als strukturierte Projekte entwerfen, zeichnen, bearbeiten, exportieren und für den derzeit unterstützten Zieladapter bauen. Es ist bewusst ein Autorentool, kein Modpack-Manager und kein Modkatalog.
 
@@ -12,8 +12,10 @@ Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als stru
 - **Projektbearbeitung:** Java-Projekte, Items und Blöcke mit Namen, Kennungen, Beschreibungen und jeweils passenden Eigenschaften. Änderungen werden lokal gespeichert; Projekte lassen sich erneut öffnen.
 - **Zeitstatistik:** „Time Spent Creating Mods“ zählt aktive Zeit pro Projekt. Der Zähler pausiert, wenn das Browserfenster verborgen ist, den Fokus verliert oder fünf Minuten keine Eingabe erhält; Zeit wird mit dem lokalen Projekt gespeichert und bleibt nach einem Neustart erhalten.
 - **Skizze und Vorschau:** 16×16-Pixeltextur mit Stift, Radierer, Füllwerkzeug, Farbpalette, Rückgängig/Wiederholen und Leeren. Textur, Pixelvorschau und Voxel-/isometrische Vorschau verwenden dieselben gespeicherten Pixel. Die Vorschau ist projektgebunden; der leere Startzustand gibt keine erfundene fertige Mod-Textur als Nutzerprojekt aus.
+- **Blockbench-Brücke:** Ausgewählte Java-Items und -Blöcke lassen sich als editierbare `.bbmodel`-Projekte mit eingebetteter 16×16-Textur öffnen. Blockbench-Modellprojekte oder Minecraft-Java-Block/Item-JSON können lokal wieder importiert werden; unterstützte Cube-Geometrie, UVs, Seiten, Einzelachsenrotation und RGBA-Texturpixel werden gespeichert, in der Vorschau angezeigt und beim Build als Modellressource ausgegeben. Der Import akzeptiert derzeit Java Block/Item mit Würfelgeometrie, einer 16×16-Textur und Minecraft-kompatiblen Cube-Rotationen. Blockbench wird als eigenständige Anwendung/Web-App geöffnet und nicht in Mod Studio eingebettet oder mit dem Installer ausgeliefert.
 - **ChatGPT:** Lokaler Sign-in-with-ChatGPT-OAuth-Ablauf mit PKCE, State-/Nonce-Prüfung und OIDC/JWKS-Validierung. Kontoanmeldung und einmalige ChatGPT-Planfreigabe werden getrennt dargestellt; Modellwechsel startet keine OAuth-Freigabe. Verfügbare ChatGPT-Modelle erscheinen im Auswahlfeld, die Auswahl bleibt lokal über App-Neustarts erhalten. Zugangsdaten verbleiben beim lokalen Dienst und werden auf Windows mit DPAPI für den aktuellen Benutzer geschützt. Die Browseroberfläche erhält keine gespeicherten Tokens. API-Antworten werden als überprüfbarer Änderungsvorschlag angezeigt; erst Anwenden aktualisiert das Projekt. Responses-API-Aufrufe setzen `store: false`.
 - **Oberfläche:** Startansicht orientiert sich an der jüngsten Vorlage: tiefschwarzer Hintergrund, schmale abgerundete Glas-Seitenleiste, gestapelte Headline, limettengrüne Akzente, schwebende Glaskugeln und transparente Live-Vorschau. Über die Hintergrundauswahl stehen schwebende Kugeln, Smaragd-Aurora, animiertes Raster und „Aus“ bereit; die Auswahl bleibt lokal gespeichert. `prefers-reduced-motion` schaltet die Animationen ab. Der erste Eindruck zeigt weiterhin nur eine leere echte Skizzenfläche, keine erfundene Mod-Textur.
+- **Minecraft-Zielauswahl:** Die App lädt alle offiziellen Java-Releases ab 1.12.2 dynamisch aus Mojangs Manifest. Fabric, Quilt, Forge und NeoForge zeigen jeweils nur die Versionen, die ihre offiziellen Metadaten als verfügbar melden; eine gebündelte Releaseliste samt Loader-Snapshot hält die Auswahl offline nutzbar. Der Zielwähler kennzeichnet Kombinationen ohne Build-Adapter. Das ist eine Verfügbarkeitsauswahl, keine Behauptung, dass bereits jeder Build-Adapter implementiert ist.
 - **Lokale KI mit Ollama (optional):** Erkennt installierte lokale Modelle und kann den lokal laufenden Ollama-Dienst bei Bedarf starten. Die KI bearbeitet das ausgewählte Element; eine 16×16-Skizze wird aus einer strukturierten Vierfarben-Palette deterministisch zu 256 editierbaren Pixeln expandiert. Ein Ende-zu-Ende-HTTP-Test mit Qwen2.5-14B erzeugte eine Amethyst-Skizze mit 256 Pixeln und vier Farben. Modellgewichte werden nicht mitgeliefert.
 - **Quelltext und Export:** Unterstützte Projekte erzeugen Java-/Gradle-Quelltext und Ressourcen aus festen Vorlagen. Nutzer können Quellprojekt-Archive exportieren und ein erfolgreich gebautes JAR herunterladen. KI-generierter Text wird nicht als Build-Skript ausgeführt.
 - **Items:** Textur, Stapelgröße und Feuerresistenz.
@@ -25,8 +27,8 @@ Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als stru
 | Ziel | Status |
 | --- | --- |
 | Minecraft Java 26.2 + Fabric — Items und Blöcke | Implementiert; gemischter Item-/Block-Mod wurde mit dem gebündelten JDK 25 und Gradle 9.8.2 gebaut und das JAR geprüft. |
-| Fabric für andere Minecraft-Versionen | Noch nicht als baubar verifiziert/freigeschaltet. |
-| Forge, NeoForge und Quilt | In der Auswahl/Planung berücksichtigt, Generator und Builds sind noch nicht implementiert. |
+| Fabric für andere Minecraft-Versionen | In der Versionsauswahl verfügbar, noch nicht als baubar verifiziert/freigeschaltet. |
+| Forge, NeoForge und Quilt | Kompatible Releases erscheinen in der Versionsauswahl; Generator und Builds sind noch nicht implementiert. |
 | Rezepte | Projektmodell enthält Rezeptfelder; Erstellung/Bearbeitung und Generatorunterstützung sind noch offen. |
 | Entitäten, Werkzeuge, Rüstung, Effekte, Weltgenerierung, Strukturen, Oberflächen | Spätere Ausbaustufen, nicht Teil des aktuellen Generators. |
 | Linux/macOS | Nicht paketiert; erstes Portable-Paket ist Windows x64. |
@@ -53,7 +55,10 @@ Für Entwicklung: Node.js 20+ installieren, dann `npm install`, `npm run css:bui
 ## Durchgeführte Prüfungen
 
 - JavaScript-Syntaxprüfungen für Client- und Servermodule bestanden.
+- Blockbench-Brücke: `.bbmodel`-Export/Import, Eingabevalidierung, KI-Erhalt importierter Modelle, Projektspeicherung und Generatorausgabe mit Tests geprüft.
 - Tailwind-CSS-Build und lokale Auslieferung der Website-Assets/Geist-Mono-Schrift geprüft.
+- Hintergrundebene im Item-Editor in einer lokalen Browseransicht geprüft; die Animation liegt nun sichtbar hinter Textur- und 3D-Flächen, ohne das Pixelraster zu überdecken.
+- Versionenkatalog mit offiziellen Mojang-, Fabric-, Quilt-, Forge- und NeoForge-Metadaten sowie Offline-Fallback per Tests geprüft.
 - Hintergrundauswahl im Browser geprüft: alle vier Optionen sind wählbar und die Einstellung „Animiertes Raster“ blieb nach Neuladen erhalten; Standard wieder auf „Schwebende Kugeln“ gesetzt.
 - `npm audit`: keine gemeldeten Schwachstellen.
 - Runtime-Archive und ihre Upstream-SHA-256-Werte geprüft; portable ZIP-Inhalte und Launcher-Eintrag geprüft.
@@ -65,10 +70,11 @@ Diese Prüfungen ersetzen keinen Live-Test mit dem ChatGPT-Konto des Endnutzers 
 ## Bekannte Grenzen und nächste Arbeiten
 
 1. Eigene Adapter und verifizierte Builds für weitere Minecraft-Versionen sowie Fabric, Forge, NeoForge und Quilt entwickeln.
-2. Modulsystem über Item/Block hinaus erweitern: zuerst Rezepte/Tags/Loot, dann Modelle, Entity-/Weltgenerierung und Spielsysteme.
-3. Weitere Betriebssysteme paketieren und den Windows-Updateablauf im installierten Alpha-4-Paket end-to-end prüfen.
-4. CI-Buildmatrix und reproduzierbare Kompatibilitätsnachweise ergänzen.
-5. Repository-Lizenz auswählen, bevor Dritten Nutzungs- oder Weiterverteilungsrechte eingeräumt werden. Der aktuelle Code ist als `UNLICENSED` markiert und enthält keine `LICENSE`-Datei.
+2. Blockbench-Unterstützung um Entity-/Bedrock-Formate, mehrere Texturen, Animationen und weitere Modelltypen erweitern.
+3. Modulsystem über Item/Block hinaus erweitern: zuerst Rezepte/Tags/Loot, dann Entity-/Weltgenerierung und Spielsysteme.
+4. Weitere Betriebssysteme paketieren und den Windows-Updateablauf im installierten Alpha-Paket end-to-end prüfen.
+5. CI-Buildmatrix und reproduzierbare Kompatibilitätsnachweise ergänzen.
+6. Repository-Lizenz auswählen, bevor Dritten Nutzungs- oder Weiterverteilungsrechte eingeräumt werden. Der aktuelle Code ist als `UNLICENSED` markiert und enthält keine `LICENSE`-Datei.
 
 ## Herkunft und Produktabgrenzung
 

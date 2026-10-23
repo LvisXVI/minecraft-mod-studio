@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 import { makeZip } from './zip.js';
+import { rewriteJavaModelTextures } from './blockbench.js';
 
 export function createGenerator({ dataDir, runtimeDir }) {
   function toolchainReady() {
@@ -47,7 +48,10 @@ export function createGenerator({ dataDir, runtimeDir }) {
       if (element.kind === 'block') {
         language[`block.${namespace}.${identifier}`] = element.name;
         files.push({ path: `src/main/resources/assets/${namespace}/textures/block/${identifier}.png`, binary: encodeTexture(element.texture.pixels) });
-        files.push({ path: `src/main/resources/assets/${namespace}/models/block/${identifier}.json`, content: JSON.stringify({ parent: 'minecraft:block/cube_all', textures: { all: `${namespace}:block/${identifier}` } }, null, 2) });
+        const blockModel = element.javaModel
+          ? rewriteJavaModelTextures(element.javaModel, `${namespace}:block/${identifier}`)
+          : { parent: 'minecraft:block/cube_all', textures: { all: `${namespace}:block/${identifier}` } };
+        files.push({ path: `src/main/resources/assets/${namespace}/models/block/${identifier}.json`, content: JSON.stringify(blockModel, null, 2) });
         files.push({ path: `src/main/resources/assets/${namespace}/blockstates/${identifier}.json`, content: JSON.stringify({ variants: { '': { model: `${namespace}:block/${identifier}` } } }, null, 2) });
         files.push({ path: `src/main/resources/assets/${namespace}/items/${identifier}.json`, content: JSON.stringify({ model: { type: 'minecraft:model', model: `${namespace}:block/${identifier}` } }, null, 2) });
         files.push({ path: `src/main/resources/data/${namespace}/loot_table/blocks/${identifier}.json`, content: JSON.stringify({ type: 'minecraft:block', pools: [{ rolls: 1, entries: [{ type: 'minecraft:item', name: `${namespace}:${identifier}` }], conditions: [{ condition: 'minecraft:survives_explosion' }] }] }, null, 2) });
@@ -55,7 +59,10 @@ export function createGenerator({ dataDir, runtimeDir }) {
         language[`item.${namespace}.${identifier}`] = element.name;
         files.push({ path: `src/main/resources/assets/${namespace}/textures/item/${identifier}.png`, binary: encodeTexture(element.texture.pixels) });
         files.push({ path: `src/main/resources/assets/${namespace}/items/${identifier}.json`, content: JSON.stringify({ model: { type: 'minecraft:model', model: `${namespace}:item/${identifier}` } }, null, 2) });
-        files.push({ path: `src/main/resources/assets/${namespace}/models/item/${identifier}.json`, content: JSON.stringify({ parent: 'minecraft:item/generated', textures: { layer0: `${namespace}:item/${identifier}` } }, null, 2) });
+        const itemModel = element.javaModel
+          ? rewriteJavaModelTextures(element.javaModel, `${namespace}:item/${identifier}`)
+          : { parent: 'minecraft:item/generated', textures: { layer0: `${namespace}:item/${identifier}` } };
+        files.push({ path: `src/main/resources/assets/${namespace}/models/item/${identifier}.json`, content: JSON.stringify(itemModel, null, 2) });
       }
     }
     files.push({ path: `src/main/resources/assets/${namespace}/lang/en_us.json`, content: JSON.stringify(language, null, 2) });
@@ -120,7 +127,7 @@ function encodeTexture(pixels) {
     for (let x = 0; x < width; x += 1) {
       const color = pixels[y * width + x]; const at = row + 1 + x * 4;
       if (!color) { raw[at + 3] = 0; continue; }
-      raw[at] = parseInt(color.slice(1, 3), 16); raw[at + 1] = parseInt(color.slice(3, 5), 16); raw[at + 2] = parseInt(color.slice(5, 7), 16); raw[at + 3] = 255;
+      raw[at] = parseInt(color.slice(1, 3), 16); raw[at + 1] = parseInt(color.slice(3, 5), 16); raw[at + 2] = parseInt(color.slice(5, 7), 16); raw[at + 3] = color.length === 9 ? parseInt(color.slice(7, 9), 16) : 255;
     }
   }
   const chunk = (type, data) => { const name = Buffer.from(type); const length = Buffer.alloc(4); length.writeUInt32BE(data.length); const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(Buffer.concat([name, data]))); return Buffer.concat([length, name, data, crc]); };

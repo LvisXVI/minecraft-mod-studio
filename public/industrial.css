@@ -6,6 +6,12 @@
   font-display: swap;
 }
 
+.blockbench-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 9px 0 13px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+.blockbench-actions[hidden] { display: none; }
+.blockbench-actions .quiet-button { min-height: 30px; padding-inline: 8px; border: 1px solid var(--line); border-radius: 5px; color: var(--ink); }
+.blockbench-actions #blockbench-open-button { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); color: var(--blue); }
+.blockbench-actions small { flex: 1 0 100%; color: var(--muted); font: 9px/1.5 var(--mono); }
+
 :root {
   color-scheme: dark;
   --ink: #f4f5f6;
@@ -349,7 +355,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 :root { --display: "Inter", "Segoe UI", system-ui, sans-serif; }
 body { font-family: "Segoe UI", Inter, system-ui, sans-serif; background: #050706; }
 .app-shell { position: relative; isolation: isolate; background: transparent; }
-.background-effects { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse 34% 50% at 70% 48%, rgba(94, 255, 0, .065), transparent 76%); contain: paint; }
+.background-effects { position: fixed; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse 34% 50% at 70% 48%, rgba(94, 255, 0, .065), transparent 76%); contain: paint; }
 .background-effects::before, .background-effects::after { position: absolute; content: ""; pointer-events: none; opacity: 0; }
 .background-effects::before { inset: -20%; background: radial-gradient(ellipse 33% 26% at 66% 30%, rgba(39, 255, 126, .26), transparent 72%), radial-gradient(ellipse 29% 36% at 82% 63%, rgba(45, 211, 105, .22), transparent 72%), radial-gradient(ellipse 34% 24% at 48% 70%, rgba(0, 177, 113, .18), transparent 75%); filter: blur(30px); will-change: transform; backface-visibility: hidden; }
 .background-effects::after { inset: 0; background: repeating-linear-gradient(0deg, rgba(154, 255, 56, .045) 0 1px, transparent 1px 34px), repeating-linear-gradient(90deg, rgba(154, 255, 56, .045) 0 1px, transparent 1px 34px); mask-image: linear-gradient(90deg, transparent, #000 25%, #000 78%, transparent); }
@@ -524,6 +530,12 @@ button, select, input, textarea, .project-link, .new-project-button, .icon-butto
   .background-choice { grid-template-columns: 18px 66px 1fr; gap: 9px; }
   .background-preview { width: 66px; }
 }
+
+/* Keep the selected ambient motion visible through the workbench surfaces. */
+.design-stage { background: rgba(5, 7, 6, .12); }
+.editor-surface { background: rgba(37, 40, 42, .48); }
+.texture-editor, .preview-editor { background: rgba(17, 19, 21, .38); }
+.voxel-preview { background-color: rgba(20, 23, 25, .34); }
 @media (min-width: 721px) and (max-width: 1080px) {
   .empty-state { align-content: start; grid-template-columns: minmax(0, .74fr) minmax(0, 1.26fr); gap: clamp(18px, 3vw, 32px); padding: clamp(22px, 3.2vw, 36px); }
   .empty-copy { max-width: none; min-width: 0; }
@@ -589,4 +601,27 @@ button, select, input, textarea, .project-link, .new-project-button, .icon-butto
   .assistant-panel { position: relative; top: auto; height: min(76svh, 700px); min-height: 470px; }
   .voxel-preview { height: 230px; min-height: 230px; }
   .voxel-preview canvas { width: min(100%, 230px); }
+}
+/* Beginner-first item editing: make the common task obvious and tuck IDs/technical behaviour away. */
+.surface-heading small { max-width: 34ch; line-height: 1.45; }
+.draw-tools { flex-wrap: wrap; gap: 7px; }
+.tool-button { width: auto; min-width: 38px; height: 34px; padding: 0 9px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.tool-button span { font: 9px/1 var(--mono); letter-spacing: 0; }
+.element-inspector { display: grid; grid-template-columns: minmax(190px, .8fr) minmax(260px, 1.2fr); align-items: start; gap: 16px; padding: 14px 16px; border: 1px solid #2b3032; border-bottom: 0; background: rgba(17, 19, 21, .76); }
+.primary-name-label { color: #c6ff4a; font-size: 9px; }
+.primary-name-label input { height: 40px; font-size: 13px; }
+.element-advanced { border-left: 1px solid #2b3032; padding: 5px 0 5px 14px; }
+.element-advanced summary { display: flex; align-items: baseline; gap: 9px; color: #c6ff4a; font: 9px var(--mono); cursor: pointer; list-style-position: inside; }
+.element-advanced summary::marker { color: #c6ff4a; }
+.element-advanced summary span { color: #777d80; font: 8px/1.45 var(--mono); }
+.element-advanced[open] summary { margin-bottom: 12px; }
+.element-advanced-fields { display: grid; gap: 10px; }
+.element-advanced .field-hint { color: #777d80; font: 8px var(--mono); letter-spacing: 0; }
+.property-fields { flex-wrap: wrap; align-items: start; }
+@media (max-width: 700px) {
+  .tool-button { padding: 0 7px; }
+  .tool-button span { font-size: 8px; }
+  .element-advanced summary { flex-wrap: wrap; }
+  .element-inspector { grid-template-columns: 1fr; gap: 10px; padding: 12px; }
+  .element-advanced { border-left: 0; border-top: 1px solid #2b3032; padding: 10px 0 0; }
 }
