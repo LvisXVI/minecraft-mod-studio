@@ -5,13 +5,15 @@ import { createGenerator } from './generator.js';
 import { createVersionCatalog } from './version-catalog.js';
 import { createChatGPTAuth } from './auth/oauth.js';
 import { createAiService } from './ai.js';
+import { createAiMemory } from './ai-memory.js';
 
 const gradleRunner = fileURLToPath(new URL('./build-runner.ps1', import.meta.url));
 
 export function createServices({ projectStore, dataDir, runtimeDir, vault, openExternal }) {
   const generator = createGenerator({ dataDir, runtimeDir });
   const auth = createChatGPTAuth({ dataDir, vault, openExternal });
-  const ai = createAiService(auth, projectStore);
+  const aiMemory = createAiMemory(join(dataDir, 'ai-memory.json'));
+  const ai = createAiService(auth, projectStore, aiMemory);
   const getVersionCatalog = createVersionCatalog();
   const build = {
     async check(project) {
@@ -63,6 +65,7 @@ export function createServices({ projectStore, dataDir, runtimeDir, vault, openE
     build,
     auth,
     ai,
+    aiMemory,
     async capabilities() {
       return { ...await getVersionCatalog(), runtime: { ready: generator.toolchainReady(), java: '25', gradle: '9.8.2' } };
     },
