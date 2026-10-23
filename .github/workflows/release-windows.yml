@@ -50,5 +50,5 @@ jobs:
             dist/SHA256SUMS.txt `
             --repo $env:GITHUB_REPOSITORY `
             --title "Mod Studio $version" `
-            --notes "Neu in Alpha 6: Updates räumen alte Mod-Studio-Installationsversionen und Setup-Dateien aus dem dedizierten Update-Cache auf, sobald die neue Version gestartet ist. Projekte und Einstellungen bleiben erhalten." `
+            --notes "Neu in Alpha 7: Minecraft-Java-spezialisierter KI-Assistent mit ehrlicher Versions-/Loader-Kompatibilität, gezielter offizieller Doku-Suche auf ausdrückliche Bitte und lokalem, bearbeitbarem Gedächtnis für deine Arbeitsregeln. Projekte und Zugangsdaten bleiben lokal." `
             --prerelease
