@@ -8,13 +8,13 @@
 [![Windows](https://img.shields.io/badge/Windows-Setup%20%2B%20Portable-15263b?style=flat-square&logo=windows)](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest)
 [![Java Edition](https://img.shields.io/badge/Minecraft-Java%20Edition-15263b?style=flat-square)](https://github.com/LvisXVI/minecraft-mod-studio)
 
-[Website & Preview](https://lvisxvi.github.io/minecraft-mod-studio/) · [Windows herunterladen](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest) · [Projektstatus](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md)
+[Website & Browser-Testversion](https://lvisxvi.github.io/minecraft-mod-studio/) · [Windows herunterladen](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest) · [Projektstatus](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
 ---
 
-Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. ChatGPT ist optional; Ollama kann als lokaler KI-Anbieter genutzt werden. Die Website zeigt eine eigens aufgebaute UI-Vorschau des Arbeitsbereichs; sie verwendet keinen Screenshot der Landingpage als Produktbild.
+Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. ChatGPT ist optional; Ollama kann als lokaler KI-Anbieter genutzt werden. Die Website enthält unter **Browser-Testversion öffnen** eine interaktive Vorschau der echten Editor-Oberfläche. Projekte bleiben dort im Browser; Assistentenantworten sind simuliert und Java-Builds benötigen die Windows-App.
 
 Unter **Einstellungen → Hintergrund** kannst du animierte Glaskugeln, Smaragd-Aurora, Raster, Kristall-Nebel, Ozeanfluss oder Redstone-Signal auswählen. Die Auswahl bleibt lokal gespeichert; **Aus** schaltet Effekte ab und reduzierte Bewegung hält Animationen an.
 
@@ -47,6 +47,12 @@ Voraussetzung ist Node.js 20 oder neuer. Tailwind wird lokal kompiliert; der Ser
 npm install
 npm run css:build
 npm start
+```
+
+Die statische Browser-Testversion unter `docs/demo/` wird aus der App-Oberfläche erzeugt:
+
+```bash
+npm run demo:build
 ```
 
 Für die Windows-Pakete:

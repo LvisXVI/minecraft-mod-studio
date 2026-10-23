@@ -36,3 +36,26 @@ test('empty voxel preview stays empty until a mod element exists', () => {
   renderVoxelPreview({ width: 360, height: 360, getContext: () => context }, Array(256).fill(null), null);
   assert.deepEqual(calls, [['clearRect', 0, 0, 360, 360]]);
 });
+
+test('item preview renders its transparent texture as a floating sprite without a block cube', () => {
+  const calls = [];
+  const mainContext = {
+    clearRect() {}, save() {}, translate() {}, rotate() {}, transform() {}, restore() {},
+    drawImage: (...args) => calls.push(['drawImage', ...args]),
+  };
+  const textureContext = {
+    createImageData(size) { return { data: new Uint8ClampedArray(size * size * 4) }; },
+    putImageData(image) { calls.push(['putImageData', image.data.length]); },
+  };
+  const previousDocument = globalThis.document;
+  globalThis.document = { createElement: () => ({ width: 0, height: 0, getContext: () => textureContext }) };
+  try {
+    renderVoxelPreview({ width: 360, height: 360, getContext: () => mainContext }, Array(256).fill('#B8FF32'), { kind: 'item' });
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document;
+    else globalThis.document = previousDocument;
+  }
+
+  assert.equal(calls.filter(([name]) => name === 'drawImage').length, 1);
+  assert.equal(calls.some(([name]) => name === 'beginPath'), false);
+});
