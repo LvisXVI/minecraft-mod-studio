@@ -113,14 +113,25 @@
               </div>
               <div class="design-stage" id="design-view">
                 <div class="stage-meta"><span class="live-indicator"><i></i>LIVE-VORSCHAU</span><span id="selected-element-label">Noch kein Element</span></div>
+                <div class="element-inspector" id="element-inspector" hidden>
+                  <label class="field-label primary-name-label">NAME IM SPIEL<input id="element-name" maxlength="72" type="text" placeholder="Zum Beispiel: Mondstein"></label>
+                  <details class="element-advanced">
+                    <summary>Weitere Einstellungen <span>Technische Kennung, Beschreibung und Spielverhalten</span></summary>
+                    <div class="element-advanced-fields">
+                      <label class="field-label">TECHNISCHE KENNUNG<div class="namespace-input"><span id="namespace-prefix">new_mod:</span><input id="element-identifier" maxlength="48" type="text" placeholder="mondstein"></div></label>
+                      <label class="field-label compact">BESCHREIBUNG <span class="field-hint">Optional</span><textarea id="element-description" maxlength="500" rows="2" placeholder="Was macht dieses Element?"></textarea></label>
+                      <div id="item-properties" class="property-fields"></div>
+                    </div>
+                  </details>
+                </div>
                 <div class="editor-surface">
                   <div class="texture-editor">
-                    <div class="surface-heading"><div><span>TEXTUR ZEICHNEN</span><small>Klicke ein Feld an und wähle eine Farbe.</small></div><span class="dimension-chip">16 × 16</span></div>
+                    <div class="surface-heading"><div><span>TEXTUR ZEICHNEN</span><small>Farbe auswählen, dann Felder anklicken. Jeder Strich wird gespeichert.</small></div><span class="dimension-chip">16 × 16</span></div>
                     <div class="pixel-canvas-wrap"><canvas id="pixel-canvas" width="320" height="320" aria-label="16 mal 16 Pixel Zeichenfläche" role="application"></canvas><div class="pixel-ruler ruler-top">0&nbsp; &nbsp; 4&nbsp; &nbsp; 8&nbsp; &nbsp; 12&nbsp; &nbsp; 15</div><div class="pixel-ruler ruler-left">0<br><br>4<br><br>8<br><br>12<br><br>15</div></div>
                     <div class="draw-tools" role="toolbar" aria-label="Zeichenwerkzeuge">
-                      <button class="tool-button selected" data-tool="pencil" title="Stift (B)" aria-label="Stift" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 13.5 9-9a2.1 2.1 0 0 1 3 3l-9 9L4 17l.5-3.5Z"/><path d="m11.5 6 2.5 2.5"/></svg></button>
-                      <button class="tool-button" data-tool="eraser" title="Radierer (E)" aria-label="Radierer" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 11 7-7a2 2 0 0 1 2.8 0l2 2a2 2 0 0 1 0 2.8L9 15.1H6.4L3.8 12.5A1.1 1.1 0 0 1 4.5 11Z"/><path d="m7.7 7.8 4.5 4.5"/></svg></button>
-                      <button class="tool-button" data-tool="fill" title="Fläche füllen (G)" aria-label="Fläche füllen" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 9 6-6 6 6-6 6-6-6Z"/><path d="m11 15 2 2h4v-4l-2-2"/></svg></button>
+                      <button class="tool-button selected" data-tool="pencil" title="Stift (B)" aria-label="Stift" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 13.5 9-9a2.1 2.1 0 0 1 3 3l-9 9L4 17l.5-3.5Z"/><path d="m11.5 6 2.5 2.5"/></svg><span>Stift</span></button>
+                      <button class="tool-button" data-tool="eraser" title="Radierer (E)" aria-label="Radierer" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 11 7-7a2 2 0 0 1 2.8 0l2 2a2 2 0 0 1 0 2.8L9 15.1H6.4L3.8 12.5A1.1 1.1 0 0 1 4.5 11Z"/><path d="m7.7 7.8 4.5 4.5"/></svg><span>Radierer</span></button>
+                      <button class="tool-button" data-tool="fill" title="Fläche füllen (G)" aria-label="Fläche füllen" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 9 6-6 6 6-6 6-6-6Z"/><path d="m11 15 2 2h4v-4l-2-2"/></svg><span>Füllen</span></button>
                       <span class="tool-divider"></span>
                       <label class="color-input-wrap" title="Farbe auswählen"><input id="color-picker" type="color" value="#465E84" aria-label="Zeichenfarbe wählen"><span id="color-swatch" class="color-swatch"></span></label>
                       <div class="palette" id="palette" aria-label="Farbpalette"></div>
@@ -134,12 +145,6 @@
                       <button class="quiet-button" id="blockbench-import-button" type="button">Blockbench-Datei übernehmen</button>
                       <input id="blockbench-file-input" type="file" accept=".json,.bbmodel,application/json" hidden>
                       <small>.bbmodel direkt öffnen oder Java-Block/Item-JSON importieren. Textur und Cube-Geometrie werden lokal ins Mod-Projekt übernommen.</small>
-                    </div>
-                    <div class="element-inspector" id="element-inspector" hidden>
-                      <label class="field-label">NAME<input id="element-name" maxlength="72" type="text" placeholder="Name im Spiel"></label>
-                      <label class="field-label">KENNUNG<div class="namespace-input"><span id="namespace-prefix">new_mod:</span><input id="element-identifier" maxlength="48" type="text" placeholder="new_item"></div></label>
-                      <label class="field-label compact">BESCHREIBUNG<textarea id="element-description" maxlength="500" rows="2" placeholder="Was macht dieses Element?"></textarea></label>
-                      <div id="item-properties" class="property-fields"></div>
                     </div>
                     <button class="add-first-element" id="add-first-element" type="button"><span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg></span>Erstes Element hinzufügen</button>
                   </div>
