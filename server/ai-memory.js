@@ -44,6 +44,21 @@ export function createAiMemory(filePath) {
       if (rules.some((entry) => entry.scope === scope && entry.text.toLocaleLowerCase('de') === rule.toLocaleLowerCase('de'))) return null;
       return { rule, rules: await this.add(rule, projectId) };
     },
+    async learnFromProposals(proposals, projectId) {
+      if (!UUID.test(projectId || '') || !Array.isArray(proposals)) return [];
+      const learned = [];
+      for (const proposal of proposals.slice(0, 2)) {
+        const text = validateLearnedRule(proposal?.text);
+        if (!text || !['global', 'project'].includes(proposal?.scope)) continue;
+        const scopeId = proposal.scope === 'project' ? projectId : null;
+        const rules = await read();
+        const scope = scopeId || 'global';
+        if (rules.some((rule) => rule.scope === scope && rule.text.toLocaleLowerCase('de') === text.toLocaleLowerCase('de'))) continue;
+        await this.add(text, scopeId);
+        learned.push({ text, scope: proposal.scope });
+      }
+      return learned;
+    },
     async remove(id, projectId = null) {
       const rules = await read();
       const next = rules.filter((rule) => !(rule.id === id && (rule.scope === 'global' || rule.scope === projectId)));
@@ -59,7 +74,18 @@ export function extractRule(input) {
   const match = text.match(/^(?:bitte\s+)?(?:merk(?:e)?\s+dir(?:\s+bitte)?|ab jetzt|künftig|in zukunft|ich bevorzuge|bitte immer|immer)\s*[:,—-]?\s*(.{8,450})$/iu);
   if (!match) return null;
   const rule = match[1].trim().replace(/[.!?]+$/, '');
-  return rule.length >= 8 ? rule : null;
+  return validateLearnedRule(rule);
+}
+
+export function validateLearnedRule(input) {
+  const value = clean(input).replace(/[.!?]+$/, '').trim();
+  if (value.length < 8 || value.length > 500) return null;
+  // Memory is for durable working preferences, never credentials or identifying contact details.
+  if (/@|\b(?:password|passwort|kennwort|api[-_ ]?key|token|secret|geheimnis|zugangsdaten)\b/iu.test(value)) return null;
+  if (/\b(?:sk-[a-z0-9_-]{12,}|gh[pousr]_[a-z0-9]{20,}|github_pat_[a-z0-9_]{20,})\b/iu.test(value)) return null;
+  if (/(?:\+?\d[\d\s()./-]{7,}\d)/u.test(value)) return null;
+  if (/\b(?:adresse|wohnort|geburtsdatum|telefonnummer|handynummer|kontonummer|krankheit|diagnose|religion|politische meinung)\b/iu.test(value)) return null;
+  return value;
 }
 
 function clean(text) {
