@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createGenerator } from './generator.js';
+import { createVersionCatalog } from './version-catalog.js';
 import { createChatGPTAuth } from './auth/oauth.js';
 import { createAiService } from './ai.js';
 
@@ -11,6 +12,7 @@ export function createServices({ projectStore, dataDir, runtimeDir, vault, openE
   const generator = createGenerator({ dataDir, runtimeDir });
   const auth = createChatGPTAuth({ dataDir, vault, openExternal });
   const ai = createAiService(auth, projectStore);
+  const getVersionCatalog = createVersionCatalog();
   const build = {
     async check(project) {
       const supported = project.target.loader === 'fabric' && project.target.minecraftVersion === '26.2' && project.elements.every((element) => ['item', 'block'].includes(element.kind));
@@ -62,16 +64,7 @@ export function createServices({ projectStore, dataDir, runtimeDir, vault, openE
     auth,
     ai,
     async capabilities() {
-      return {
-        defaultLoader: 'fabric', defaultVersion: '26.2',
-        loaders: [
-          { id: 'fabric', label: 'Fabric', status: 'supported', versions: ['26.2'] },
-          { id: 'quilt', label: 'Quilt', status: 'planned', versions: [] },
-          { id: 'neoforge', label: 'NeoForge', status: 'planned', versions: [] },
-          { id: 'forge', label: 'Forge', status: 'planned', versions: [] },
-        ],
-        runtime: { ready: generator.toolchainReady(), java: '25', gradle: '9.8.2' },
-      };
+      return { ...await getVersionCatalog(), runtime: { ready: generator.toolchainReady(), java: '25', gradle: '9.8.2' } };
     },
   };
 }
