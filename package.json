@@ -9,6 +9,7 @@
     "start:dev": "node --watch server/index.js",
     "test": "node --test",
     "verify:setup": "node scripts/verify-setup.js",
+    "demo:build": "node scripts/build-browser-demo.mjs",
     "css:build": "tailwindcss -i public/tailwind.input.css -o public/tailwind.css --minify",
     "dist:portable": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-portable.ps1"
   },
