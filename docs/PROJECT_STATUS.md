@@ -1,6 +1,6 @@
 # Mod Studio — Projektstatus
 
-Stand: 23. Oktober 2026 · Version `0.1.0-alpha.5` (Updater, ChatGPT-Modellauswahl, anpassbare Glasoberfläche und Windows-Setup)
+Stand: 23. Oktober 2026 · Version `0.1.0-alpha.6` (Updater mit Bereinigung alter Installationsreste)
 
 Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als strukturierte Projekte entwerfen, zeichnen, bearbeiten, exportieren und für den derzeit unterstützten Zieladapter bauen. Es ist bewusst ein Autorentool, kein Modpack-Manager und kein Modkatalog.
 
@@ -8,7 +8,7 @@ Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als stru
 
 - **Lokale Windows-App:** Die Website und ihr Backend laufen nur auf `127.0.0.1` und öffnen sich im normalen Browser. Projekte liegen in `%LOCALAPPDATA%\ModStudio`.
 - **Portable Laufzeiten:** Das ZIP enthält Node.js 24.21.0, Eclipse Temurin JDK 25.0.4.1+1 samt Compiler und Gradle 9.8.2. Beim ersten Start werden sie in den App-eigenen `.runtime`-Ordner entpackt. Die Installation verändert weder System-Java noch PATH und lädt diese Laufzeiten nicht auf dem Ziel-PC nach. Minecraft-/Fabric-Build-Abhängigkeiten werden beim ersten Build aus den offiziellen Repositories geladen.
-- **Windows-Setup und Updater:** `Mod-Studio-Setup.exe` enthält das vollständige portable Paket und installiert es app-lokal unter `%LOCALAPPDATA%\Programs\ModStudio\0.1.0-alpha.4`. Node.js, JDK, Gradle und Website sind bereits eingebettet; der Setup-Vorgang lädt keine Laufzeiten nach und startet anschließend die App. Die App prüft beim Start und per **Updates**-Schaltfläche die GitHub-Releases einschließlich Vorabversionen. Ein Update lädt das Setup erst nach ausdrücklichem Klick, prüft die SHA-256-Prüfsumme aus `SHA256SUMS.txt` und startet es. `Mod-Studio.exe` zeigt einen eigenen Ladebildschirm, entpackt die lokalen Laufzeiten mit Fortschritt und hält den Server ohne Konsolenfenster im Infobereich aktiv. `start-mod-studio.bat` bleibt als Startoption mit sichtbarer Konsole verfügbar.
+- **Windows-Setup und Updater:** `Mod-Studio-Setup.exe` enthält das vollständige portable Paket und installiert es app-lokal unter `%LOCALAPPDATA%\Programs\ModStudio\0.1.0-alpha.6`. Node.js, JDK, Gradle und Website sind bereits eingebettet; der Setup-Vorgang lädt keine Laufzeiten nach und startet anschließend die App. Die App prüft beim Start und per **Updates**-Schaltfläche die GitHub-Releases einschließlich Vorabversionen. Ein Update lädt das Setup erst nach ausdrücklichem Klick, prüft die SHA-256-Prüfsumme aus `SHA256SUMS.txt` und startet es. Nach dem Start löscht die App nur alte versionsgebundene Installationsordner und Dateien aus ihrem eigenen Update-Cache. Projekte und Einstellungen unter `%LOCALAPPDATA%\ModStudio` bleiben erhalten. `Mod-Studio.exe` zeigt einen eigenen Ladebildschirm, entpackt die lokalen Laufzeiten mit Fortschritt und hält den Server ohne Konsolenfenster im Infobereich aktiv. `start-mod-studio.bat` bleibt als Startoption mit sichtbarer Konsole verfügbar.
 - **Projektbearbeitung:** Java-Projekte, Items und Blöcke mit Namen, Kennungen, Beschreibungen und jeweils passenden Eigenschaften. Änderungen werden lokal gespeichert; Projekte lassen sich erneut öffnen.
 - **Zeitstatistik:** „Time Spent Creating Mods“ zählt aktive Zeit pro Projekt. Der Zähler pausiert, wenn das Browserfenster verborgen ist, den Fokus verliert oder fünf Minuten keine Eingabe erhält; Zeit wird mit dem lokalen Projekt gespeichert und bleibt nach einem Neustart erhalten.
 - **Skizze und Vorschau:** 16×16-Pixeltextur mit Stift, Radierer, Füllwerkzeug, Farbpalette, Rückgängig/Wiederholen und Leeren. Textur, Pixelvorschau und Voxel-/isometrische Vorschau verwenden dieselben gespeicherten Pixel. Die Vorschau ist projektgebunden; der leere Startzustand gibt keine erfundene fertige Mod-Textur als Nutzerprojekt aus.
@@ -39,7 +39,7 @@ Der gewünschte spätere Funktionsumfang geht deutlich über Items und Blöcke h
 
 ## Paket und Prüfsummen
 
-Release: [v0.1.0-alpha.4 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.4) (nach Veröffentlichung verfügbar)
+Release: [v0.1.0-alpha.6 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.6) (nach Veröffentlichung verfügbar)
 
 - Dateien: `Mod-Studio-Setup.exe` (einzelner Installer) und `Mod-Studio-Portable.zip` (manuell entpackbar)
 - Größen und SHA-256: in `dist/SHA256SUMS.txt` und im GitHub-Release angegeben
