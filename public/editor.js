@@ -158,6 +158,21 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     drawJavaModelPreview(context, element.javaModel.elements, texture, width, height, rotation);
     return;
   }
+  if (element.kind === 'item') {
+    const sprite = createTextureCanvas(texture);
+    const spriteSize = scale * 0.72;
+    context.save();
+    context.translate(centerX, height * 0.5);
+    context.rotate(-Math.PI / 8 + rotation * Math.PI / 18);
+    context.transform(1, 0.12, -0.08, 0.96, 0, 0);
+    context.shadowColor = 'rgba(0, 0, 0, 0.38)';
+    context.shadowBlur = 16;
+    context.shadowOffsetY = 13;
+    context.imageSmoothingEnabled = false;
+    context.drawImage(sprite, -spriteSize / 2, -spriteSize / 2, spriteSize, spriteSize);
+    context.restore();
+    return;
+  }
   const size = 1;
   path([[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]], '#6F87A4');
   path([[1, 0, 0], [1, 0, 1], [1, 1, 1], [1, 1, 0]], '#536B89');
@@ -167,36 +182,11 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     drawTexturePlane(texture, (u, v) => point(u, 1 - v, 1.002), context, size);
     drawTexturePlane(texture, (u, v) => point(1.002, 1 - v, 1 - u), context, size);
     drawTexturePlane(texture, (u, v) => point(u, 1 - v, 0.002), context, size);
-  } else {
-    context.save();
-    const [x, y] = point(0.5, 1.06, 0.5);
-    context.translate(x, y);
-    context.rotate(-Math.PI / 4);
-    context.transform(1, 0.5, 0, 1, 0, 0);
-    const tile = scale * 0.39;
-    const cell = tile / SIZE;
-    for (let py = 0; py < SIZE; py += 1) {
-      for (let px = 0; px < SIZE; px += 1) {
-        const pixel = texture[py * SIZE + px];
-        if (!pixel) continue;
-        context.fillStyle = pixel;
-        context.fillRect((px - SIZE / 2) * cell, (py - SIZE / 2) * cell, cell + 0.5, cell + 0.5);
-      }
-    }
-    context.restore();
   }
 
   function drawTexturePlane(texturePixels, map, ctx, extent) {
     const n = SIZE;
-    const image = ctx.createImageData(n, n);
-    for (let y = 0; y < n; y += 1) for (let x = 0; x < n; x += 1) {
-      const color = parseHex(texturePixels[y * n + x] || '#ffffff');
-      const index = (y * n + x) * 4;
-      image.data[index] = color[0]; image.data[index + 1] = color[1]; image.data[index + 2] = color[2]; image.data[index + 3] = texturePixels[y * n + x] ? color[3] : 0;
-    }
-    const scratch = document.createElement('canvas');
-    scratch.width = n; scratch.height = n;
-    scratch.getContext('2d').putImageData(image, 0, 0);
+    const scratch = createTextureCanvas(texturePixels);
     const [a, b] = map(0, 0), [c, d] = map(extent, 0), [e, f] = map(0, extent);
     ctx.save();
     ctx.setTransform((c - a) / n, (d - b) / n, (e - a) / n, (f - b) / n, a, b);
@@ -206,6 +196,22 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
   }
 
   function parseHex(value) { const n = Number.parseInt(value.slice(1, 7), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255, value.length === 9 ? Number.parseInt(value.slice(7, 9), 16) : 255]; }
+}
+
+function createTextureCanvas(texturePixels) {
+  const canvas = document.createElement('canvas');
+  canvas.width = SIZE; canvas.height = SIZE;
+  const context = canvas.getContext('2d');
+  const image = context.createImageData(SIZE, SIZE);
+  texturePixels.forEach((pixel, index) => {
+    const value = pixel || '#ffffff';
+    const packed = Number.parseInt(value.slice(1, 7), 16);
+    const color = [(packed >> 16) & 255, (packed >> 8) & 255, packed & 255, value.length === 9 ? Number.parseInt(value.slice(7, 9), 16) : 255];
+    const offset = index * 4;
+    image.data[offset] = color[0]; image.data[offset + 1] = color[1]; image.data[offset + 2] = color[2]; image.data[offset + 3] = pixel ? color[3] : 0;
+  });
+  context.putImageData(image, 0, 0);
+  return canvas;
 }
 
 function drawJavaModelPreview(context, elements, pixels, width, height, cameraRotation) {
