@@ -24,15 +24,16 @@ let timerActivityAt = Date.now();
 let timerTickAt = null;
 let timerSaveAt = Date.now();
 let timerDirty = false;
+let targetCatalog = null;
 
 async function initialize() {
   wireShell();
+  await refreshCapabilityLabel();
   await refreshProjects();
   const params = new URLSearchParams(location.search);
   const wanted = params.get('project');
   const projects = await api('/api/projects').catch(() => ({ projects: [] }));
   if (wanted && projects.projects.some((entry) => entry.id === wanted)) await selectProject(wanted);
-  await refreshCapabilityLabel();
   await refreshAuthStatus();
   setTimeout(() => checkForUpdates({ silent: true }), 1800);
 }
@@ -73,7 +74,7 @@ function wireShell() {
     project.sourceOverrides[currentSourcePath] = $('#code-output').value;
     scheduleSave();
   });
-  $('#loader-select').addEventListener('change', changeTarget);
+  $('#loader-select').addEventListener('change', changeLoader);
   $('#version-select').addEventListener('change', changeTarget);
   $('#element-name').addEventListener('input', updateElementField);
   $('#element-identifier').addEventListener('input', updateElementField);
@@ -190,7 +191,7 @@ async function selectProject(id) {
     const result = await api(`/api/projects/${id}`); project = result.project; selectedId = id;
     timerTickAt = null; timerActivityAt = Date.now(); timerSaveAt = Date.now(); timerDirty = false; renderProjectTime();
     emptyState.hidden = true; workbench.hidden = false; $('#target-controls').hidden = false; $('#project-title').textContent = project.name;
-    $('#loader-select').value = project.target.loader; $('#version-select').value = project.target.minecraftVersion || '26.2';
+    $('#loader-select').value = project.target.loader; renderVersionChoices(project.target.loader, project.target.minecraftVersion || targetCatalog?.defaultVersion || '26.2');
     $('#namespace-prefix').textContent = `${project.namespace}:`;
     renderChat(); renderElements(); await refreshProjects();
     if (editor) editor.destroy();
@@ -303,8 +304,11 @@ function tickProjectTimer(){
 function renderProjectTime(){const tracker=$('#time-tracker');if(!tracker)return;tracker.hidden=!project;$('#project-time').textContent=formatDuration(project?.timeSpentMs||0);}
 function formatDuration(milliseconds){const minutes=Math.floor(Math.max(0,Number(milliseconds)||0)/60_000);if(minutes<60)return `${minutes} min`;const hours=Math.floor(minutes/60);const remainder=minutes%60;return `${hours}h ${String(remainder).padStart(2,'0')}m`;}
 
-async function refreshCapabilityLabel(){try{const info=await api('/api/capabilities');$('#target-status').textContent=info.runtime.ready?'TOOLCHAIN BEREIT':'TOOLCHAIN FEHLT';$('#target-status').classList.toggle('ready',info.runtime.ready);const loader=$('#loader-select');loader.replaceChildren(...info.loaders.map((item)=>{const option=document.createElement('option');option.value=item.id;option.textContent=item.label+(item.status==='supported'?'':' · geplant');option.disabled=item.status!=='supported';return option;}));const version=$('#version-select');version.replaceChildren(...(info.loaders.find((item)=>item.id==='fabric')?.versions||[]).map((value)=>{const option=document.createElement('option');option.value=value;option.textContent=value;return option;}));}catch{}}
-async function changeTarget(){if(!project)return;project.target.loader=$('#loader-select').value;project.target.minecraftVersion=$('#version-select').value;await saveNow();}
+async function refreshCapabilityLabel(){try{targetCatalog=await api('/api/capabilities');const loader=$('#loader-select');const selected=project?.target.loader||targetCatalog.defaultLoader;loader.replaceChildren(...targetCatalog.loaders.map((item)=>{const option=document.createElement('option');option.value=item.id;option.textContent=`${item.label} · ${item.versions.length} Versionen`;option.disabled=item.versions.length===0;return option;}));loader.value=selected;if(project)renderVersionChoices(selected,project.target.minecraftVersion||targetCatalog.defaultVersion);updateTargetStatus();}catch{$('#target-status').textContent='VERSIONEN OFFLINE';$('#target-status').title='Die Versionsliste konnte nicht geladen werden. Bereits gespeicherte Projekte bleiben verfügbar.';}}
+function renderVersionChoices(loaderId, preferredVersion){const loader=targetCatalog?.loaders.find((item)=>item.id===loaderId);const supported=[...(loader?.versions||[])].sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}));const options=supported.map((value)=>{const option=document.createElement('option');option.value=value;option.textContent=value;return option;});if(preferredVersion&&!supported.includes(preferredVersion)){const saved=document.createElement('option');saved.value=preferredVersion;saved.textContent=`${preferredVersion} · für diesen Loader nicht gelistet`;saved.selected=true;options.unshift(saved);}$('#version-select').replaceChildren(...options);if(preferredVersion&&supported.includes(preferredVersion))$('#version-select').value=preferredVersion;else if(!preferredVersion&&supported.length)$('#version-select').value=supported[0];updateTargetStatus();}
+async function changeLoader(){if(!project)return;const loader=$('#loader-select').value;const previousVersion=$('#version-select').value;const info=targetCatalog?.loaders.find((item)=>item.id===loader);const version=info?.versions.includes(previousVersion)?previousVersion:info?.versions[0];renderVersionChoices(loader,version);project.target.loader=loader;project.target.minecraftVersion=version||previousVersion;updateTargetStatus();await saveNow();}
+async function changeTarget(){if(!project)return;project.target.loader=$('#loader-select').value;project.target.minecraftVersion=$('#version-select').value;updateTargetStatus();await saveNow();}
+function updateTargetStatus(){const status=$('#target-status');if(!status||!targetCatalog)return;const loader=targetCatalog.loaders.find((item)=>item.id===$('#loader-select').value);const version=$('#version-select').value;const buildSupported=Boolean(loader?.buildVersions?.includes(version));const runtimeReady=Boolean(targetCatalog.runtime.ready);status.textContent=buildSupported?(runtimeReady?'BUILD BEREIT':'TOOLCHAIN FEHLT'):'BUILD-ADAPTER FEHLT';status.classList.toggle('ready',buildSupported&&runtimeReady);status.title=buildSupported?`Build-Unterstützung für ${loader.label} ${version}${runtimeReady?' ist bereit.':' ist vorhanden, die eingebettete Laufzeit fehlt.'}`:`${loader?.label||'Dieser Loader'} ${version||''} ist in der Versionsauswahl verfügbar. Der Generator baut aktuell nur Fabric 26.2; Quellprojekt und Skizzen bleiben trotzdem editierbar.`;}
 function showView(view){currentView=view;document.querySelectorAll('.mode-tab').forEach((button)=>{button.classList.toggle('active',button.dataset.view===view);button.setAttribute('aria-selected',String(button.dataset.view===view));});$('#design-view').hidden=view!=='design';$('#code-view').hidden=view!=='code';$('#build-view').hidden=view!=='build';if(view==='code')refreshSource();if(view==='build')refreshBuildStatus();}
 
 async function refreshSource(){if(!project)return;try{const result=await api(`/api/projects/${project.id}/files`);$('#file-list').replaceChildren();const pre=$('#code-output');for(const file of result.files){const button=document.createElement('button');button.className='file-button';button.textContent=file.path;button.addEventListener('click',()=>showSourceFile(file));$('#file-list').append(button);}if(result.files.length){const source=result.files.find((file)=>file.path.endsWith('ModEntry.java'))||result.files[0];showSourceFile(source);}}catch(error){toast(error.message);}}
