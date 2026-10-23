@@ -6,6 +6,12 @@
   font-display: swap;
 }
 
+.blockbench-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 9px 0 13px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+.blockbench-actions[hidden] { display: none; }
+.blockbench-actions .quiet-button { min-height: 30px; padding-inline: 8px; border: 1px solid var(--line); border-radius: 5px; color: var(--ink); }
+.blockbench-actions #blockbench-open-button { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); color: var(--blue); }
+.blockbench-actions small { flex: 1 0 100%; color: var(--muted); font: 9px/1.5 var(--mono); }
+
 :root {
   color-scheme: dark;
   --ink: #f4f5f6;

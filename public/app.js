@@ -1,5 +1,6 @@
 import { api, jsonBody } from './api.js';
 import { createPixelEditor, renderVoxelPreview } from './editor.js';
+import { createBlockbenchProject, importBlockbenchProject } from './blockbench.js';
 
 const $ = (selector) => document.querySelector(selector);
 const projectList = $('#project-list');
@@ -54,6 +55,9 @@ function wireShell() {
   $('#cancel-dialog-button').addEventListener('click', () => dialog.close());
   $('#close-dialog-button').addEventListener('click', () => dialog.close());
   $('#export-button').addEventListener('click', exportProject);
+  $('#blockbench-open-button').addEventListener('click', openBlockbench);
+  $('#blockbench-import-button').addEventListener('click', () => $('#blockbench-file-input').click());
+  $('#blockbench-file-input').addEventListener('change', importBlockbenchModel);
   $('#undo-button').addEventListener('click', () => editor?.undo());
   $('#redo-button').addEventListener('click', () => editor?.redo());
   $('#clear-canvas-button').addEventListener('click', () => editor?.clear());
@@ -233,6 +237,7 @@ async function deleteSelectedElement() {
 
 function updateSelection() {
   const element = selectedElement();
+  $('#blockbench-actions').hidden = !element;
   $('#delete-element-button').hidden = !element;
   $('#selected-element-label').textContent = element ? `${element.kind === 'block' ? 'BLOCK' : 'ITEM'} / ${element.identifier}` : 'Noch kein Element';
   $('#element-inspector').hidden = !element; $('#element-name').value = element?.name || ''; $('#element-identifier').value = element?.identifier || ''; $('#element-description').value = element?.description || '';
@@ -265,7 +270,7 @@ function updateElementDescription() {
 }
 
 function onTextureChange(texture) { const element = selectedElement(); if (!element) return; element.texture = texture; drawPreview(); renderElements(); scheduleSave(); }
-function drawPreview() { const element = selectedElement(); renderVoxelPreview($('#voxel-canvas'), element?.texture?.pixels || Array(256).fill(null), element, previewRotation); $('#preview-empty').hidden = Boolean(element && element.texture.pixels.some(Boolean)); }
+function drawPreview() { const element = selectedElement(); renderVoxelPreview($('#voxel-canvas'), element?.texture?.pixels || Array(256).fill(null), element, previewRotation); $('#preview-empty').hidden = Boolean(element && element.texture.pixels.some(Boolean)); $('#model-preview-caption').textContent = element?.javaModel?.elements?.length ? `Blockbench-Geometrie · ${element.javaModel.elements.length} Cubes` : 'Modellvorschau aus deiner Textur'; }
 function renderPalette() {
   const palette = $('#palette'); palette.replaceChildren();
   for (const color of editor.getPalette()) { const button = document.createElement('button'); button.type='button'; button.className='palette-swatch'; button.style.background=color; button.setAttribute('aria-label',`Farbe ${color}`); button.addEventListener('click',()=>{editor.setColor(color);$('#color-picker').value=color;$('#color-swatch').style.background=color;}); palette.append(button); }
@@ -305,6 +310,77 @@ function showView(view){currentView=view;document.querySelectorAll('.mode-tab').
 async function refreshSource(){if(!project)return;try{const result=await api(`/api/projects/${project.id}/files`);$('#file-list').replaceChildren();const pre=$('#code-output');for(const file of result.files){const button=document.createElement('button');button.className='file-button';button.textContent=file.path;button.addEventListener('click',()=>showSourceFile(file));$('#file-list').append(button);}if(result.files.length){const source=result.files.find((file)=>file.path.endsWith('ModEntry.java'))||result.files[0];showSourceFile(source);}}catch(error){toast(error.message);}}
 function showSourceFile(file){const pre=$('#code-output');currentSourcePath=file.path;$('#open-file-label').textContent=file.path;const editable=file.path.endsWith('.java');pre.readOnly=!editable;pre.placeholder=editable?'Java-Quellcode wird hier gespeichert.':'Diese Datei wird vom Projektmodell erzeugt.';pre.value=editable?(project.sourceOverrides?.[file.path]??file.content??''):(file.content||'[Binärdatei: Textur]');}
 async function exportProject(){if(!project)return;try{const response=await fetch(`/api/projects/${project.id}/source`);if(!response.ok)throw new Error('Das Quellprojekt konnte nicht exportiert werden.');const blob=await response.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${project.namespace}-source.zip`;a.click();URL.revokeObjectURL(url);toast('Quellprojekt exportiert.');}catch(error){toast(error.message);}}
+function openBlockbench() {
+  const element = selectedElement();
+  if (!element) return toast('Wähle zuerst ein Item oder einen Block aus.');
+  const projectFile = createBlockbenchProject(element, textureDataUrl(element.texture.pixels));
+  downloadText(`${element.identifier}.bbmodel`, JSON.stringify(projectFile, null, 2), 'application/json');
+  window.open('https://web.blockbench.net/', '_blank', 'noopener,noreferrer');
+  toast('Blockbench-Projekt gespeichert. Ziehe die .bbmodel-Datei in den Blockbench-Tab.');
+}
+async function importBlockbenchModel(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file || !project || !selectedElement()) return;
+  try {
+    if (file.size > 1024 * 1024) throw new Error('Die Blockbench-Datei ist größer als 1 MB.');
+    let imported = JSON.parse(await file.text());
+    let texturePixels = null;
+    if (/\.bbmodel$/i.test(file.name) || imported.meta?.model_format) {
+      const result = importBlockbenchProject(imported);
+      imported = result.javaModel;
+      if (result.textureSource) texturePixels = await textureFromDataUrl(result.textureSource);
+    }
+    const nextProject = structuredClone(project);
+    const element = nextProject.elements.find((entry) => entry.id === nextProject.activeElementId);
+    element.javaModel = imported;
+    if (texturePixels) element.texture = { size: 16, pixels: texturePixels };
+    const saved = await api(`/api/projects/${project.id}`, { method: 'PUT', body: jsonBody(nextProject) });
+    project = saved.project;
+    renderElements();
+    updateSelection();
+    await refreshProjects();
+    setSaveStatus('Gespeichert');
+    toast(`Blockbench-Modell übernommen: ${element.javaModel.elements?.length || 0} Cubes. Es wird beim nächsten Build verwendet.`);
+  } catch (error) {
+    toast(error.message || 'Das Blockbench-Modell konnte nicht importiert werden.');
+  }
+}
+function textureDataUrl(pixels) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 16; canvas.height = 16;
+  const context = canvas.getContext('2d');
+  const image = context.createImageData(16, 16);
+  pixels.forEach((color, index) => {
+    if (!color) return;
+    const rgb = Number.parseInt(color.slice(1), 16); const at = index * 4;
+    image.data[at] = (rgb >> 16) & 255; image.data[at + 1] = (rgb >> 8) & 255; image.data[at + 2] = rgb & 255; image.data[at + 3] = 255;
+  });
+  context.putImageData(image, 0, 0);
+  return canvas.toDataURL('image/png');
+}
+async function textureFromDataUrl(source) {
+  if (typeof source !== 'string' || !source.startsWith('data:image/')) throw new Error('Die eingebettete Blockbench-Textur kann nicht gelesen werden.');
+  const image = new Image();
+  image.src = source;
+  await image.decode();
+  if (image.naturalWidth !== 16 || image.naturalHeight !== 16) throw new Error('Die Blockbench-Textur muss 16 × 16 Pixel groß sein.');
+  const canvas = document.createElement('canvas'); canvas.width = 16; canvas.height = 16;
+  const context = canvas.getContext('2d', { willReadFrequently: true }); context.drawImage(image, 0, 0);
+  const rgba = context.getImageData(0, 0, 16, 16).data;
+  const pixels = Array.from({ length: 256 }, (_, index) => {
+    const offset = index * 4; const red = rgba[offset], green = rgba[offset + 1], blue = rgba[offset + 2], alpha = rgba[offset + 3];
+    if (alpha < 16) return null;
+    return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}`.toUpperCase();
+  });
+  return pixels;
+}
+function downloadText(name, content, type) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const link = document.createElement('a');
+  link.href = url; link.download = name; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 async function refreshBuildStatus(){if(!project)return;try{const status=await api(`/api/projects/${project.id}/build`);$('#build-requirements').textContent=status.message;$('#build-button').disabled=!status.ready;const download=$('#download-jar-button');download.hidden=!status.artifactAvailable;if(status.artifactAvailable){download.href=`/api/projects/${project.id}/artifact`;download.download=status.artifactName;}}catch(error){$('#build-requirements').textContent=error.message;}}
 async function startBuild(){await refreshBuildStatus();if($('#build-button').disabled){toast('Dieses Ziel ist noch nicht als vollständig baubar freigeschaltet.');return;}const button=$('#build-button'),log=$('#build-log'),download=$('#download-jar-button');button.disabled=true;download.hidden=true;log.replaceChildren();log.textContent='Build startet …\n';try{const response=await fetch(`/api/projects/${project.id}/build`,{method:'POST'});if(!response.ok){const error=await response.json().catch(()=>({}));throw new Error(error.error||'Build fehlgeschlagen.');}const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';while(true){const {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const events=buffer.split('\n\n');buffer=events.pop()||'';for(const raw of events){const event=raw.match(/^event: (.+)$/m)?.[1];const data=raw.split('\n').find(line=>line.startsWith('data: '))?.slice(6);if(!event||!data)continue;const payload=JSON.parse(data);if(event==='log'){log.append(document.createTextNode(payload.text));log.scrollTop=log.scrollHeight;}if(event==='complete'){log.append(document.createTextNode(payload.ok?'\nBUILD ERFOLGREICH':'\nBUILD FEHLGESCHLAGEN'));if(payload.ok&&payload.artifact){download.href=`/api/projects/${project.id}/artifact`;download.download=payload.filename;download.hidden=false;}toast(payload.ok?'Mod erfolgreich gebaut.':'Der Build ist fehlgeschlagen. Sieh dir die Ausgabe an.');}}}}catch(error){log.append(document.createTextNode(`\n${error.message}`));toast(error.message);}finally{button.disabled=false;await refreshBuildStatus();}}
 

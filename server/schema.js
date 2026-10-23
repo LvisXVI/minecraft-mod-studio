@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { validateJavaBlockModel } from './blockbench.js';
 
 export const PROJECT_SCHEMA_VERSION = 1;
 export const MAX_PROJECT_ELEMENTS = 80;
@@ -136,6 +137,7 @@ function validateElement(value) {
     description: cleanText(value.description, 500),
     properties,
     texture: { size: TEXTURE_SIZE, pixels },
+    ...(value.javaModel ? { javaModel: validateJavaBlockModel(value.javaModel) } : {}),
     recipes: Array.isArray(value.recipes) ? value.recipes.slice(0, 8).map(validateRecipe) : [],
   };
 }
