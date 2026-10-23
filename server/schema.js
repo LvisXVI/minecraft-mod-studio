@@ -115,7 +115,7 @@ function validateElement(value) {
   if (!Array.isArray(sourcePixels) || sourcePixels.length !== TEXTURE_SIZE * TEXTURE_SIZE) throw new Error('Texturen müssen 16×16 Pixel groß sein.');
   const pixels = sourcePixels.map((pixel) => {
     if (pixel === null || pixel === '') return null;
-    if (typeof pixel !== 'string' || !/^#[\da-fA-F]{6}$/.test(pixel)) throw new Error('Ungültige Texturfarbe.');
+    if (typeof pixel !== 'string' || !/^#[\da-fA-F]{6}(?:[\da-fA-F]{2})?$/.test(pixel)) throw new Error('Ungültige Texturfarbe.');
     return pixel.toUpperCase();
   });
   const properties = kind === 'block'

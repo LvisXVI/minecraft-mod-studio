@@ -275,7 +275,7 @@ function renderPalette() {
   const palette = $('#palette'); palette.replaceChildren();
   for (const color of editor.getPalette()) { const button = document.createElement('button'); button.type='button'; button.className='palette-swatch'; button.style.background=color; button.setAttribute('aria-label',`Farbe ${color}`); button.addEventListener('click',()=>{editor.setColor(color);$('#color-picker').value=color;$('#color-swatch').style.background=color;}); palette.append(button); }
 }
-function paintThumbnail(canvas, pixels) { const ctx=canvas.getContext('2d'); const image=ctx.createImageData(16,16); pixels.forEach((color,index)=>{if(!color)return;const n=parseInt(color.slice(1),16),at=index*4;image.data[at]=(n>>16)&255;image.data[at+1]=(n>>8)&255;image.data[at+2]=n&255;image.data[at+3]=255;});ctx.putImageData(image,0,0); }
+function paintThumbnail(canvas, pixels) { const ctx=canvas.getContext('2d'); const image=ctx.createImageData(16,16); pixels.forEach((color,index)=>{if(!color)return;const n=parseInt(color.slice(1,7),16),at=index*4;image.data[at]=(n>>16)&255;image.data[at+1]=(n>>8)&255;image.data[at+2]=n&255;image.data[at+3]=color.length===9?parseInt(color.slice(7,9),16):255;});ctx.putImageData(image,0,0); }
 
 function scheduleSave() { setSaveStatus('Änderungen …'); $('#download-jar-button').hidden=true; clearTimeout(dirtyTimer); dirtyTimer=setTimeout(saveNow,500); }
 async function saveNow() {
@@ -353,8 +353,8 @@ function textureDataUrl(pixels) {
   const image = context.createImageData(16, 16);
   pixels.forEach((color, index) => {
     if (!color) return;
-    const rgb = Number.parseInt(color.slice(1), 16); const at = index * 4;
-    image.data[at] = (rgb >> 16) & 255; image.data[at + 1] = (rgb >> 8) & 255; image.data[at + 2] = rgb & 255; image.data[at + 3] = 255;
+    const rgb = Number.parseInt(color.slice(1, 7), 16); const at = index * 4;
+    image.data[at] = (rgb >> 16) & 255; image.data[at + 1] = (rgb >> 8) & 255; image.data[at + 2] = rgb & 255; image.data[at + 3] = color.length === 9 ? Number.parseInt(color.slice(7, 9), 16) : 255;
   });
   context.putImageData(image, 0, 0);
   return canvas.toDataURL('image/png');
@@ -370,8 +370,8 @@ async function textureFromDataUrl(source) {
   const rgba = context.getImageData(0, 0, 16, 16).data;
   const pixels = Array.from({ length: 256 }, (_, index) => {
     const offset = index * 4; const red = rgba[offset], green = rgba[offset + 1], blue = rgba[offset + 2], alpha = rgba[offset + 3];
-    if (alpha < 16) return null;
-    return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}`.toUpperCase();
+    if (alpha === 0) return null;
+    return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}${alpha === 255 ? '' : alpha.toString(16).padStart(2, '0')}`.toUpperCase();
   });
   return pixels;
 }

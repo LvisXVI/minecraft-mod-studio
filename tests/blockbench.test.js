@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { inflateSync } from 'node:zlib';
 import { preserveBlockbenchModels, validateJavaBlockModel } from '../server/blockbench.js';
 import { createBlockbenchProject, importBlockbenchProject } from '../public/blockbench.js';
 import { makeElement, makeProject, validateProject } from '../server/schema.js';
@@ -81,5 +82,27 @@ test('persists imported Blockbench geometry and emits its real model JSON into t
   assert.deepEqual(generatedModel.elements[0].to, [16, 12, 16]);
   assert.equal(generatedModel.textures.all, `${savedProject.namespace}:block/carved_stone`);
   assert.equal(generatedModel.elements[0].faces.north.texture, '#all');
+});
+
+test('keeps imported texture alpha through project validation and PNG generation', () => {
+  const project = makeProject({ name: 'Transparenz', target: { loader: 'fabric', minecraftVersion: '26.2' } });
+  const element = makeElement('item');
+  element.identifier = 'glass_shard';
+  element.texture.pixels[0] = '#12AB34';
+  element.texture.pixels[1] = '#12AB3480';
+  project.elements.push(element);
+  const saved = validateProject(project);
+  assert.equal(saved.elements[0].texture.pixels[1], '#12AB3480');
+  const texture = createGenerator({ dataDir: 'unused', runtimeDir: {} }).generate(saved).find((file) => file.path.endsWith('/textures/item/glass_shard.png')).binary;
+  const idatChunks = [];
+  for (let offset = 8; offset < texture.length;) {
+    const length = texture.readUInt32BE(offset);
+    const type = texture.toString('ascii', offset + 4, offset + 8);
+    if (type === 'IDAT') idatChunks.push(texture.subarray(offset + 8, offset + 8 + length));
+    offset += 12 + length;
+  }
+  const pixels = inflateSync(Buffer.concat(idatChunks));
+  assert.equal(pixels[4], 255);
+  assert.equal(pixels[8], 128);
 });
 

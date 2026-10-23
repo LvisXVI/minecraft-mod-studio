@@ -192,7 +192,7 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     for (let y = 0; y < n; y += 1) for (let x = 0; x < n; x += 1) {
       const color = parseHex(texturePixels[y * n + x] || '#ffffff');
       const index = (y * n + x) * 4;
-      image.data[index] = color[0]; image.data[index + 1] = color[1]; image.data[index + 2] = color[2]; image.data[index + 3] = texturePixels[y * n + x] ? 255 : 0;
+      image.data[index] = color[0]; image.data[index + 1] = color[1]; image.data[index + 2] = color[2]; image.data[index + 3] = texturePixels[y * n + x] ? color[3] : 0;
     }
     const scratch = document.createElement('canvas');
     scratch.width = n; scratch.height = n;
@@ -205,7 +205,7 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     ctx.restore();
   }
 
-  function parseHex(value) { const n = Number.parseInt(value.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  function parseHex(value) { const n = Number.parseInt(value.slice(1, 7), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255, value.length === 9 ? Number.parseInt(value.slice(7, 9), 16) : 255]; }
 }
 
 function drawJavaModelPreview(context, elements, pixels, width, height, cameraRotation) {
@@ -231,8 +231,8 @@ function drawJavaModelPreview(context, elements, pixels, width, height, cameraRo
   const textureImage = textureContext.createImageData(16, 16);
   pixels.forEach((hex, index) => {
     if (!hex) return;
-    const rgb = Number.parseInt(hex.slice(1), 16), offset = index * 4;
-    textureImage.data[offset] = (rgb >> 16) & 255; textureImage.data[offset + 1] = (rgb >> 8) & 255; textureImage.data[offset + 2] = rgb & 255; textureImage.data[offset + 3] = 255;
+    const rgb = Number.parseInt(hex.slice(1, 7), 16), offset = index * 4;
+    textureImage.data[offset] = (rgb >> 16) & 255; textureImage.data[offset + 1] = (rgb >> 8) & 255; textureImage.data[offset + 2] = rgb & 255; textureImage.data[offset + 3] = hex.length === 9 ? Number.parseInt(hex.slice(7, 9), 16) : 255;
   });
   textureContext.putImageData(textureImage, 0, 0);
   for (const { element, points } of cubes) {

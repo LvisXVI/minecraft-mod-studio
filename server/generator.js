@@ -127,7 +127,7 @@ function encodeTexture(pixels) {
     for (let x = 0; x < width; x += 1) {
       const color = pixels[y * width + x]; const at = row + 1 + x * 4;
       if (!color) { raw[at + 3] = 0; continue; }
-      raw[at] = parseInt(color.slice(1, 3), 16); raw[at + 1] = parseInt(color.slice(3, 5), 16); raw[at + 2] = parseInt(color.slice(5, 7), 16); raw[at + 3] = 255;
+      raw[at] = parseInt(color.slice(1, 3), 16); raw[at + 1] = parseInt(color.slice(3, 5), 16); raw[at + 2] = parseInt(color.slice(5, 7), 16); raw[at + 3] = color.length === 9 ? parseInt(color.slice(7, 9), 16) : 255;
     }
   }
   const chunk = (type, data) => { const name = Buffer.from(type); const length = Buffer.alloc(4); length.writeUInt32BE(data.length); const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(Buffer.concat([name, data]))); return Buffer.concat([length, name, data, crc]); };
