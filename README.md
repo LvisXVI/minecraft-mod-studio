@@ -25,6 +25,7 @@ Unter **Einstellungen → Hintergrund** kannst du animierte Glaskugeln, Smaragd-
 - **Lokales Projekt:** Eigenschaften, Skizze, Java-Quelltext, Ressourcen und Build bleiben zusammen.
 - **JAR und Quellarchiv:** erzeugte Dateien lassen sich aus dem Build-Bereich herunterladen.
 - **Optionale KI:** ChatGPT-Anmeldung oder ein verfügbares lokales Ollama-Modell.
+- **Minecraft-Mod-Assistent:** versionsbewusste Erklärungen, offizielle Doku-Suche auf ausdrückliche Bitte und ein lokales, bearbeitbares Gedächtnis für deine Vorlieben.
 - **Windows-Paket:** Setup und Portable-App enthalten Node.js, JDK und Gradle; auf dem Ziel-PC ist dafür keine separate Runtime-Installation nötig.
 
 Forge, NeoForge, Quilt, weitere Minecraft-Versionen und weitere Inhaltstypen sind Ausbauziele und noch nicht als baubare Adapter freigeschaltet. Der [vollständige Status](docs/PROJECT_STATUS.md) trennt geprüfte Funktionen von der [Roadmap](docs/ROADMAP.md).
