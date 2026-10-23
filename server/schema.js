@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { validateJavaBlockModel } from './blockbench.js';
 
 export const PROJECT_SCHEMA_VERSION = 1;
 export const MAX_PROJECT_ELEMENTS = 80;
@@ -114,7 +115,7 @@ function validateElement(value) {
   if (!Array.isArray(sourcePixels) || sourcePixels.length !== TEXTURE_SIZE * TEXTURE_SIZE) throw new Error('Texturen müssen 16×16 Pixel groß sein.');
   const pixels = sourcePixels.map((pixel) => {
     if (pixel === null || pixel === '') return null;
-    if (typeof pixel !== 'string' || !/^#[\da-fA-F]{6}$/.test(pixel)) throw new Error('Ungültige Texturfarbe.');
+    if (typeof pixel !== 'string' || !/^#[\da-fA-F]{6}(?:[\da-fA-F]{2})?$/.test(pixel)) throw new Error('Ungültige Texturfarbe.');
     return pixel.toUpperCase();
   });
   const properties = kind === 'block'
@@ -136,6 +137,7 @@ function validateElement(value) {
     description: cleanText(value.description, 500),
     properties,
     texture: { size: TEXTURE_SIZE, pixels },
+    ...(value.javaModel ? { javaModel: validateJavaBlockModel(value.javaModel) } : {}),
     recipes: Array.isArray(value.recipes) ? value.recipes.slice(0, 8).map(validateRecipe) : [],
   };
 }

@@ -154,6 +154,10 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     context.lineWidth = 1;
     context.stroke();
   };
+  if (element.javaModel?.elements?.length) {
+    drawJavaModelPreview(context, element.javaModel.elements, texture, width, height, rotation);
+    return;
+  }
   const size = 1;
   path([[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]], '#6F87A4');
   path([[1, 0, 0], [1, 0, 1], [1, 1, 1], [1, 1, 0]], '#536B89');
@@ -188,7 +192,7 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     for (let y = 0; y < n; y += 1) for (let x = 0; x < n; x += 1) {
       const color = parseHex(texturePixels[y * n + x] || '#ffffff');
       const index = (y * n + x) * 4;
-      image.data[index] = color[0]; image.data[index + 1] = color[1]; image.data[index + 2] = color[2]; image.data[index + 3] = texturePixels[y * n + x] ? 255 : 0;
+      image.data[index] = color[0]; image.data[index + 1] = color[1]; image.data[index + 2] = color[2]; image.data[index + 3] = texturePixels[y * n + x] ? color[3] : 0;
     }
     const scratch = document.createElement('canvas');
     scratch.width = n; scratch.height = n;
@@ -201,5 +205,67 @@ export function renderVoxelPreview(canvas, pixels, element, rotation = 0) {
     ctx.restore();
   }
 
-  function parseHex(value) { const n = Number.parseInt(value.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  function parseHex(value) { const n = Number.parseInt(value.slice(1, 7), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255, value.length === 9 ? Number.parseInt(value.slice(7, 9), 16) : 255]; }
+}
+
+function drawJavaModelPreview(context, elements, pixels, width, height, cameraRotation) {
+  const cubes = elements.map((element) => {
+    const [x0, y0, z0] = element.from, [x1, y1, z1] = element.to;
+    const points = [[x0,y0,z0],[x1,y0,z0],[x0,y1,z0],[x1,y1,z0],[x0,y0,z1],[x1,y0,z1],[x0,y1,z1],[x1,y1,z1]];
+    if (element.rotation) points.forEach((point) => rotateBlockbenchPoint(point, element.rotation));
+    return { element, points };
+  });
+  const all = cubes.flatMap(({ points }) => points);
+  const center = [0, 1, 2].map((axis) => (Math.min(...all.map((point) => point[axis])) + Math.max(...all.map((point) => point[axis]))) / 2);
+  const span = Math.max(16, ...[0, 1, 2].map((axis) => Math.max(...all.map((point) => point[axis])) - Math.min(...all.map((point) => point[axis]))));
+  const scale = width * 0.4 * 16 / span;
+  const angle = cameraRotation * Math.PI / 2;
+  const project = ([x, y, z]) => {
+    const localX = (x - center[0]) / 16, localZ = (z - center[2]) / 16;
+    const rx = localX * Math.cos(angle) - localZ * Math.sin(angle);
+    const rz = localX * Math.sin(angle) + localZ * Math.cos(angle);
+    return [width / 2 + (rx - rz) * scale * 0.5, height * 0.54 + (rx + rz) * scale * 0.25 - ((y - center[1]) / 16) * scale * 0.58];
+  };
+  const textureCanvas = document.createElement('canvas'); textureCanvas.width = 16; textureCanvas.height = 16;
+  const textureContext = textureCanvas.getContext('2d');
+  const textureImage = textureContext.createImageData(16, 16);
+  pixels.forEach((hex, index) => {
+    if (!hex) return;
+    const rgb = Number.parseInt(hex.slice(1, 7), 16), offset = index * 4;
+    textureImage.data[offset] = (rgb >> 16) & 255; textureImage.data[offset + 1] = (rgb >> 8) & 255; textureImage.data[offset + 2] = rgb & 255; textureImage.data[offset + 3] = hex.length === 9 ? Number.parseInt(hex.slice(7, 9), 16) : 255;
+  });
+  textureContext.putImageData(textureImage, 0, 0);
+  for (const { element, points } of cubes) {
+    const faces = [
+      [element.faces.south, [points[6], points[7], points[3], points[2]], 0.76],
+      [element.faces.east, [points[7], points[5], points[1], points[3]], 0.57],
+      [element.faces.up, [points[2], points[3], points[7], points[6]], 1.12],
+    ];
+    for (const [face, vertices, brightness] of faces) {
+      if (!face) continue;
+      const projected = vertices.map(project);
+      const [u1, v1, u2, v2] = face.uv || [0, 0, 16, 16];
+      const uvWidth = u2 - u1 || 1, uvHeight = v2 - v1 || 1;
+      const [p0, p1, p2] = projected;
+      context.save();
+      context.beginPath(); projected.forEach(([x, y], index) => index ? context.lineTo(x, y) : context.moveTo(x, y)); context.closePath(); context.clip();
+      context.setTransform((p1[0] - p0[0]) / uvWidth, (p1[1] - p0[1]) / uvWidth, (p2[0] - p0[0]) / uvHeight, (p2[1] - p0[1]) / uvHeight, p0[0] - ((p1[0] - p0[0]) / uvWidth) * u1 - ((p2[0] - p0[0]) / uvHeight) * v1, p0[1] - ((p1[1] - p0[1]) / uvWidth) * u1 - ((p2[1] - p0[1]) / uvHeight) * v1);
+      context.imageSmoothingEnabled = false; context.drawImage(textureCanvas, 0, 0);
+      if (brightness < 1) { context.fillStyle = `rgba(0,0,0,${1 - brightness})`; context.fillRect(-512, -512, 1024, 1024); }
+      context.restore();
+      context.beginPath(); projected.forEach(([x, y], index) => index ? context.lineTo(x, y) : context.moveTo(x, y)); context.closePath();
+      context.strokeStyle = 'rgba(30,43,59,.3)'; context.lineWidth = 1; context.stroke();
+    }
+  }
+}
+
+function rotateBlockbenchPoint(point, rotation) {
+  const origin = rotation.origin || [8, 8, 8];
+  const [x, y, z] = point.map((value, index) => value - origin[index]);
+  const angles = rotation.axis ? [rotation.axis === 'x' ? rotation.angle : 0, rotation.axis === 'y' ? rotation.angle : 0, rotation.axis === 'z' ? rotation.angle : 0].map((value) => value * Math.PI / 180) : rotation;
+  const [rx, ry, rz] = angles || [0, 0, 0];
+  const afterX = [x, y * Math.cos(rx) - z * Math.sin(rx), y * Math.sin(rx) + z * Math.cos(rx)];
+  const afterY = [afterX[0] * Math.cos(ry) + afterX[2] * Math.sin(ry), afterX[1], -afterX[0] * Math.sin(ry) + afterX[2] * Math.cos(ry)];
+  const afterZ = [afterY[0] * Math.cos(rz) - afterY[1] * Math.sin(rz), afterY[0] * Math.sin(rz) + afterY[1] * Math.cos(rz), afterY[2]];
+  point[0] = origin[0] + afterZ[0]; point[1] = origin[1] + afterZ[1]; point[2] = origin[2] + afterZ[2];
 }

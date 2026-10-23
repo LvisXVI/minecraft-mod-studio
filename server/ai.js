@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { validateProject } from './schema.js';
+import { preserveBlockbenchModels } from './blockbench.js';
 
 let ollamaStartup = null;
 let managedOllamaProcess = null;
@@ -38,7 +39,7 @@ export function createAiService(auth, store) {
         const result = await response.json().catch(() => ({}));
         if (!response.ok || typeof result.message?.content !== 'string') throw new Error('Die lokale Ollama-Anfrage konnte nicht abgeschlossen werden.');
         const update = parseLocalUpdate(result.message.content, activeElement);
-        const updatedProject = { ...project, elements: project.elements.map((element) => element.id === activeElement.id ? update.element : element) };
+        const updatedProject = preserveBlockbenchModels({ ...project, elements: project.elements.map((element) => element.id === activeElement.id ? update.element : element) }, project);
         const candidate = { message: update.message, project: validateProject(updatedProject) };
         const savedLastMessage = project.conversation.at(-1);
         candidate.project.conversation = [...project.conversation, ...(savedLastMessage?.role === 'user' && savedLastMessage.content === message ? [] : [{ role: 'user', content: message, createdAt: new Date().toISOString() }]), { role: 'assistant', content: candidate.message, createdAt: new Date().toISOString() }].slice(-100);
@@ -69,17 +70,17 @@ export function createAiService(auth, store) {
         }
         if (!completed) throw new Error('Die Antwort wurde vor dem Abschluss unterbrochen.');
       }
-      const candidate = parseCandidate(finalText, project.id);
+      const candidate = parseCandidate(finalText, project);
       const savedLastMessage = project.conversation.at(-1);
       candidate.project.conversation = [...project.conversation, ...(savedLastMessage?.role === 'user' && savedLastMessage.content === message ? [] : [{ role: 'user', content: message, createdAt: new Date().toISOString() }]), { role: 'assistant', content: candidate.message, createdAt: new Date().toISOString() }].slice(-100);
-      candidate.project = validateProject(candidate.project);
+      candidate.project = validateProject(preserveBlockbenchModels(candidate.project, project));
       emit('candidate', candidate);
       emit('complete', { ok: true, provider }); res.end();
     },
     async apply(projectId, candidate) {
       const current = await store.read(projectId);
       if (candidate?.id !== current.id) throw new Error('Der KI-Vorschlag gehört nicht zu diesem Projekt.');
-      return store.write(projectId, validateProject(candidate));
+      return store.write(projectId, validateProject(preserveBlockbenchModels(candidate, current)));
     },
     close() {
       if (managedOllamaProcess && !managedOllamaProcess.killed) managedOllamaProcess.kill();
@@ -131,12 +132,12 @@ async function startOllama() {
   } catch { managedOllamaProcess = null; return false; }
 }
 
-function parseCandidate(text, projectId) {
+function parseCandidate(text, currentProject) {
   let parsed;
   try { parsed = JSON.parse(String(text).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')); }
   catch { throw new Error('Die KI-Antwort war kein gültiger Mod-Vorschlag. Deine Mod blieb unverändert.'); }
-  if (typeof parsed.message !== 'string' || !parsed.project || parsed.project.id !== projectId) throw new Error('Die KI-Antwort enthielt keinen passenden Projektvorschlag. Deine Mod blieb unverändert.');
-  return { message: parsed.message.slice(0, 4000), project: validateProject(parsed.project) };
+  if (typeof parsed.message !== 'string' || !parsed.project || parsed.project.id !== currentProject.id) throw new Error('Die KI-Antwort enthielt keinen passenden Projektvorschlag. Deine Mod blieb unverändert.');
+  return { message: parsed.message.slice(0, 4000), project: validateProject(preserveBlockbenchModels(parsed.project, currentProject)) };
 }
 
 function parseLocalUpdate(text, currentElement) {
