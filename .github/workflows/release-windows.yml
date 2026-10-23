@@ -50,5 +50,5 @@ jobs:
             dist/SHA256SUMS.txt `
             --repo $env:GITHUB_REPOSITORY `
             --title "Mod Studio $version" `
-            --notes "Neu in Alpha 7: Minecraft-Java-spezialisierter KI-Assistent mit ehrlicher Versions-/Loader-Kompatibilität, gezielter offizieller Doku-Suche auf ausdrückliche Bitte und lokalem, bearbeitbarem Gedächtnis für deine Arbeitsregeln. Projekte und Zugangsdaten bleiben lokal." `
+            --notes "Neu in Alpha 8: Der Minecraft-Java-Assistent lernt klare, dauerhafte Vorlieben und wiederkehrende Korrekturen automatisch. Das bearbeitbare Gedächtnis bleibt pro Benutzer lokal; Einzelaufträge und erkennbare sensible Daten werden nicht übernommen. Enthält außerdem gezielte offizielle Dokumentationssuche und ehrliche Versions-/Loader-Hinweise." `
             --prerelease
