@@ -41,7 +41,7 @@ Der gewünschte spätere Funktionsumfang geht deutlich über Items und Blöcke h
 
 ## Paket und Prüfsummen
 
-Release: [v0.1.0-alpha.8 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.8) (nach Veröffentlichung verfügbar)
+Release: [v0.1.0-alpha.8 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.8) — als vollständiger GitHub-Release ohne Vorabversions-Markierung veröffentlicht und als „Latest“ gesetzt.
 
 - Dateien: `Mod-Studio-Setup.exe` (einzelner Installer) und `Mod-Studio-Portable.zip` (manuell entpackbar)
 - Größen und SHA-256: in `dist/SHA256SUMS.txt` und im GitHub-Release angegeben
