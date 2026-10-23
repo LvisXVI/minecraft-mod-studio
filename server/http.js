@@ -39,6 +39,15 @@ async function routeApi(req, res, url, store, services, updates) {
     return json(res, 202, { version: result.version, releaseUrl: result.releaseUrl });
   }
   if (req.method === 'GET' && pathname === '/api/ai/providers') return json(res, 200, await services.ai.providers());
+  if (req.method === 'GET' && pathname === '/api/ai/memory') return json(res, 200, { rules: await services.aiMemory.list(url.searchParams.get('project') || null) });
+  if (req.method === 'POST' && pathname === '/api/ai/memory') {
+    const body = await readJson(req);
+    return json(res, 200, { rules: await services.aiMemory.add(body.text, body.projectId || null) });
+  }
+  if (req.method === 'DELETE' && pathname === '/api/ai/memory') {
+    const id = url.searchParams.get('id') || '';
+    return json(res, 200, { rules: await services.aiMemory.remove(id, url.searchParams.get('project') || null) });
+  }
   if (req.method === 'GET' && pathname === '/api/auth/status') return json(res, 200, await services.auth.status());
   if (req.method === 'POST' && pathname === '/api/auth/start') return json(res, 200, await services.auth.beginSignIn());
   if (req.method === 'POST' && pathname === '/api/auth/signout') return json(res, 200, await services.auth.signOut());
