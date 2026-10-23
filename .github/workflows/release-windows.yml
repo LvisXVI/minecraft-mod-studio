@@ -37,7 +37,7 @@ jobs:
           }
       - name: Build Windows packages
         run: npm run dist:portable
-      - name: Publish prerelease assets
+      - name: Publish Windows release assets
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -50,5 +50,4 @@ jobs:
             dist/SHA256SUMS.txt `
             --repo $env:GITHUB_REPOSITORY `
             --title "Mod Studio $version" `
-            --notes "Neu in Alpha 8: Der Minecraft-Java-Assistent lernt klare, dauerhafte Vorlieben und wiederkehrende Korrekturen automatisch. Das bearbeitbare Gedächtnis bleibt pro Benutzer lokal; Einzelaufträge und erkennbare sensible Daten werden nicht übernommen. Enthält außerdem gezielte offizielle Dokumentationssuche und ehrliche Versions-/Loader-Hinweise." `
-            --prerelease
+            --notes "Neu in Alpha 8: Der Minecraft-Java-Assistent lernt klare, dauerhafte Vorlieben und wiederkehrende Korrekturen automatisch. Das bearbeitbare Gedächtnis bleibt pro Benutzer lokal; Einzelaufträge und erkennbare sensible Daten werden nicht übernommen. Enthält außerdem gezielte offizielle Dokumentationssuche und ehrliche Versions-/Loader-Hinweise."
