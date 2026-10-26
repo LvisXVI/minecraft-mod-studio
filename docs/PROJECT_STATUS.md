@@ -1,83 +1,83 @@
-# Mod Studio — Projektstatus
+# Mod Studio — Project status
 
-Stand: 23. Oktober 2026 · Version `0.1.0-alpha.8` (Minecraft-Mod-Assistent mit automatischem lokalem Lernen)
+As of 26 October 2026 · version `0.1.0-alpha.8` (Minecraft mod assistant with automatic local learning; Liquid Glass surface on `main`)
 
-Mod Studio ist eine lokale Werkbank, mit der Nutzer Minecraft-Java-Mods als strukturierte Projekte entwerfen, zeichnen, bearbeiten, exportieren und für den derzeit unterstützten Zieladapter bauen. Es ist bewusst ein Autorentool, kein Modpack-Manager und kein Modkatalog.
+Mod Studio is a local workbench for designing, painting, editing, exporting and – for the currently supported target adapter – building Minecraft Java mods as structured projects. It is deliberately an authoring tool, not a modpack manager or a mod catalogue.
 
-## Was in der Alpha enthalten ist
+## What the alpha includes
 
-- **Lokale Windows-App:** Die Website und ihr Backend laufen nur auf `127.0.0.1` und öffnen sich im normalen Browser. Projekte liegen in `%LOCALAPPDATA%\ModStudio`.
-- **Portable Laufzeiten:** Das ZIP enthält Node.js 24.21.0, Eclipse Temurin JDK 25.0.4.1+1 samt Compiler und Gradle 9.8.2. Beim ersten Start werden sie in den App-eigenen `.runtime`-Ordner entpackt. Die Installation verändert weder System-Java noch PATH und lädt diese Laufzeiten nicht auf dem Ziel-PC nach. Minecraft-/Fabric-Build-Abhängigkeiten werden beim ersten Build aus den offiziellen Repositories geladen.
-- **Windows-Setup und Updater:** `Mod-Studio-Setup.exe` enthält das vollständige portable Paket und installiert es app-lokal unter `%LOCALAPPDATA%\Programs\ModStudio\0.1.0-alpha.6`. Node.js, JDK, Gradle und Website sind bereits eingebettet; der Setup-Vorgang lädt keine Laufzeiten nach und startet anschließend die App. Die App prüft beim Start und per **Updates**-Schaltfläche die GitHub-Releases einschließlich Vorabversionen. Ein Update lädt das Setup erst nach ausdrücklichem Klick, prüft die SHA-256-Prüfsumme aus `SHA256SUMS.txt` und startet es. Nach dem Start löscht die App nur alte versionsgebundene Installationsordner und Dateien aus ihrem eigenen Update-Cache. Projekte und Einstellungen unter `%LOCALAPPDATA%\ModStudio` bleiben erhalten. `Mod-Studio.exe` zeigt einen eigenen Ladebildschirm, entpackt die lokalen Laufzeiten mit Fortschritt und hält den Server ohne Konsolenfenster im Infobereich aktiv. `start-mod-studio.bat` bleibt als Startoption mit sichtbarer Konsole verfügbar.
-- **Projektbearbeitung:** Java-Projekte, Items und Blöcke mit Namen, Kennungen, Beschreibungen und jeweils passenden Eigenschaften. Änderungen werden lokal gespeichert; Projekte lassen sich erneut öffnen.
-- **Zeitstatistik:** „Time Spent Creating Mods“ zählt aktive Zeit pro Projekt. Der Zähler pausiert, wenn das Browserfenster verborgen ist, den Fokus verliert oder fünf Minuten keine Eingabe erhält; Zeit wird mit dem lokalen Projekt gespeichert und bleibt nach einem Neustart erhalten.
-- **Skizze und Vorschau:** 16×16-Pixeltextur mit Stift, Radierer, Füllwerkzeug, Farbpalette, Rückgängig/Wiederholen und Leeren. Textur, Pixelvorschau und Voxel-/isometrische Vorschau verwenden dieselben gespeicherten Pixel. Items erscheinen als schwebende Textur-Sprites, Blöcke als Würfel. Die Vorschau ist projektgebunden; der leere Startzustand gibt keine erfundene fertige Mod-Textur als Nutzerprojekt aus.
-- **Blockbench-Brücke:** Ausgewählte Java-Items und -Blöcke lassen sich als editierbare `.bbmodel`-Projekte mit eingebetteter 16×16-Textur öffnen. Blockbench-Modellprojekte oder Minecraft-Java-Block/Item-JSON können lokal wieder importiert werden; unterstützte Cube-Geometrie, UVs, Seiten, Einzelachsenrotation und RGBA-Texturpixel werden gespeichert, in der Vorschau angezeigt und beim Build als Modellressource ausgegeben. Der Import akzeptiert derzeit Java Block/Item mit Würfelgeometrie, einer 16×16-Textur und Minecraft-kompatiblen Cube-Rotationen. Blockbench wird als eigenständige Anwendung/Web-App geöffnet und nicht in Mod Studio eingebettet oder mit dem Installer ausgeliefert.
-- **ChatGPT:** Lokaler Sign-in-with-ChatGPT-OAuth-Ablauf mit PKCE, State-/Nonce-Prüfung und OIDC/JWKS-Validierung. Kontoanmeldung und einmalige ChatGPT-Planfreigabe werden getrennt dargestellt; Modellwechsel startet keine OAuth-Freigabe. Verfügbare ChatGPT-Modelle erscheinen im Auswahlfeld, die Auswahl bleibt lokal über App-Neustarts erhalten. Zugangsdaten verbleiben beim lokalen Dienst und werden auf Windows mit DPAPI für den aktuellen Benutzer geschützt. Die Browseroberfläche erhält keine gespeicherten Tokens. API-Antworten werden als überprüfbarer Änderungsvorschlag angezeigt; erst Anwenden aktualisiert das Projekt. Responses-API-Aufrufe setzen `store: false`.
-- **Minecraft-Mod-Assistent:** Fachprompt für Minecraft Java mit ehrlicher Loader-/Versionskompatibilität und verständlichen, praktischen Vorschlägen. Auf ausdrückliche Bitte kann ChatGPT offizielle Minecraft-/Loader-Dokumentation durchsuchen; dafür gelten die Nutzungsgrenzen oder mögliche Zusatzkosten des Anbieters. Ollama bleibt offline und behauptet keine Live-Recherche. ChatGPT und Ollama können klare dauerhafte Vorlieben und wiederkehrende Korrekturen selbstständig als Regel ableiten und lokal pro Windows-Benutzer speichern — allgemein oder nur für das aktuelle Projekt. Einzelaufträge und erkennbare sensible Angaben, Kontaktinformationen und Zugangsdaten werden verworfen. Regeln sind jederzeit einsehbar und löschbar. Das ist persistentes Gedächtnis, kein heimliches Modell-Fine-Tuning.
-- **Oberfläche:** Startansicht orientiert sich an der jüngsten Vorlage: tiefschwarzer Hintergrund, schmale abgerundete Glas-Seitenleiste, gestapelte Headline, limettengrüne Akzente, schwebende Glaskugeln und transparente Live-Vorschau. Über die Hintergrundauswahl stehen schwebende Kugeln, Smaragd-Aurora, animiertes Raster und „Aus“ bereit; die Auswahl bleibt lokal gespeichert. `prefers-reduced-motion` schaltet die Animationen ab. Der erste Eindruck zeigt weiterhin nur eine leere echte Skizzenfläche, keine erfundene Mod-Textur.
-- **Minecraft-Zielauswahl:** Die App lädt alle offiziellen Java-Releases ab 1.12.2 dynamisch aus Mojangs Manifest. Fabric, Quilt, Forge und NeoForge zeigen jeweils nur die Versionen, die ihre offiziellen Metadaten als verfügbar melden; eine gebündelte Releaseliste samt Loader-Snapshot hält die Auswahl offline nutzbar. Der Zielwähler kennzeichnet Kombinationen ohne Build-Adapter. Das ist eine Verfügbarkeitsauswahl, keine Behauptung, dass bereits jeder Build-Adapter implementiert ist.
-- **Lokale KI mit Ollama (optional):** Erkennt installierte lokale Modelle und kann den lokal laufenden Ollama-Dienst bei Bedarf starten. Die KI bearbeitet das ausgewählte Element; eine 16×16-Skizze wird aus einer strukturierten Vierfarben-Palette deterministisch zu 256 editierbaren Pixeln expandiert. Ein Ende-zu-Ende-HTTP-Test mit Qwen2.5-14B erzeugte eine Amethyst-Skizze mit 256 Pixeln und vier Farben. Modellgewichte werden nicht mitgeliefert.
-- **Quelltext und Export:** Unterstützte Projekte erzeugen Java-/Gradle-Quelltext und Ressourcen aus festen Vorlagen. Nutzer können Quellprojekt-Archive exportieren und ein erfolgreich gebautes JAR herunterladen. KI-generierter Text wird nicht als Build-Skript ausgeführt.
-- **Items:** Textur, Stapelgröße und Feuerresistenz.
-- **Blöcke:** Textur, Härte, Explosionswiderstand, Lichtstärke und Werkzeuganforderung; der Generator erzeugt Registrierung, Modell, Blockstate, Loot-Tabelle und Ressourcen.
-- **Visuelles System:** „Dark Editorial“ mit mattem Anthrazit, gebrochenem Weiß, feinen IDE-Trennlinien, reduzierter Hellgrün-Akzentfarbe und lokal eingebundener Geist-Mono-Schrift. Responsives Layout; Tailwind-CSS wird lokal kompiliert und lokal ausgeliefert.
-- **Browser-Testversion:** Unter `/demo/` läuft dieselbe Werkbank-Oberfläche als statische GitHub-Pages-Seite. Projekte und Änderungen werden in `localStorage` dieses Browsers gespeichert; ein Beispielprojekt macht den Editor direkt sichtbar. Der Assistent erzeugt klar markierte Beispieldialoge ohne externe KI-Anfrage. Quelltextansicht und JSON-Projektexport funktionieren; echte Java-/Gradle-Builds und ChatGPT-Anmeldung gibt es dort nicht. `npm run demo:build` erzeugt die statischen Dateien aus `public/` und dem Versions-Fallback.
+- **Local Windows app:** the website and its backend run on `127.0.0.1` only and open in your normal browser. Projects live in `%LOCALAPPDATA%\ModStudio`.
+- **Portable runtimes:** the ZIP contains Node.js 24.21.0, Eclipse Temurin JDK 25.0.4.1+1 including the compiler, and Gradle 9.8.2. On first start they are unpacked into the app's own `.runtime` folder. Installation changes neither system Java nor PATH and does not download these runtimes on the target PC. Minecraft/Fabric build dependencies are fetched from the official repositories on the first build.
+- **Windows setup and updater:** `Mod-Studio-Setup.exe` contains the complete portable package and installs it app-locally under `%LOCALAPPDATA%\Programs\ModStudio\<version>`. Node.js, JDK, Gradle and the website are embedded; setup downloads no runtimes and launches the app afterwards. On start and via the **Updates** button, the app checks GitHub releases including pre-releases. An update downloads the setup only after an explicit click, verifies its SHA-256 from `SHA256SUMS.txt` and runs it. After launch the app only removes old version-bound install folders and files from its own update cache; projects and settings under `%LOCALAPPDATA%\ModStudio` are kept. `Mod-Studio.exe` shows its own loading screen, unpacks the local runtimes with progress and keeps the server running in the tray without a console window. `start-mod-studio.bat` remains available as a start option with a visible console. When embedded in Modspire, updates are managed by Modspire.
+- **Project editing:** Java projects, items and blocks with names, identifiers, descriptions and matching properties. Changes are saved locally; projects can be reopened.
+- **Time statistics:** "Time Spent Creating Mods" counts active time per project. The counter pauses when the browser window is hidden, loses focus or receives no input for five minutes; time is stored with the local project and survives restarts.
+- **Sketch and preview:** 16×16 pixel texture with pen, eraser, fill tool, palette, undo/redo and clear. Texture, pixel preview and voxel/isometric preview share the same saved pixels. Items appear as floating texture sprites, blocks as cubes. The preview is project-bound; the empty start state never presents an invented finished texture as a user project.
+- **Blockbench bridge:** selected Java items and blocks open as editable `.bbmodel` projects with an embedded 16×16 texture. Blockbench model projects or Minecraft Java block/item JSON can be imported back locally; supported cube geometry, UVs, faces, single-axis rotation and RGBA texture pixels are stored, shown in the preview and emitted as a model resource on build. Import currently accepts Java block/item with cube geometry, one 16×16 texture and Minecraft-compatible cube rotations. Blockbench opens as a standalone app/web app and is neither embedded in Mod Studio nor shipped with the installer.
+- **ChatGPT:** local Sign in with ChatGPT OAuth flow with PKCE, state/nonce checks and OIDC/JWKS validation. Account sign-in and the one-time ChatGPT plan approval are shown separately; switching models starts no OAuth approval. Available ChatGPT models appear in the picker, and the choice persists across restarts. Credentials stay with the local service and are protected on Windows with DPAPI for the current user. The browser UI never receives stored tokens. API answers are shown as a reviewable change proposal; only applying it updates the project. Responses API calls set `store: false`.
+- **Minecraft mod assistant:** a Minecraft Java specialist prompt with honest loader/version compatibility and practical suggestions. On explicit request ChatGPT can search official Minecraft/loader documentation; the provider's limits or possible extra costs apply. Ollama stays offline and never claims live research. ChatGPT and Ollama can turn clear lasting preferences and recurring corrections into rules on their own and store them locally per Windows user – globally or for the current project only. One-off requests and recognisable sensitive data, contact details and credentials are discarded. Rules can be viewed and deleted at any time. This is persistent memory, not hidden model fine-tuning. Follow-up questions leave the project unchanged; malformed AI element IDs are repaired without losing existing Blockbench models.
+- **Interface:** a deep-black workshop with a narrow rounded glass sidebar, stacked headline, lime accents, floating glass orbs and a transparent live preview. Two surfaces are available – *Workshop* (default) and *Liquid Glass* (frosted panels over a Minecraft scene) – plus six animated backgrounds and "Off"; the choice is stored locally. Views, dialogs and new chat messages fade in; `prefers-reduced-motion` turns animations off. The first view still shows only an empty real sketch area, no invented mod texture.
+- **Minecraft target picker:** the app loads all official Java releases from 1.12.2 dynamically from Mojang's manifest. Fabric, Quilt, Forge and NeoForge each show only the versions their official metadata reports as available; a bundled release list with a loader snapshot keeps the picker usable offline. The picker marks combinations without a build adapter. It is an availability picker, not a claim that every build adapter exists.
+- **Local AI with Ollama (optional):** detects installed local models and can start the local Ollama service when needed. The AI edits the selected element; a 16×16 sketch is expanded deterministically from a structured four-colour palette into 256 editable pixels. An end-to-end HTTP test with Qwen2.5-14B produced an amethyst sketch with 256 pixels and four colours. Model weights are not shipped.
+- **Source and export:** supported projects generate Java/Gradle source and resources from fixed templates. Users can export source archives and download a successfully built JAR. AI-generated text is never executed as a build script.
+- **Items:** texture, stack size and fire resistance.
+- **Blocks:** texture, hardness, blast resistance, light level and tool requirement; the generator creates registration, model, blockstate, loot table and resources.
+- **Visual system:** "Dark Editorial" with matte anthracite, off-white, fine IDE dividers, a restrained lime accent and the locally bundled Geist Mono font. Responsive layout; Tailwind CSS is compiled and served locally.
+- **Browser demo:** under `/demo/` the same workbench runs as a static GitHub Pages site. Projects and changes are stored in this browser's `localStorage`; a sample project makes the editor visible immediately. The assistant produces clearly labelled sample dialogues without external AI requests. The source view and JSON project export work; real Java/Gradle builds and ChatGPT sign-in are not available there. `npm run demo:build` generates the static files from `public/` and the version fallback.
 
-## Verifizierter Build-Umfang
+## Verified build scope
 
-| Ziel | Status |
+| Target | Status |
 | --- | --- |
-| Minecraft Java 26.2 + Fabric — Items und Blöcke | Implementiert; gemischter Item-/Block-Mod wurde mit dem gebündelten JDK 25 und Gradle 9.8.2 gebaut und das JAR geprüft. |
-| Fabric für andere Minecraft-Versionen | In der Versionsauswahl verfügbar, noch nicht als baubar verifiziert/freigeschaltet. |
-| Forge, NeoForge und Quilt | Kompatible Releases erscheinen in der Versionsauswahl; Generator und Builds sind noch nicht implementiert. |
-| Rezepte | Projektmodell enthält Rezeptfelder; Erstellung/Bearbeitung und Generatorunterstützung sind noch offen. |
-| Entitäten, Werkzeuge, Rüstung, Effekte, Weltgenerierung, Strukturen, Oberflächen | Spätere Ausbaustufen, nicht Teil des aktuellen Generators. |
-| Linux/macOS | Nicht paketiert; erstes Portable-Paket ist Windows x64. |
+| Minecraft Java 26.2 + Fabric — items and blocks | Implemented; a mixed item/block mod was built with the bundled JDK 25 and Gradle 9.8.2 and the JAR was inspected. |
+| Fabric for other Minecraft versions | Selectable, not yet verified/enabled as buildable. |
+| Forge, NeoForge and Quilt | Compatible releases appear in the picker; generator and builds are not implemented yet. |
+| Recipes | The project model has recipe fields; creation/editing and generator support are still open. |
+| Entities, tools, armour, effects, world generation, structures, GUIs | Later stages, not part of the current generator. |
+| Linux/macOS | Not packaged; the first portable package is Windows x64. |
 
-Das langfristige Ziel ist ein Multitool für Java-Loader und Versionen. Ein Ziel gilt erst als unterstützt, wenn sein Adapter tatsächlich Quelltext und Ressourcen erzeugt und ein Build für diese Kombination geprüft wurde. Die Alpha unterstützt daher nicht „jede Version“.
+The long-term goal is a multi-tool across Java loaders and versions. A target only counts as supported once its adapter really generates source and resources and a build of that combination has been verified. The alpha therefore does not support "every version".
 
-Der gewünschte spätere Funktionsumfang geht deutlich über Items und Blöcke hinaus: Werkzeuge/Waffen/Rüstung, Rezepte, Mobs und Verhaltensregeln, Biome/Dimensionen/Strukturen, Maschinen, Effekte, GUIs, Sounds/Partikel/Animation, Befehle, Netzwerksynchronisation, Tags, Loot und Balancing. Die geplanten Editor-Module, Architektur, Loaderstrategie und Phasen stehen in [ROADMAP.md](ROADMAP.md); diese Inhalte sind Planung, bis sie als implementiert und gebaut ausgewiesen werden.
+The desired later scope goes well beyond items and blocks: tools/weapons/armour, recipes, mobs and behaviour rules, biomes/dimensions/structures, machines, effects, GUIs, sounds/particles/animation, commands, network sync, tags, loot and balancing. The planned editor modules, architecture, loader strategy and phases are in [ROADMAP.md](ROADMAP.md); those contents are plans until they are marked as implemented and built.
 
-## Paket und Prüfsummen
+## Package and checksums
 
-Release: [v0.1.0-alpha.8 auf GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.8) — als vollständiger GitHub-Release ohne Vorabversions-Markierung veröffentlicht und als „Latest“ gesetzt.
+Release: [v0.1.0-alpha.8 on GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.8) — published as a full GitHub release (not a pre-release) and marked "Latest".
 
-- Dateien: `Mod-Studio-Setup.exe` (einzelner Installer) und `Mod-Studio-Portable.zip` (manuell entpackbar)
-- Größen und SHA-256: in `dist/SHA256SUMS.txt` und im GitHub-Release angegeben
-- Runtime-Archivprüfsummen: [`licenses/runtime-checksums.txt`](../licenses/runtime-checksums.txt)
-- Beide Pakete enthalten Website, lokalen Server, Skripte, Schrift, Lizenzen und Node/JDK/Gradle-Archive. Die Setup-EXE bettet das vollständige Portable-ZIP ein; die portable Variante enthält `Mod-Studio.exe` im entpackten Paket auf der obersten Ebene.
+- Files: `Mod-Studio-Setup.exe` (single installer) and `Mod-Studio-Portable.zip` (unzip manually)
+- Sizes and SHA-256: in `dist/SHA256SUMS.txt` and on the GitHub release
+- Runtime archive checksums: [`licenses/runtime-checksums.txt`](../licenses/runtime-checksums.txt)
+- Both packages contain the website, local server, scripts, font, licences and the Node/JDK/Gradle archives. The setup EXE embeds the complete portable ZIP; the portable variant has `Mod-Studio.exe` at the top level of the unpacked package.
 
-## Einrichtung und Entwicklung
+## Setup and development
 
-Für Endnutzer: `Mod-Studio-Setup.exe` herunterladen und starten oder das ZIP entpacken und `Mod-Studio.exe` starten. Auf Windows kann SmartScreen bei einer nicht signierten Alpha nachfragen. ChatGPT-Anmeldung und erster Minecraft-Build brauchen Internet. Ollama ist optional; ohne Login oder lokales Modell funktionieren manuelle Skizze, Bearbeitung und unterstützter Export weiterhin.
+For users: download and run `Mod-Studio-Setup.exe`, or unzip the ZIP and start `Mod-Studio.exe`. Windows SmartScreen may ask about an unsigned alpha. ChatGPT sign-in and the first Minecraft build need internet access. Ollama is optional; without sign-in or a local model, manual sketching, editing and supported export still work.
 
-Für Entwicklung: Node.js 20+ installieren, dann `npm install`, `npm run css:build` und `npm start`. Die Windows-Pakete werden mit `npm run dist:portable` erstellt; benötigte verifizierte Runtime-Archive müssen in `.runtime/downloads/` liegen. Der Build kompiliert die Launcher-/Setup-EXE mit Windows PowerShell/.NET Framework.
+For development: install Node.js 20+, then `npm install`, `npm run css:build` and `npm start`. Windows packages are built with `npm run dist:portable`; the required verified runtime archives must be in `.runtime/downloads/`. The build compiles the launcher/setup EXE with Windows PowerShell/.NET Framework.
 
-## Durchgeführte Prüfungen
+## Checks performed
 
-- JavaScript-Syntaxprüfungen für Client- und Servermodule bestanden.
-- Blockbench-Brücke: `.bbmodel`-Export/Import, Eingabevalidierung, KI-Erhalt importierter Modelle, Projektspeicherung und Generatorausgabe mit Tests geprüft.
-- Tailwind-CSS-Build und lokale Auslieferung der Website-Assets/Geist-Mono-Schrift geprüft.
-- Hintergrundebene im Item-Editor in einer lokalen Browseransicht geprüft; die Animation liegt nun sichtbar hinter Textur- und 3D-Flächen, ohne das Pixelraster zu überdecken.
-- Versionenkatalog mit offiziellen Mojang-, Fabric-, Quilt-, Forge- und NeoForge-Metadaten sowie Offline-Fallback per Tests geprüft.
-- Hintergrundauswahl im Browser geprüft: alle vier Optionen sind wählbar und die Einstellung „Animiertes Raster“ blieb nach Neuladen erhalten; Standard wieder auf „Schwebende Kugeln“ gesetzt.
-- `npm audit`: keine gemeldeten Schwachstellen.
-- Runtime-Archive und ihre Upstream-SHA-256-Werte geprüft; portable ZIP-Inhalte und Launcher-Eintrag geprüft.
-- Echter Fabric-26.2-Build eines gemischten Item-/Block-Mods mit den gebündelten Laufzeiten erfolgreich; JAR-Datei und Inhalt geprüft.
-- Lokaler Ollama-Ende-zu-Ende-Test mit Qwen2.5-14B und einer projektspezifischen Amethyst-Skizze erfolgreich.
+- JavaScript syntax checks for client and server modules passed; `npm test` passes (30 tests).
+- Blockbench bridge: `.bbmodel` export/import, input validation, preservation of imported models through AI edits, project storage and generator output covered by tests.
+- Tailwind CSS build and local serving of website assets and the Geist Mono font verified.
+- Background layer in the item editor checked in a local browser view; the animation sits visibly behind texture and 3D areas without covering the pixel grid.
+- Version catalogue with official Mojang, Fabric, Quilt, Forge and NeoForge metadata plus offline fallback covered by tests.
+- Background and surface choice checked in the browser: options are selectable and the choice persists after reload.
+- `npm audit`: no reported vulnerabilities.
+- Runtime archives and their upstream SHA-256 values verified; portable ZIP contents and launcher entry checked.
+- A real Fabric 26.2 build of a mixed item/block mod with the bundled runtimes succeeded; JAR file and contents inspected.
+- Local Ollama end-to-end test with Qwen2.5-14B and a project-specific amethyst sketch succeeded.
 
-Diese Prüfungen ersetzen keinen Live-Test mit dem ChatGPT-Konto des Endnutzers oder einem laufenden Minecraft-Client/Modpack. Erfolgreicher Java-Compile zeigt die Zielkompatibilität des erzeugten Projekts, aber nicht, dass es in jeder Kombination mit anderen Mods konfliktfrei läuft.
+These checks do not replace a live test with the end user's ChatGPT account or a running Minecraft client/modpack. A successful Java compile shows the generated project matches its target, not that it runs conflict-free with every other mod.
 
-## Bekannte Grenzen und nächste Arbeiten
+## Known limits and next work
 
-1. Eigene Adapter und verifizierte Builds für weitere Minecraft-Versionen sowie Fabric, Forge, NeoForge und Quilt entwickeln.
-2. Blockbench-Unterstützung um Entity-/Bedrock-Formate, mehrere Texturen, Animationen und weitere Modelltypen erweitern.
-3. Modulsystem über Item/Block hinaus erweitern: zuerst Rezepte/Tags/Loot, dann Entity-/Weltgenerierung und Spielsysteme.
-4. Weitere Betriebssysteme paketieren und den Windows-Updateablauf im installierten Alpha-Paket end-to-end prüfen.
-5. CI-Buildmatrix und reproduzierbare Kompatibilitätsnachweise ergänzen.
-6. Repository-Lizenz auswählen, bevor Dritten Nutzungs- oder Weiterverteilungsrechte eingeräumt werden. Der aktuelle Code ist als `UNLICENSED` markiert und enthält keine `LICENSE`-Datei.
+1. Develop adapters and verified builds for more Minecraft versions and for Fabric, Forge, NeoForge and Quilt.
+2. Extend Blockbench support to entity/Bedrock formats, multiple textures, animations and more model types.
+3. Grow the module system beyond item/block: recipes/tags/loot first, then entity/world generation and game systems.
+4. Package for more operating systems and verify the Windows update flow end-to-end in the installed alpha package.
+5. Add a CI build matrix and reproducible compatibility evidence.
+6. Choose a repository licence before granting third parties usage or redistribution rights. The code is currently marked `UNLICENSED` and has no `LICENSE` file.
 
-## Herkunft und Produktabgrenzung
+## Origin and product scope
 
-Der Nutzer wünschte ein eigenständiges, praktisches Mod-Erstellungswerkzeug für Minecraft Java, das sich langfristig über Versionen und Loader erstreckt und echte editierbare Skizzen erzeugt. Das Produkt grenzt sich von Modspire ab: Fokus auf Erstellen und Bauen eigener Mod-Projekte, nicht auf Modpacks oder Mod-Suche. Die verlinkte Designreferenz CreativeMod.net war bei der Recherche offline/leitete auf eine fremde Seite weiter; daraus wurden keine Inhalte kopiert. Die visuelle Richtung folgt den vom Nutzer gelieferten Gestaltungsregeln.
+The goal was a standalone, practical mod-creation tool for Minecraft Java that will eventually span versions and loaders and produces real editable sketches. It is distinct from Modspire: the focus is creating and building your own mod projects, not modpacks or mod search. The linked design reference CreativeMod.net was offline / redirected to an unrelated site during research; no content was copied. The visual direction follows the design rules supplied by the user.

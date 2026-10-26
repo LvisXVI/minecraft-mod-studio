@@ -1,55 +1,57 @@
 <div align="center">
 
-<img src="docs/media/studio-1.webp" alt="Mod Studio mit 16×16-Textureditor, 3D-Vorschau und Mod-Assistent" width="100%">
+<img src="docs/media/studio-glass.webp" alt="Mod Studio with the 16×16 texture editor, 3D preview and mod assistant in the Liquid Glass surface" width="100%">
 
 # Mod Studio
 
-### Deine Idee wird zum editierbaren Minecraft-Java-Projekt.
+### Turn your idea into an editable Minecraft Java mod project.
 
-[![Release](https://img.shields.io/github/v/release/LvisXVI/minecraft-mod-studio?style=flat-square&color=c6ff4a&label=Release&include_prereleases)](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest)
-[![Windows](https://img.shields.io/badge/Windows-Setup%20%2B%20Portable-15263b?style=flat-square&logo=windows)](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest)
+[![Release](https://img.shields.io/github/v/release/LvisXVI/minecraft-mod-studio?style=flat-square&color=c6ff4a&label=release&include_prereleases)](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest)
+[![Windows](https://img.shields.io/badge/Windows-setup%20%2B%20portable-15263b?style=flat-square&logo=windows)](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest)
 [![Minecraft](https://img.shields.io/badge/Minecraft-Java%2026.2%20·%20Fabric-15263b?style=flat-square)](docs/PROJECT_STATUS.md)
 
-[🌐 Website](https://lvisxvi.github.io/minecraft-mod-studio/) · [🧪 Browser-Testversion](https://lvisxvi.github.io/minecraft-mod-studio/demo/) · [⬇️ Windows herunterladen](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest) · [📋 Projektstatus](docs/PROJECT_STATUS.md) · [🗺️ Roadmap](docs/ROADMAP.md)
+[🌐 Website](https://lvisxvi.github.io/minecraft-mod-studio/) · [🧪 Browser demo](https://lvisxvi.github.io/minecraft-mod-studio/demo/) · [⬇️ Download for Windows](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest) · [📋 Project status](docs/PROJECT_STATUS.md) · [🗺️ Roadmap](docs/ROADMAP.md)
 
 </div>
 
 ---
 
-Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods. Beschreibe deine Idee, zeichne echte 16×16-Texturen, übernimm Blockbench-Modelle, bearbeite Eigenschaften und Java-Quelltext und baue dein Projekt direkt auf deinem PC. KI ist optional: ChatGPT-Anmeldung oder ein lokales Ollama-Modell.
+Mod Studio is a local workbench for Minecraft Java mods. Describe your idea, paint real 16×16 textures, bring in Blockbench models, edit properties and Java source, and build the project right on your PC. AI is optional: sign in with ChatGPT or use a local Ollama model.
 
-> **Auch in [Modspire 0.3.2](https://lvisxvi.github.io/modspire/) enthalten:** Modspire startet das echte Mod Studio aus jedem seiner fünf Layouts, ohne separate Installation.
+> **Also included in [Modspire 0.3.2](https://lvisxvi.github.io/modspire/):** Modspire launches the real Mod Studio from any of its five layouts, with no separate installation.
 
-## ✨ Was du heute bauen kannst
+> The app interface is currently in German; this documentation is in English.
+
+## ✨ What you can build today
 
 | | |
 |---|---|
-| 🎨 **16×16-Texturen** | Stift, Radierer, Füllen, Palette und Live-3D-Vorschau – jeder Strich landet direkt in der Projekttextur. |
-| 🧊 **Blockbench** | `.bbmodel` öffnen oder Java-Block/Item-JSON importieren; Textur und Cube-Geometrie werden lokal übernommen. |
-| ☕ **Java & Ressourcen** | Eigenschaften, Java-Quelltext, `fabric.mod.json` und Gradle-Dateien direkt in der Werkbank ansehen. |
-| 🔨 **Bauen** | Fabric-JAR für **Minecraft Java 26.2** bauen oder das Quellprojekt als ZIP exportieren. JDK und Gradle sind im Paket. |
-| 🧠 **Mod-Assistent** | Versionsbewusste Erklärungen, offizielle Doku-Suche auf ausdrückliche Bitte und ein lokales, bearbeitbares Gedächtnis. |
-| 🪟 **Zwei Oberflächen** | *Werkstatt* (klar, kontraststark) oder *Liquid Glass* (Milchglas über einer Minecraft-Welt) – unter **Hintergrund** wählbar, dazu sechs animierte Hintergründe. |
+| 🎨 **16×16 textures** | Pen, eraser, fill, palette and a live 3D preview – every stroke goes straight into the project texture. |
+| 🧊 **Blockbench** | Open `.bbmodel` files or import Java block/item JSON; texture and cube geometry are imported locally. |
+| ☕ **Java & resources** | Properties, Java source, `fabric.mod.json` and Gradle files side by side in the workbench. |
+| 🔨 **Build** | Build a Fabric JAR for **Minecraft Java 26.2** or export the source project as a ZIP. JDK and Gradle are bundled. |
+| 🧠 **Mod assistant** | Version-aware explanations, official documentation search on explicit request, and a local, editable memory of your preferences. |
+| 🪟 **Two surfaces** | *Workshop* (clear, high contrast) or *Liquid Glass* (frosted panels over a Minecraft world), plus six animated backgrounds – under **Background** in the app. |
 
-<p align="center"><img src="docs/media/studio-code.webp" alt="Dateien- und Code-Ansicht mit generierter Java-Klasse" width="100%"></p>
+<p align="center"><img src="docs/media/studio-code.webp" alt="Files and code view with a generated Java class" width="100%"></p>
 
-Forge, NeoForge, Quilt, weitere Minecraft-Versionen und Inhaltstypen sind Ausbauziele und noch nicht als baubare Adapter freigeschaltet. Der [Projektstatus](docs/PROJECT_STATUS.md) trennt Geprüftes klar von der [Roadmap](docs/ROADMAP.md).
+Forge, NeoForge, Quilt, more Minecraft versions and more content types are on the roadmap and are not enabled as buildable targets yet. The [project status](docs/PROJECT_STATUS.md) separates verified features from the [roadmap](docs/ROADMAP.md).
 
-## 🚀 Installation
+## 🚀 Install
 
-1. [Releases](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest) öffnen.
-2. **`Mod-Studio-Setup.exe`** installiert App und Laufzeiten unter `%LOCALAPPDATA%\Programs\ModStudio` – oder **`Mod-Studio-Portable.zip`** entpacken und `Mod-Studio.exe` starten.
-3. Projekt anlegen, erste Textur zeichnen, bauen.
+1. Open [Releases](https://github.com/LvisXVI/minecraft-mod-studio/releases/latest).
+2. **`Mod-Studio-Setup.exe`** installs the app and its runtimes into `%LOCALAPPDATA%\Programs\ModStudio` – or unzip **`Mod-Studio-Portable.zip`** and run `Mod-Studio.exe`.
+3. Create a project, paint your first texture, build.
 
-Projekte und Zugangsdaten bleiben lokal unter `%LOCALAPPDATA%\ModStudio`; der App-Server bindet an `127.0.0.1`. Anmeldung und erster Build brauchen Internet (Gradle lädt die offiziellen Minecraft-/Fabric-Abhängigkeiten).
+Projects and credentials stay local in `%LOCALAPPDATA%\ModStudio`; the app server binds to `127.0.0.1`. Sign-in and the first build need internet access (Gradle downloads the official Minecraft/Fabric dependencies).
 
-## 🧪 Im Browser ausprobieren
+## 🧪 Try it in your browser
 
-Die [Browser-Testversion](https://lvisxvi.github.io/minecraft-mod-studio/demo/) ist die echte Editor-Oberfläche. Projekte bleiben im Browser, Assistentenantworten sind simuliert, Java-Builds gibt es nur in der Windows-App.
+The [browser demo](https://lvisxvi.github.io/minecraft-mod-studio/demo/) is the real editor interface. Projects stay in your browser, assistant replies are simulated, and Java builds need the Windows app.
 
-## 🛠️ Entwicklung
+## 🛠️ Development
 
-Node.js 20+. Tailwind wird lokal kompiliert, der Server nutzt Node-Bordmittel.
+Node.js 20+. Tailwind is compiled locally; the server only uses Node built-ins.
 
 ```bash
 npm install
@@ -59,14 +61,14 @@ npm test
 ```
 
 ```bash
-npm run demo:build      # Browser-Testversion nach docs/demo/
+npm run demo:build      # browser demo into docs/demo/
 npm run dist:portable   # dist/Mod-Studio-Setup.exe, Mod-Studio-Portable.zip, SHA256SUMS.txt
 ```
 
-Lizenz- und Prüfsummenhinweise zu den gebündelten Laufzeiten stehen in [`licenses/`](licenses/).
+Licence and checksum notes for the bundled runtimes are in [`licenses/`](licenses/).
 
-## 🌐 Die Projektfamilie
+## 🌐 The project family
 
-[Modspire](https://lvisxvi.github.io/modspire/) plant Modpacks, **Mod Studio** baut Mods, [Minecraft Host](https://lvisxvi.github.io/minecraft-host/) startet den Server für deine Freunde. Oben auf jeder Website wechselst du zwischen den drei Projekten.
+[Modspire](https://lvisxvi.github.io/modspire/) plans modpacks, **Mod Studio** builds mods, [Minecraft Host](https://lvisxvi.github.io/minecraft-host/) runs the server for your friends. Each website has a switcher at the top to jump between them.
 
-Mod Studio ist ein unabhängiges Community-Projekt und nicht mit Microsoft oder Mojang verbunden.
+Mod Studio is an independent community project and is not affiliated with Microsoft or Mojang.
