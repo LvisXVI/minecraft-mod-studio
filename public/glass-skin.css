@@ -8,7 +8,8 @@
 .mode-tab.active { color: #0c1402; background: #c6ff4a; box-shadow: none; }
 
 /* Switching Gestalten / Dateien & Code / Mod bauen fades the new view in */
-#design-view:not([hidden]), #code-view:not([hidden]), #build-view:not([hidden]) { animation: studioViewIn .45s cubic-bezier(.16, 1, .3, 1) both; }
+#design-view:not([hidden]), #code-view:not([hidden]), #build-view:not([hidden]) { animation: studioFade .35s ease-out both; }
+@keyframes studioFade { from { opacity: 0; } }
 @keyframes studioViewIn { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } }
 dialog[open] .modal-card { animation: studioDrop .4s cubic-bezier(.34, 1.56, .64, 1) both; }
 @keyframes studioDrop { from { opacity: 0; transform: scale(.94); } }
