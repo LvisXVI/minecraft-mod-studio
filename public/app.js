@@ -40,6 +40,7 @@ async function initialize() {
 
 function wireShell() {
   initializeBackgroundSettings();
+  initializeSkin();
   $('#update-check-button').addEventListener('click', () => checkForUpdates());
   $('#close-update-dialog').addEventListener('click', () => $('#update-dialog').close());
   $('#close-update-button').addEventListener('click', () => $('#update-dialog').close());
@@ -151,6 +152,21 @@ function initializeBackgroundSettings() {
     if (saved) { selected = saved; hasSavedPreference = true; }
   } catch {}
   setBackgroundStyle(selected, false, hasSavedPreference);
+}
+
+function initializeSkin() {
+  let skin = 'workshop';
+  try { skin = localStorage.getItem('modstudio.skin') || 'workshop'; } catch {}
+  setSkin(skin, false);
+  document.querySelectorAll('input[name="skin-style"]').forEach((input) => input.addEventListener('change', () => setSkin(input.value)));
+}
+
+function setSkin(skin, persist = true) {
+  const selected = skin === 'glass' ? 'glass' : 'workshop';
+  const apply = () => { document.documentElement.dataset.skin = selected; };
+  if (persist && document.startViewTransition && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply); else apply();
+  document.querySelectorAll('input[name="skin-style"]').forEach((input) => { input.checked = input.value === selected; });
+  if (persist) { try { localStorage.setItem('modstudio.skin', selected); } catch { toast('Die Oberfläche konnte nicht lokal gespeichert werden.'); } }
 }
 
 function setBackgroundStyle(style, persist = true, allowReducedMotion = persist) {

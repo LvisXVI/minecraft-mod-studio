@@ -17,6 +17,8 @@ html = html.replace('<html lang="de">', '<html lang="de" data-browser-demo="true
   .replaceAll('href="/tailwind.css"', 'href="./tailwind.css"')
   .replaceAll('href="/styles.css"', 'href="./styles.css"')
   .replaceAll('href="/industrial.css"', 'href="./industrial.css"')
+  .replaceAll('href="/ai-memory.css"', 'href="./ai-memory.css"')
+  .replaceAll('href="/glass-skin.css"', 'href="./glass-skin.css"')
   .replaceAll('src="/app.js"', 'src="./app.js"')
   .replace('aria-label="ChatGPT-Konto verbinden"', 'aria-label="Demo-Mod-Assistent"')
   .replace('<option value="chatgpt">ChatGPT-Konto</option>', '<option value="chatgpt">Demo-Assistent</option>')
