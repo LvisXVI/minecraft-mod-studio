@@ -1,6 +1,6 @@
 # Mod Studio — Project status
 
-As of 26 October 2026 · version `0.1.0-alpha.8` (Minecraft mod assistant with automatic local learning; Liquid Glass surface on `main`)
+As of 26 October 2026 · version `0.1.0-alpha.9` (Liquid Glass surface and Modspire integration fixes)
 
 Mod Studio is a local workbench for designing, painting, editing, exporting and – for the currently supported target adapter – building Minecraft Java mods as structured projects. It is deliberately an authoring tool, not a modpack manager or a mod catalogue.
 
@@ -41,7 +41,7 @@ The desired later scope goes well beyond items and blocks: tools/weapons/armour,
 
 ## Package and checksums
 
-Release: [v0.1.0-alpha.8 on GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.8) — published as a full GitHub release (not a pre-release) and marked "Latest".
+Release: [v0.1.0-alpha.9 on GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.9) — published as a full GitHub release (not a pre-release) and marked "Latest".
 
 - Files: `Mod-Studio-Setup.exe` (single installer) and `Mod-Studio-Portable.zip` (unzip manually)
 - Sizes and SHA-256: in `dist/SHA256SUMS.txt` and on the GitHub release
