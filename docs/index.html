@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="de" class="js-off">
+<html lang="en" class="js-off">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#060b0a">
   <title>Mod Studio — Minecraft Java Mod Creator</title>
-  <meta name="description" content="Mod Studio ist eine lokale Werkbank für Minecraft-Java-Mods: 16×16-Texturen zeichnen, Blockbench-Modelle übernehmen, Java-Quelltext bearbeiten und Fabric-JARs direkt auf deinem PC bauen. KI optional.">
+  <meta name="description" content="Mod Studio is a local workbench for Minecraft Java mods: paint 16×16 textures, import Blockbench models, edit Java source and build Fabric JARs on your PC. AI optional.">
   <link rel="canonical" href="https://lvisxvi.github.io/minecraft-mod-studio/">
   <link rel="icon" href="demo/favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lvisxvi.github.io/minecraft-mod-studio/">
-  <meta property="og:title" content="Mod Studio — deine Idee wird zur Minecraft-Mod">
-  <meta property="og:description" content="Mod-Ideen beschreiben, Pixeltexturen zeichnen und Java-Mods lokal bauen.">
+  <meta property="og:title" content="Mod Studio — turn your idea into a Minecraft mod">
+  <meta property="og:description" content="Describe mod ideas, paint pixel textures and build Java mods locally.">
   <meta property="og:image" content="https://lvisxvi.github.io/minecraft-mod-studio/media/studio-1.webp">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +48,7 @@
   </style>
 </head>
 <body data-repo="LvisXVI/minecraft-mod-studio" data-asset="Setup\.exe$">
-  <a class="skip" href="#main">Zum Inhalt</a>
+  <a class="skip" href="#main">Skip to content</a>
   <div class="lg-scene" aria-hidden="true"><div class="lg-orb a"></div><div class="lg-orb b"></div></div>
 
   <div id="lg-intro" aria-hidden="true">
@@ -60,18 +60,18 @@
     </div>
   </div>
 
-  <nav class="lg-nav glass" aria-label="Hauptnavigation">
-    <a class="brand" href="#top" aria-label="Mod Studio Startseite"><span class="pixel-mark"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M8 8h13v13H8zm19 0h13v13H27zM8 27h13v13H8zm19 0h13v13H27z" fill="#c6ff4a"/></svg></span><span>Mod Studio</span></a>
+  <nav class="lg-nav glass" aria-label="Main">
+    <a class="brand" href="#top" aria-label="Mod Studio home"><span class="pixel-mark"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M8 8h13v13H8zm19 0h13v13H27zM8 27h13v13H8zm19 0h13v13H27z" fill="#c6ff4a"/></svg></span><span>Mod Studio</span></a>
     <div class="nav-links">
-      <a href="#werkbank">Werkbank</a><a href="#ausprobieren">Ausprobieren</a><a href="#stand">Build-Status</a><a href="#download">Download</a>
+      <a href="#workbench">Workbench</a><a href="#try">Try it</a><a href="#status">Build status</a><a href="#download">Download</a>
     </div>
-    <div class="switch" aria-label="Projekte">
+    <div class="switch" aria-label="Projects">
       <a href="../modspire/">Modspire</a>
       <a href="./" aria-current="page">Mod Studio</a>
       <a href="../minecraft-host/">Host</a>
     </div>
     <a class="btn primary small nav-cta" href="#download">Download</a>
-    <button class="menu-btn" aria-label="Menü" aria-expanded="false"><span></span><span></span><span></span></button>
+    <button class="menu-btn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </nav>
 
   <main id="main">
@@ -79,131 +79,131 @@
       <div class="hero-grid">
         <div>
           <span class="eyebrow" data-hero style="--d:0">Minecraft Java · Mod Creation Studio</span>
-          <h1 data-hero style="--d:1;margin-top:22px">Eine Idee.<br><span class="grad">Deine eigene Mod.</span></h1>
-          <p class="lead" data-hero style="--d:2">Beschreibe, zeichne und bearbeite deine Mod in einer lokalen Werkbank. Die Skizze bleibt editierbar, Java-Quelltext entsteht aus deinem Projekt und KI bleibt optional.</p>
+          <h1 data-hero style="--d:1;margin-top:22px">One idea.<br><span class="grad">Your own mod.</span></h1>
+          <p class="lead" data-hero style="--d:2">Describe, paint and edit your mod in a local workbench. The sketch stays editable, Java source comes from your project, and AI stays optional.</p>
           <div class="actions" data-hero style="--d:3">
             <a class="btn primary" href="https://github.com/LvisXVI/minecraft-mod-studio/releases/latest" data-release-download>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14"/></svg>
-              Windows-App laden
+              Get the Windows app
             </a>
-            <a class="btn" href="demo/">Browser-Testversion öffnen ↗</a>
+            <a class="btn" href="demo/">Open the browser demo ↗</a>
           </div>
           <div class="meta" data-hero style="--d:4">
             <span class="chip"><span class="dot"></span>Version <b data-release-version>0.1.0-alpha.8</b></span>
-            <span class="chip">Fabric · Minecraft 26.2</span><span class="chip">2 Oberflächen · inkl. Liquid Glass</span>
-            <span class="chip">Auch in Modspire 0.3.2 enthalten</span>
+            <span class="chip">Fabric · Minecraft 26.2</span><span class="chip">2 surfaces · incl. Liquid Glass</span>
+            <span class="chip">Included in Modspire 0.3.2</span>
           </div>
         </div>
         <div class="hero-visual" data-hero style="--d:2">
-          <div class="device glass"><img src="media/studio-1.webp" width="1600" height="958" alt="Mod Studio mit 16×16-Textureditor, 3D-Vorschau und Mod-Assistent"></div>
-          <div class="float glass f1"><span class="ico">▦</span><div>16 × 16 Pixel<small>Stift · Radierer · Füllen</small></div></div>
-          <div class="float glass f2"><span class="ico">☕</span><div>Java &amp; Gradle<small>JDK im Paket enthalten</small></div></div>
+          <div class="device glass"><img src="media/studio-1.webp" width="1600" height="958" alt="Mod Studio with the 16×16 texture editor, 3D preview and mod assistant"></div>
+          <div class="float glass f1"><span class="ico">▦</span><div>16 × 16 pixels<small>Pen · eraser · fill</small></div></div>
+          <div class="float glass f2"><span class="ico">☕</span><div>Java &amp; Gradle<small>JDK bundled</small></div></div>
         </div>
       </div>
       <div class="scroll-cue" aria-hidden="true"></div>
     </header>
 
-    <section class="section wrap" id="werkbank">
+    <section class="section wrap" id="workbench">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">01 · Werkbank</span>
-        <h2>Von der Skizze <span class="grad">bis zur Java-Datei.</span></h2>
-        <p>Jeder Bereich hängt an demselben lokalen Mod-Projekt: Eigenschaften, Textur, Vorschau und generierter Quelltext bleiben zusammen.</p>
+        <span class="eyebrow">01 · Workbench</span>
+        <h2>From sketch <span class="grad">to Java file.</span></h2>
+        <p>Every area belongs to the same local mod project: properties, texture, preview and generated source stay together.</p>
       </div>
       <div class="bento">
-        <article class="card glass span-2" data-reveal><div class="ico">🎨</div><h3>Pixel für Pixel</h3><p>Zeichne, fülle, radiere und ändere Farben. Die Skizze bleibt mit der gespeicherten Textur des Projekts verbunden.</p><span class="tag">Textur</span></article>
-        <article class="card glass span-2" data-reveal style="--d:1"><div class="ico">🧊</div><h3>Blockbench direkt</h3><p><code>.bbmodel</code> öffnen oder Java-Block/Item-JSON importieren. Textur und Cube-Geometrie werden lokal übernommen.</p><span class="tag">Modelle</span></article>
-        <article class="card glass span-2" data-reveal style="--d:2"><div class="ico">☕</div><h3>Java gehört dazu</h3><p>Eigenschaften, Java-Quelltext und Ressourcen deines Mods direkt in der Werkbank ansehen und bearbeiten.</p><span class="tag">Quelltext</span></article>
+        <article class="card glass span-2" data-reveal><div class="ico">🎨</div><h3>Pixel by pixel</h3><p>Paint, fill, erase and recolour. The sketch stays linked to the project's saved texture.</p><span class="tag">Texture</span></article>
+        <article class="card glass span-2" data-reveal style="--d:1"><div class="ico">🧊</div><h3>Blockbench built in</h3><p>Open <code>.bbmodel</code> files or import Java block/item JSON. Texture and cube geometry are imported locally.</p><span class="tag">Models</span></article>
+        <article class="card glass span-2" data-reveal style="--d:2"><div class="ico">☕</div><h3>Java included</h3><p>View and edit your mod's properties, Java source and resources right in the workbench.</p><span class="tag">Source</span></article>
         <article class="card glass tint span-4 feature-wide" data-reveal>
-          <div><div class="ico">🔨</div><h3>Im Projekt bauen</h3><p>Baue ein Fabric-JAR für das freigeschaltete Minecraft-Ziel oder exportiere das Quellprojekt. Setup und Portable-App bringen Node.js, JDK und Gradle mit.</p><span class="tag">Build</span></div>
-          <img src="media/studio-code.webp" width="1600" height="958" alt="Dateien- und Code-Ansicht mit generierter Java-Klasse" loading="lazy">
+          <div><div class="ico">🔨</div><h3>Build inside the project</h3><p>Build a Fabric JAR for the enabled Minecraft target or export the source project. Setup and portable app bundle Node.js, JDK and Gradle.</p><span class="tag">Build</span></div>
+          <img src="media/studio-code.webp" width="1600" height="958" alt="Files and code view with a generated Java class" loading="lazy">
         </article>
-        <article class="card glass span-2" data-reveal style="--d:1"><div class="ico">🧠</div><h3>Assistent mit Gedächtnis</h3><p>Versionsbewusste Erklärungen, offizielle Doku-Suche auf Wunsch und ein lokales, bearbeitbares Gedächtnis für deine Vorlieben. ChatGPT oder Ollama.</p><span class="tag">KI optional</span></article>
+        <article class="card glass span-2" data-reveal style="--d:1"><div class="ico">🧠</div><h3>An assistant that remembers</h3><p>Version-aware explanations, official docs search on request and a local, editable memory of your preferences. ChatGPT or Ollama.</p><span class="tag">AI optional</span></article>
       </div>
     </section>
 
-    <section class="section wrap" id="ausprobieren">
+    <section class="section wrap" id="try">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">02 · Ausprobieren</span>
-        <h2>Zeichne hier dein <span class="grad">erstes Item.</span></h2>
-        <p>Ein Mini-Ausschnitt des Textureditors. Die volle Oberfläche mit Projekten, 3D-Vorschau und Assistent läuft in der Browser-Testversion.</p>
+        <span class="eyebrow">02 · Try it</span>
+        <h2>Paint your <span class="grad">first item here.</span></h2>
+        <p>A tiny slice of the texture editor. The full interface with projects, 3D preview and assistant runs in the browser demo.</p>
       </div>
       <div class="card glass canvas-card" data-reveal>
         <div class="canvas-row">
-          <div class="pixgrid" id="pixgrid" role="img" aria-label="16 mal 16 Pixel Zeichenfläche"></div>
+          <div class="pixgrid" id="pixgrid" role="img" aria-label="16 by 16 pixel canvas"></div>
           <div>
-            <h3>16 × 16 Smaragdsplitter</h3>
-            <p>Klicken oder ziehen zum Zeichnen. Rechtsklick radiert. Im echten Editor landet jeder Strich direkt in der Projekttextur.</p>
-            <div class="palette" id="palette" aria-label="Farbpalette"></div>
+            <h3>16 × 16 emerald shard</h3>
+            <p>Click or drag to paint, right-click to erase. In the real editor every stroke lands directly in the project texture.</p>
+            <div class="palette" id="palette" aria-label="Palette"></div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn small" id="pix-clear" type="button">Leeren</button>
-              <button class="btn small" id="pix-gem" type="button">Beispiel laden</button>
-              <a class="btn small primary" href="demo/">Volle Testversion ↗</a>
+              <button class="btn small" id="pix-clear" type="button">Clear</button>
+              <button class="btn small" id="pix-gem" type="button">Load example</button>
+              <a class="btn small primary" href="demo/">Full demo ↗</a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section wrap" id="stand">
+    <section class="section wrap" id="status">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">03 · Transparenter Stand</span>
-        <h2>Was heute <span class="grad">schon baut.</span></h2>
-        <p>Vorhandene Funktionen und nächste Ausbauziele sind klar getrennt. Loader- und Versionskompatibilität wird nicht vorgetäuscht.</p>
+        <span class="eyebrow">03 · Honest status</span>
+        <h2>What builds <span class="grad">today.</span></h2>
+        <p>Existing features and next goals are clearly separated. Loader and version compatibility is never faked.</p>
       </div>
       <div class="scope">
         <div class="card glass" data-reveal>
-          <h3>Jetzt nutzbar</h3>
+          <h3>Available now</h3>
           <ul>
-            <li>Minecraft-Java-Modprojekte lokal erstellen und bearbeiten</li>
-            <li>Items und Blöcke mit echten, editierbaren 16×16-Texturen</li>
-            <li>Java-/Gradle-Quelltext und Ressourcen erzeugen</li>
-            <li>Minecraft Java 26.2 mit Fabric lokal bauen</li>
-            <li>JAR und Quellarchiv aus dem Build-Bereich herunterladen</li>
-            <li>Windows-App mit Node.js, JDK und Gradle im Paket</li>
+            <li>Create and edit Minecraft Java mod projects locally</li>
+            <li>Items and blocks with real, editable 16×16 textures</li>
+            <li>Generate Java/Gradle source and resources</li>
+            <li>Build Minecraft Java 26.2 with Fabric locally</li>
+            <li>Download the JAR and source archive from the build area</li>
+            <li>Windows app with Node.js, JDK and Gradle bundled</li>
           </ul>
         </div>
         <div class="card glass later" data-reveal style="--d:1">
-          <h3>Weiterer Ausbau</h3>
+          <h3>Coming next</h3>
           <ul>
-            <li>Forge, NeoForge und Quilt als eigene Zieladapter</li>
-            <li>Verifizierte Builds für weitere Minecraft-Versionen</li>
-            <li>Rezepte, Entitäten, Weltgenerierung und mehr Inhalte</li>
-            <li>Linux- und macOS-Pakete</li>
+            <li>Forge, NeoForge and Quilt as separate target adapters</li>
+            <li>Verified builds for more Minecraft versions</li>
+            <li>Recipes, entities, world generation and more content</li>
+            <li>Linux and macOS packages</li>
           </ul>
-          <p class="muted" style="margin-top:auto">Frühe Alpha. Details im <a href="https://github.com/LvisXVI/minecraft-mod-studio/blob/main/docs/PROJECT_STATUS.md">Projektstatus</a> und in der <a href="https://github.com/LvisXVI/minecraft-mod-studio/blob/main/docs/ROADMAP.md">Roadmap</a>.</p>
+          <p class="muted" style="margin-top:auto">Early alpha. Details in the <a href="https://github.com/LvisXVI/minecraft-mod-studio/blob/main/docs/PROJECT_STATUS.md">project status</a> and <a href="https://github.com/LvisXVI/minecraft-mod-studio/blob/main/docs/ROADMAP.md">roadmap</a>.</p>
         </div>
       </div>
     </section>
 
     <section class="section wrap" id="download">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">04 · Windows-Alpha</span>
-        <h2>Die Werkbank <span class="grad">lokal öffnen.</span></h2>
+        <span class="eyebrow">04 · Windows alpha</span>
+        <h2>Open the workbench <span class="grad">locally.</span></h2>
       </div>
       <div class="download">
         <div class="dl-main glass tint" data-reveal>
           <div>
             <h3 style="font-size:30px">Mod Studio <span data-release-version>0.1.0-alpha.8</span></h3>
-            <p class="muted" style="margin:8px 0 0">Das Setup installiert App und Laufzeiten unter <code>%LOCALAPPDATA%\Programs\ModStudio</code>. Projekte und Zugangsdaten bleiben lokal; der Server bindet an <code>127.0.0.1</code>.</p>
+            <p class="muted" style="margin:8px 0 0">The setup installs the app and runtimes into <code>%LOCALAPPDATA%\Programs\ModStudio</code>. Projects and credentials stay local; the server binds to <code>127.0.0.1</code>.</p>
           </div>
           <div class="spec">
             <div><small>Setup</small><strong>Mod-Studio-Setup.exe</strong></div>
             <div><small>Portable</small><strong>Mod-Studio-Portable.zip</strong></div>
-            <div><small>Veröffentlicht</small><strong data-release-date>Okt. 2026</strong></div>
+            <div><small>Released</small><strong data-release-date>Oct 2026</strong></div>
           </div>
           <div class="actions">
-            <a class="btn primary" href="https://github.com/LvisXVI/minecraft-mod-studio/releases/latest" data-release-download>Setup herunterladen</a>
-            <a class="btn" href="https://github.com/LvisXVI/minecraft-mod-studio/releases/latest">Portable &amp; Prüfsummen</a>
+            <a class="btn primary" href="https://github.com/LvisXVI/minecraft-mod-studio/releases/latest" data-release-download>Download setup</a>
+            <a class="btn" href="https://github.com/LvisXVI/minecraft-mod-studio/releases/latest">Portable &amp; checksums</a>
           </div>
         </div>
         <div class="dl-side">
           <div class="card glass" data-reveal style="--d:1">
-            <h3>Schon Modspire?</h3>
-            <p>Modspire 0.3.2 enthält Mod Studio bereits: aus jedem der fünf Layouts heraus öffnen, ohne separate Installation.</p>
-            <a class="btn small" href="../modspire/" style="align-self:flex-start">Zu Modspire →</a>
+            <h3>Already using Modspire?</h3>
+            <p>Modspire 0.3.2 already includes Mod Studio: open it from any of its five layouts, no separate installation.</p>
+            <a class="btn small" href="../modspire/" style="align-self:flex-start">Go to Modspire →</a>
           </div>
           <div class="card glass" data-reveal style="--d:2">
-            <h3>Aus dem Quellcode</h3>
+            <h3>From source</h3>
             <pre>npm install
 npm run css:build
 npm start</pre>
@@ -217,12 +217,12 @@ npm start</pre>
     <div class="wrap">
       <div>
         <a class="brand" href="#top"><span class="pixel-mark"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M8 8h13v13H8zm19 0h13v13H27zM8 27h13v13H8zm19 0h13v13H27z" fill="#c6ff4a"/></svg></span><span>Mod Studio</span></a>
-        <p>Unabhängiges Community-Projekt für Minecraft Java. Nicht mit Microsoft oder Mojang verbunden.</p>
+        <p>Independent community project for Minecraft Java. Not affiliated with Microsoft or Mojang. The app interface is currently German.</p>
       </div>
-      <nav aria-label="Fußzeile">
+      <nav aria-label="Footer">
         <a href="https://github.com/LvisXVI/minecraft-mod-studio">GitHub</a>
         <a href="https://github.com/LvisXVI/minecraft-mod-studio/releases">Releases</a>
-        <a href="demo/">Browser-Testversion</a>
+        <a href="demo/">Browser demo</a>
         <a href="../modspire/">Modspire</a>
         <a href="../minecraft-host/">Minecraft Host</a>
       </nav>
@@ -238,7 +238,7 @@ npm start</pre>
       const cells = Array.from({length: 256}, () => grid.appendChild(document.createElement('i')));
       colors.forEach((c, i) => {
         const b = document.createElement('button'); b.type = 'button'; b.style.background = c;
-        b.setAttribute('aria-label', `Farbe ${c}`); b.setAttribute('aria-pressed', String(i === 0));
+        b.setAttribute('aria-label', `Colour ${c}`); b.setAttribute('aria-pressed', String(i === 0));
         b.onclick = () => { color = c; pal.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); };
         pal.appendChild(b);
       });

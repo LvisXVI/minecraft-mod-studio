@@ -1,73 +1,73 @@
-# Mod Studio — Ausbau zum vollständigen Java-Mod-Creator
+# Mod Studio — Towards a complete Java mod creator
 
-Mod Studio soll Nutzern mit unterschiedlichen Kenntnissen erlauben, vollständige Mods für Minecraft Java visuell und mit Hilfe von KI zu planen, zu zeichnen, zu bearbeiten und als echte Projekte zu bauen. Eine Beschreibung soll zu konkreten, überprüfbaren Projektdaten führen: Skizzen, Texturen, Modelle, Eigenschaften, Abhängigkeiten, Code und Spielressourcen müssen miteinander verbunden und einzeln veränderbar bleiben.
+Mod Studio should let people with any level of experience plan, paint, edit and build complete Minecraft Java mods as real projects – visually and with help from AI. A description should lead to concrete, reviewable project data: sketches, textures, models, properties, dependencies, code and game resources must stay connected yet individually editable.
 
-Diese Roadmap beschreibt den gewünschten Produktumfang. Sie ist keine Behauptung, dass die unten aufgeführten Funktionen schon in der Alpha vorhanden sind. Den verifizierten Ist-Stand nennt [PROJECT_STATUS.md](PROJECT_STATUS.md).
+This roadmap describes the intended product scope. It is not a claim that the features below already exist in the alpha. The verified current state is in [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
-## Erstellungsablauf
+## Creation flow
 
-Die vom Nutzer verlinkte [MCreator-Seite](https://mcreator.net/) zeigt hilfreiche Arbeitsabläufe: geführte Erstellungsdialoge, direkte WYSIWYG-Bearbeitung, eine gemeinsame Asset-Verwaltung, integrierten Quellcode und einen Test-/Build-Schritt. Mod Studio verfolgt dieselbe praktische Abfolge für Minecraft Java, verbindet sie aber mit projektspezifischen editierbaren Skizzen, lokalem Projektbesitz und nachvollziehbaren Generatoren. Der aktuelle Editor hat bereits Projektanlage, Textur-/Voxel-Vorschau, Elementübersicht, Quellcodeansicht und Build-Ausgabe; geführte Wizards und ein eigenständiger Asset-Browser gehören zum weiteren Ausbau. Es werden keine MCreator-Assets oder Oberflächen kopiert.
+The [MCreator site](https://mcreator.net/) shows useful workflows: guided creation dialogs, direct WYSIWYG editing, shared asset management, integrated source code and a test/build step. Mod Studio follows the same practical sequence for Minecraft Java but combines it with project-bound editable sketches, local project ownership and traceable generators. The current editor already has project creation, texture/voxel preview, an element overview, a source view and build output; guided wizards and a standalone asset browser are part of the next stages. No MCreator assets or interfaces are copied.
 
-## Ziel: Inhalte, die ein Mod typischerweise braucht
+## Goal: the content a mod typically needs
 
-Jeder Inhalt wird in einem gemeinsamen Projektmodell gespeichert. Wo ein Inhalt visuell ist, beginnt er mit einer echten, projektgebundenen Skizze oder einem Modell-Editor. Wo er aus Regeln besteht, erhält er einen passenden visuellen beziehungsweise strukturierten Editor. AI-Vorschläge bleiben prüfbare Änderungen, keine undurchsichtigen Komplettüberschreibungen.
+All content is stored in one shared project model. Visual content starts with a real, project-bound sketch or model editor. Rule-based content gets a matching visual or structured editor. AI suggestions stay reviewable changes, never opaque full overwrites.
 
-### Spielinhalte
+### Game content
 
-- Items, Werkzeuge, Waffen, Rüstung, Schilde, Nahrung, Tränke, Bücher und Sammelobjekte
-- Blöcke, Erze, Pflanzen, Setzlinge, Türen, Behälter, Maschinen, Energie- und Flüssigkeitssysteme
-- Kreaturen, NPCs, Bosse, Reittiere und eigene KI-/Verhaltensregeln
-- Biome, Dimensionen, Strukturen, Dungeons, Erze, Pflanzenverteilung und weitere Weltgenerierung
-- Status- und Statuseffekte, Verzauberungen, Attribute, Fortschritt und Fähigkeiten
-- Flüssigkeiten, Gase, Partikel, Sounds, Musik, Animationen, Loot und Fortschrittsziele
-- Rezepte und Rezeptbücher, Tags, Trading, Spawns, Tabellen und Balancing-Regeln
-- GUIs, Menüs, HUD-Elemente, Konfigurationen, Befehle, Berechtigungen, Keybinds und Netzwerksynchronisation
-- Lokalisierung, Ressourcen, Modelle, Texturen, 2D-/3D-Assets, Blockmodelle und Entity-Modelle
+- Items, tools, weapons, armour, shields, food, potions, books and collectibles
+- Blocks, ores, plants, saplings, doors, containers, machines, energy and fluid systems
+- Creatures, NPCs, bosses, mounts and custom AI/behaviour rules
+- Biomes, dimensions, structures, dungeons, ore and plant distribution and other world generation
+- Status effects, enchantments, attributes, advancements and abilities
+- Fluids, gases, particles, sounds, music, animations, loot and advancement goals
+- Recipes and recipe books, tags, trading, spawns, tables and balancing rules
+- GUIs, menus, HUD elements, configuration, commands, permissions, keybinds and network sync
+- Localisation, resources, models, textures, 2D/3D assets, block models and entity models
 
-### Passende Arbeitsbereiche
+### Matching workspaces
 
-- Freihand-Skizze, Pixeltextur und Palette mit Undo/Redo, Ebenen und transparenter Vorschau
-- Block-/Item-Mockups und 3D-Modell-/Voxel-Editor mit UV-Ansicht, Animation und Materialvorschau
-- Visuelle Rezept- und Ablaufdiagramme, Loot-/Spawn-Regeln, Zustandsmaschinen und KI-Verhalten
-- Struktur- und Dimension-Editor mit Höhenkarte, Biome-/Feature-Platzierung und Vorschau
-- Eigenschaftsformulare mit Einheiten, Wertebereichen, Version-Hinweisen und Abhängigkeitsprüfung
-- Codeansicht mit Navigation, Quelltextvergleich, Diagnosemeldungen und manueller Bearbeitung
-- KI-Assistent für Erstellen, Erklären und Ändern, mit konkreter Vorschau und selektivem Anwenden
-- Validierung, Abhängigkeitsprüfung, Build-Ausgabe, JAR-/Quellcodeexport und Installationsanleitung
+- Freehand sketch, pixel texture and palette with undo/redo, layers and transparent preview
+- Block/item mock-ups and a 3D model/voxel editor with UV view, animation and material preview
+- Visual recipe and flow diagrams, loot/spawn rules, state machines and AI behaviour
+- Structure and dimension editor with height map, biome/feature placement and preview
+- Property forms with units, value ranges, version hints and dependency checks
+- Code view with navigation, source diff, diagnostics and manual editing
+- AI assistant for creating, explaining and changing, with a concrete preview and selective apply
+- Validation, dependency checks, build output, JAR/source export and installation guide
 
-## Loader- und Versionsstrategie
+## Loader and version strategy
 
-Unterstützungsziele sind einzelne Kombinationen aus Loader, Minecraft-Version, Java-Version und benötigten APIs. Das UI darf eine Kombination erst als baubar markieren, wenn Generator, Abhängigkeiten und Build dieser Kombination durch die Projektpipeline geprüft sind.
+Support targets are individual combinations of loader, Minecraft version, Java version and required APIs. The UI may only mark a combination as buildable once generator, dependencies and build of that combination have been verified by the project pipeline.
 
-Geplante Adapterfamilien:
+Planned adapter families:
 
 - Fabric
 - Quilt
 - Forge
 - NeoForge
-- Vanilla-Mod-/Datapack-nahe Exporte dort, wo keine Java-Mod-API benötigt wird
+- Vanilla mod / datapack-style exports where no Java mod API is needed
 
-Jeder Adapter implementiert denselben Vertrag für Zielvalidierung, Projekttypen, Quelltext und Ressourcen, Abhängigkeiten, Runtime-Anforderungen, Build, Diagnose und Export. Versionen werden als konkrete Adapterprofile behandelt, nicht durch ungesicherte Text-Ersetzungen zwischen Releases. API-Abweichungen werden über kleine versionsspezifische Generatoren/Kompatibilitätsschichten abgefangen.
+Each adapter implements the same contract for target validation, project types, source and resources, dependencies, runtime requirements, build, diagnostics and export. Versions are treated as concrete adapter profiles, not as unchecked text replacements between releases. API differences are handled by small version-specific generators/compatibility layers.
 
-Die portable Windows-App soll zur Zielkombination passende JDK-/Gradle-Laufzeiten im Paket anbieten und diese app-lokal verwenden. Laufzeiten werden versioniert, auf Prüfsummen geprüft und mit Upstream-Lizenzhinweisen ausgeliefert. Ein einzelnes JDK kann nicht ehrlich als passend für alle alten und neuen Minecraft-Zielversionen versprochen werden. Die App soll Abhängigkeiten beim ersten Build aus offiziellen Quellen beziehen; sie soll keine Werkzeuge systemweit installieren oder PATH ändern.
+The portable Windows app should ship JDK/Gradle runtimes matching the target combination and use them app-locally. Runtimes are versioned, checksum-verified and shipped with upstream licence notices. A single JDK cannot honestly be promised to fit every old and new Minecraft target. The app should fetch dependencies from official sources on the first build; it should never install tools system-wide or change PATH.
 
-## Architekturregeln
+## Architecture rules
 
-1. **Ein Projektmodell:** Beschreibung, Skizze, Assets, Eigenschaften, Verknüpfungen, Zielprofil, Code-Overrides und Buildstatus gehören zu einer versionierten lokalen Projektdatenstruktur.
-2. **Typisierte Feature-Module:** Spielobjekte sind Module mit Schema, Fähigkeiten, Formularen, Editor, Validierung und Generator. Die Oberfläche soll nicht auf Item-/Block-Sonderfälle fest verdrahtet bleiben.
-3. **Gezielte KI-Patches:** Das Modell schlägt typisierte Projektänderungen vor. Der Nutzer kann Elemente einzeln vergleichen und anwenden oder verwerfen. AI darf keine beliebigen Shell-Befehle oder Buildskripte ausführen.
-4. **Wiederverwendbare Assets:** Texturen, Modelle, Sounds, Animationen, Lokalisierungen und Tags können von mehreren Elementen referenziert werden; Änderungen zeigen ihre Auswirkungen.
-5. **Wahrheitsgemäße Adapter:** Projekterstellung und Vorschau können geplant werden, aber Build und Export melden präzise, welche Feature-/Loader-/Versionskombinationen funktionieren.
-6. **Lokales Projekt zuerst:** Speicherung und Bearbeitung funktionieren ohne Konto. ChatGPT/Ollama sind optionale Anbieter. Zugangstoken bleiben im lokalen Dienst; KI-Daten werden erst mit einer Anfrage an den jeweils gewählten Anbieter übertragen.
-7. **Prüfbare Ergebnisse:** Jeder freigeschaltete Adapter braucht repräsentative Referenzprojekte, Buildmatrix und validierte Artefakte, bevor das UI die Kombination als unterstützt kennzeichnet.
+1. **One project model:** description, sketch, assets, properties, links, target profile, code overrides and build status belong to one versioned local project data structure.
+2. **Typed feature modules:** game objects are modules with schema, capabilities, forms, editor, validation and generator. The UI should not stay hard-wired to item/block special cases.
+3. **Targeted AI patches:** the model proposes typed project changes. Users can compare, apply or discard elements individually. AI may never run arbitrary shell commands or build scripts.
+4. **Reusable assets:** textures, models, sounds, animations, localisations and tags can be referenced by several elements; changes show their impact.
+5. **Truthful adapters:** project creation and preview can be planned, but build and export report precisely which feature/loader/version combinations work.
+6. **Local project first:** saving and editing work without an account. ChatGPT/Ollama are optional providers. Access tokens stay in the local service; AI data is only sent to the chosen provider with a request.
+7. **Verifiable results:** every enabled adapter needs representative reference projects, a build matrix and validated artefacts before the UI marks the combination as supported.
 
-## Ausbauphasen
+## Phases
 
-1. **Solide Alpha:** Fabric 26.2 Items/Blöcke, Skizze, Eigenschaften, KI-Vorschläge, Source-/JAR-Export und portables Windows-Paket (aktueller Stand).
-2. **Kern-Authoring:** Rezepteditor, Tags, Loot, Status-/Datenkomponenten, mehr Asset-Typen, Projektübersicht und Modul-Registry.
-3. **Modell- und Weltwerkzeuge:** 3D-/UV- und Entity-Modelle, Animationen, Biome, Strukturen, Dimensionen und kontrollierte Weltgenerierung.
-4. **Spielsysteme:** Maschinen/Block Entities, GUIs, Effekte, Verzauberungen, Flüssigkeiten, Befehle, Netzwerk und Konfiguration.
-5. **Adapterausbau:** Quilt, NeoForge, Forge und zusätzliche Fabric-Versionen mit verifizierten Build-Profilen und passender Java-/Gradle-Auswahl.
-6. **Plattformen und Stabilität:** CI-Buildmatrix, Migration älterer Projekte, Diagnose, Recovery/Backups, weitere Betriebssystempakete und robuste Updates.
+1. **Solid alpha:** Fabric 26.2 items/blocks, sketch, properties, AI suggestions, source/JAR export and a portable Windows package (current state).
+2. **Core authoring:** recipe editor, tags, loot, state/data components, more asset types, project overview and module registry.
+3. **Model and world tools:** 3D/UV and entity models, animations, biomes, structures, dimensions and controlled world generation.
+4. **Game systems:** machines/block entities, GUIs, effects, enchantments, fluids, commands, networking and configuration.
+5. **Adapter expansion:** Quilt, NeoForge, Forge and more Fabric versions with verified build profiles and matching Java/Gradle selection.
+6. **Platforms and stability:** CI build matrix, migration of older projects, diagnostics, recovery/backups, more OS packages and robust updates.
 
-Die Reihenfolge kann sich nach tatsächlichen Build-/API-Abhängigkeiten ändern. Nutzer sollen im Produkt erkennen können, welche Bausteine bereits funktionieren, sich im Entwurf befinden oder für das ausgewählte Ziel nicht verfügbar sind.
+The order may change based on actual build/API dependencies. Users should always be able to see in the product which building blocks already work, which are in draft, and which are unavailable for the selected target.
