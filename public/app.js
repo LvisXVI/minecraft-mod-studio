@@ -308,12 +308,14 @@ function renderPalette() {
 }
 function paintThumbnail(canvas, pixels) { const ctx=canvas.getContext('2d'); const image=ctx.createImageData(16,16); pixels.forEach((color,index)=>{if(!color)return;const n=parseInt(color.slice(1,7),16),at=index*4;image.data[at]=(n>>16)&255;image.data[at+1]=(n>>8)&255;image.data[at+2]=n&255;image.data[at+3]=color.length===9?parseInt(color.slice(7,9),16):255;});ctx.putImageData(image,0,0); }
 
-function scheduleSave() { setSaveStatus('Änderungen …'); $('#download-jar-button').hidden=true; clearTimeout(dirtyTimer); dirtyTimer=setTimeout(saveNow,500); }
+// Bumped on every local edit so a save response never overwrites edits made while it was in flight.
+let editRevision=0;
+function scheduleSave() { editRevision++; setSaveStatus('Änderungen …'); $('#download-jar-button').hidden=true; clearTimeout(dirtyTimer); dirtyTimer=setTimeout(saveNow,500); }
 async function saveNow() {
   if (!project) return;
   clearTimeout(dirtyTimer);
-  const projectId=project.id;const savedTime=project.timeSpentMs||0;
-  try { const saved=await api(`/api/projects/${projectId}`,{method:'PUT',body:jsonBody(project)});if(project?.id===projectId){const elapsedDuringSave=Math.max(0,(project.timeSpentMs||0)-savedTime);project=saved.project;project.timeSpentMs+=elapsedDuringSave;timerDirty=elapsedDuringSave>0;renderProjectTime();}setSaveStatus('Gespeichert'); await refreshProjects(); }
+  const projectId=project.id;const savedTime=project.timeSpentMs||0;const revision=editRevision;
+  try { const saved=await api(`/api/projects/${projectId}`,{method:'PUT',body:jsonBody(project)});if(editRevision!==revision){setSaveStatus('Änderungen …');return;}if(project?.id===projectId){const elapsedDuringSave=Math.max(0,(project.timeSpentMs||0)-savedTime);project=saved.project;project.timeSpentMs+=elapsedDuringSave;timerDirty=elapsedDuringSave>0;renderProjectTime();}setSaveStatus('Gespeichert'); await refreshProjects(); }
   catch(error){setSaveStatus('Speichern fehlgeschlagen');toast(error.message);}
 }
 function setSaveStatus(value){$('#save-status').lastChild.textContent=value;}
