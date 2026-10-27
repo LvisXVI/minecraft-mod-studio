@@ -2,7 +2,7 @@
 
 Mod Studio should let people with any level of experience plan, paint, edit and build complete Minecraft Java mods as real projects – visually and with help from AI. A description should lead to concrete, reviewable project data: sketches, textures, models, properties, dependencies, code and game resources must stay connected yet individually editable.
 
-This roadmap describes the intended product scope. It is not a claim that the features below already exist in the alpha. The verified current state is in [PROJECT_STATUS.md](PROJECT_STATUS.md).
+This roadmap describes the intended product scope. It is not a claim that the features below already exist in the current release. The verified current state is in [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 ## Creation flow
 
@@ -63,7 +63,7 @@ The portable Windows app should ship JDK/Gradle runtimes matching the target com
 
 ## Phases
 
-1. **Solid alpha:** Fabric 26.2 items/blocks, sketch, properties, AI suggestions, source/JAR export and a portable Windows package (current state).
+1. **Solid 1.0:** Fabric 26.2 items/blocks, sketch, properties, AI suggestions, source/JAR export and a portable Windows package (current state).
 2. **Core authoring:** recipe editor, tags, loot, state/data components, more asset types, project overview and module registry.
 3. **Model and world tools:** 3D/UV and entity models, animations, biomes, structures, dimensions and controlled world generation.
 4. **Game systems:** machines/block entities, GUIs, effects, enchantments, fluids, commands, networking and configuration.

@@ -1,10 +1,10 @@
 # Mod Studio — Project status
 
-As of 26 October 2026 · version `0.1.0-alpha.9` (Liquid Glass surface and Modspire integration fixes)
+As of 28 October 2026 · version `1.0.0` (first full release: Liquid Glass, embedded Blockbench, app icon)
 
 Mod Studio is a local workbench for designing, painting, editing, exporting and – for the currently supported target adapter – building Minecraft Java mods as structured projects. It is deliberately an authoring tool, not a modpack manager or a mod catalogue.
 
-## What the alpha includes
+## What 1.0.0 includes
 
 - **Local Windows app:** the website and its backend run on `127.0.0.1` only and open in your normal browser. Projects live in `%LOCALAPPDATA%\ModStudio`.
 - **Portable runtimes:** the ZIP contains Node.js 24.21.0, Eclipse Temurin JDK 25.0.4.1+1 including the compiler, and Gradle 9.8.2. On first start they are unpacked into the app's own `.runtime` folder. Installation changes neither system Java nor PATH and does not download these runtimes on the target PC. Minecraft/Fabric build dependencies are fetched from the official repositories on the first build.
@@ -35,13 +35,13 @@ Mod Studio is a local workbench for designing, painting, editing, exporting and 
 | Entities, tools, armour, effects, world generation, structures, GUIs | Later stages, not part of the current generator. |
 | Linux/macOS | Not packaged; the first portable package is Windows x64. |
 
-The long-term goal is a multi-tool across Java loaders and versions. A target only counts as supported once its adapter really generates source and resources and a build of that combination has been verified. The alpha therefore does not support "every version".
+The long-term goal is a multi-tool across Java loaders and versions. A target only counts as supported once its adapter really generates source and resources and a build of that combination has been verified. Version 1.0.0 therefore does not support "every version".
 
 The desired later scope goes well beyond items and blocks: tools/weapons/armour, recipes, mobs and behaviour rules, biomes/dimensions/structures, machines, effects, GUIs, sounds/particles/animation, commands, network sync, tags, loot and balancing. The planned editor modules, architecture, loader strategy and phases are in [ROADMAP.md](ROADMAP.md); those contents are plans until they are marked as implemented and built.
 
 ## Package and checksums
 
-Release: [v0.1.0-alpha.9 on GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v0.1.0-alpha.9) — published as a full GitHub release (not a pre-release) and marked "Latest".
+Release: [v1.0.0 on GitHub](https://github.com/LvisXVI/minecraft-mod-studio/releases/tag/v1.0.0) — the first full release after the 0.1.0 alpha series, marked "Latest".
 
 - Files: `Mod-Studio-Setup.exe` (single installer) and `Mod-Studio-Portable.zip` (unzip manually)
 - Sizes and SHA-256: in `dist/SHA256SUMS.txt` and on the GitHub release
@@ -50,7 +50,7 @@ Release: [v0.1.0-alpha.9 on GitHub](https://github.com/LvisXVI/minecraft-mod-stu
 
 ## Setup and development
 
-For users: download and run `Mod-Studio-Setup.exe`, or unzip the ZIP and start `Mod-Studio.exe`. Windows SmartScreen may ask about an unsigned alpha. ChatGPT sign-in and the first Minecraft build need internet access. Ollama is optional; without sign-in or a local model, manual sketching, editing and supported export still work.
+For users: download and run `Mod-Studio-Setup.exe`, or unzip the ZIP and start `Mod-Studio.exe`. Windows SmartScreen may ask about an unsigned app. ChatGPT sign-in and the first Minecraft build need internet access. Ollama is optional; without sign-in or a local model, manual sketching, editing and supported export still work.
 
 For development: install Node.js 20+, then `npm install`, `npm run css:build` and `npm start`. Windows packages are built with `npm run dist:portable`; the required verified runtime archives must be in `.runtime/downloads/`. The build compiles the launcher/setup EXE with Windows PowerShell/.NET Framework.
 
@@ -74,7 +74,7 @@ These checks do not replace a live test with the end user's ChatGPT account or a
 1. Develop adapters and verified builds for more Minecraft versions and for Fabric, Forge, NeoForge and Quilt.
 2. Extend Blockbench support to entity/Bedrock formats, multiple textures, animations and more model types.
 3. Grow the module system beyond item/block: recipes/tags/loot first, then entity/world generation and game systems.
-4. Package for more operating systems and verify the Windows update flow end-to-end in the installed alpha package.
+4. Package for more operating systems and verify the Windows update flow end-to-end in the installed package.
 5. Add a CI build matrix and reproducible compatibility evidence.
 6. Choose a repository licence before granting third parties usage or redistribution rights. The code is currently marked `UNLICENSED` and has no `LICENSE` file.
 

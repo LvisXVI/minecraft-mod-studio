@@ -1,5 +1,6 @@
 import { api, jsonBody, apiFetch } from './api.js';
 import { createPixelEditor, renderVoxelPreview } from './editor.js';
+import { openEmbeddedBlockbench } from './blockbench-embed.js';
 import { createBlockbenchProject, importBlockbenchProject } from './blockbench.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -172,8 +173,10 @@ function initializeSkin() {
   if (actions && !document.getElementById('design-toggle')) {
     const picker = document.createElement('div');
     picker.className = 'design-picker';
-    picker.innerHTML = `<button class="design-toggle" id="design-toggle" type="button" aria-haspopup="true" aria-expanded="false"><span class="design-swatch" aria-hidden="true"></span><span>Design</span></button><div class="design-menu" id="design-menu" role="menu" hidden>${STUDIO_DESIGNS.map((d) => `<button class="design-option" type="button" role="menuitemradio" aria-checked="false" data-design="${d.id}"><i style="background-image:${d.preview}"></i><span><strong>${d.name}</strong><small>${d.note}</small></span></button>`).join('')}</div>`;
+    picker.innerHTML = `<button class="design-toggle" id="design-toggle" type="button" aria-haspopup="true" aria-expanded="false"><span class="design-swatch" aria-hidden="true"></span><span>Design</span></button><div class="design-menu" id="design-menu" role="menu" hidden>${STUDIO_DESIGNS.map((d) => `<button class="design-option" type="button" role="menuitemradio" aria-checked="false" data-design="${d.id}"><i data-preview="${d.id}"></i><span><strong>${d.name}</strong><small>${d.note}</small></span></button>`).join('')}</div>`;
     actions.prepend(picker);
+    // previews are set through CSSOM: the page CSP blocks inline style attributes
+    picker.querySelectorAll('[data-preview]').forEach((swatch) => { swatch.style.backgroundImage = STUDIO_DESIGNS.find((d) => d.id === swatch.dataset.preview).preview; });
     const menu = picker.querySelector('#design-menu'), toggle = picker.querySelector('#design-toggle');
     // The menu lives on <body>: inside the blurred top bar Chrome paints it below the workbench glass.
     document.body.appendChild(menu);
@@ -371,9 +374,13 @@ function openBlockbench() {
   const element = selectedElement();
   if (!element) return toast('Wähle zuerst ein Item oder einen Block aus.');
   const projectFile = createBlockbenchProject(element, textureDataUrl(element.texture.pixels));
-  downloadText(`${element.identifier}.bbmodel`, JSON.stringify(projectFile, null, 2), 'application/json');
-  window.open('https://web.blockbench.net/', '_blank', 'noopener,noreferrer');
-  toast('Blockbench-Projekt gespeichert. Ziehe die .bbmodel-Datei in den Blockbench-Tab.');
+  // The bundled Blockbench opens inside Mod Studio; the edited model comes back through the same checks as a file import.
+  openEmbeddedBlockbench({
+    title: element.name,
+    fileName: `${element.identifier}.bbmodel`,
+    project: projectFile,
+    onApply: (model) => applyBlockbenchModel(model, `${element.identifier}.bbmodel`, true),
+  });
 }
 async function importBlockbenchModel(event) {
   const file = event.target.files?.[0];
@@ -381,9 +388,16 @@ async function importBlockbenchModel(event) {
   if (!file || !project || !selectedElement()) return;
   try {
     if (file.size > 1024 * 1024) throw new Error('Die Blockbench-Datei ist größer als 1 MB.');
-    let imported = JSON.parse(await file.text());
+    await applyBlockbenchModel(JSON.parse(await file.text()), file.name);
+  } catch (error) {
+    toast(error.message || 'Das Blockbench-Modell konnte nicht importiert werden.');
+  }
+}
+async function applyBlockbenchModel(model, fileName, rethrow = false) {
+  try {
+    let imported = model;
     let texturePixels = null;
-    if (/\.bbmodel$/i.test(file.name) || imported.meta?.model_format) {
+    if (/\.bbmodel$/i.test(fileName) || imported.meta?.model_format) {
       const result = importBlockbenchProject(imported);
       imported = result.javaModel;
       if (result.textureSource) texturePixels = await textureFromDataUrl(result.textureSource);
@@ -398,8 +412,11 @@ async function importBlockbenchModel(event) {
     updateSelection();
     await refreshProjects();
     setSaveStatus('Gespeichert');
+    editor?.setTexture(element.texture);
+    drawPreview();
     toast(`Blockbench-Modell übernommen: ${element.javaModel.elements?.length || 0} Cubes. Es wird beim nächsten Build verwendet.`);
   } catch (error) {
+    if (rethrow) throw error;
     toast(error.message || 'Das Blockbench-Modell konnte nicht importiert werden.');
   }
 }
