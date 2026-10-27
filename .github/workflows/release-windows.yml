@@ -51,4 +51,4 @@ jobs:
             --repo $env:GITHUB_REPOSITORY `
             --title "Mod Studio $version" `
             --latest `
-            --notes "New in alpha 10: Liquid Glass is now the default surface, with a one-click switch in the top bar (the classic Workshop look is still one click away). Includes everything from alpha 9: readable editor tabs, smooth view and dialog transitions, assistant follow-ups that leave the project unchanged, element-ID repair that keeps Blockbench models, and a working send button after AI answers. The verified build target remains Minecraft Java 26.2 with Fabric."
+            --notes "New in alpha 11: edits made while a save is still in flight are no longer overwritten by the server response (typing right after adding an element could previously revert the name). Alpha 10: Liquid Glass is the default surface with a one-click Workshop/Glass switch in the top bar. The verified build target remains Minecraft Java 26.2 with Fabric."
