@@ -92,3 +92,52 @@ html[data-skin="glass"][data-scene="nether"] body::before { background: radial-g
 @keyframes studioOut { to { opacity: 0; filter: blur(8px); } }
 @keyframes studioIn { from { opacity: 0; filter: blur(8px); } }
 
+
+/* ---------- Embedded Blockbench window ---------- */
+.bb-layer { position: fixed; inset: 0; z-index: 900; display: grid; padding: 14px; background: rgba(3, 6, 5, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); opacity: 0; transition: opacity .28s ease; }
+.bb-layer.open { opacity: 1; }
+.bb-window { display: grid; grid-template-rows: auto auto 1fr; min-height: 0; border-radius: 22px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .14); background: #16171a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 30px 90px -30px rgba(0, 0, 0, .9); transform: scale(.97) translateY(10px); transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.bb-layer.open .bb-window { transform: none; }
+.bb-layer.closing .bb-window { transform: scale(.97); transition-duration: .25s; }
+.bb-bar { display: flex; align-items: center; gap: 18px; min-height: 58px; padding: 0 12px 0 16px; background: linear-gradient(180deg, rgba(30, 38, 34, .97), rgba(18, 23, 21, .97)); border-bottom: 1px solid rgba(255, 255, 255, .07); color: #f4f5f6; }
+.bb-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.bb-mark { width: 28px; height: 28px; flex: none; border-radius: 9px; background: url("blockbench/icon.png") center / cover; box-shadow: 0 0 0 1px rgba(255, 255, 255, .2), 0 6px 16px -6px rgba(0, 0, 0, .8); }
+.bb-title strong { display: block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.bb-title small { display: block; font-size: 10px; color: #8a9194; }
+.bb-steps { flex: 1; display: flex; justify-content: center; gap: 4px; padding: 4px; margin: 0 auto; max-width: max-content; border-radius: 999px; background: rgba(0, 0, 0, .28); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+.bb-step { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 14px 0 6px; border: 0; border-radius: 999px; background: transparent; color: #b9c2bd; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: background .2s, color .2s; }
+.bb-step b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; background: rgba(255, 255, 255, .08); transition: background .2s, color .2s; }
+.bb-step:hover:not(:disabled) { background: rgba(255, 255, 255, .07); color: #fff; }
+.bb-step[aria-current="true"] { background: color-mix(in srgb, var(--bb-accent, #c6ff4a) 14%, transparent); color: #fff; }
+.bb-step[aria-current="true"] b { background: var(--bb-accent, #c6ff4a); color: #0b0f0c; }
+.bb-step:disabled { opacity: .45; cursor: default; }
+.bb-actions { display: flex; align-items: center; gap: 6px; }
+.bb-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .04); color: #dfe6e1; font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1; cursor: pointer; transition: background .2s, transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+.bb-icon:hover:not(:disabled) { background: rgba(255, 255, 255, .1); transform: translateY(-1px); }
+.bb-icon:disabled { opacity: .35; cursor: default; }
+.bb-icon[aria-expanded="true"] { background: var(--bb-accent, #c6ff4a); color: #0b0f0c; border-color: transparent; }
+.bb-close.confirm { border-color: #ff8a6a; color: #ffb39f; }
+.bb-hintbar { display: flex; align-items: center; gap: 12px; min-height: 36px; padding: 0 16px; background: rgba(12, 16, 14, .96); border-bottom: 1px solid rgba(255, 255, 255, .05); }
+.bb-status { flex: 1; min-width: 0; font-size: 12px; color: #aab4ae; animation: bbHint .35s ease both; }
+.bb-quick { min-height: 26px; padding: 0 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--bb-accent, #c6ff4a) 45%, transparent); background: color-mix(in srgb, var(--bb-accent, #c6ff4a) 10%, transparent); color: #fff; font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer; }
+.bb-quick:hover { background: color-mix(in srgb, var(--bb-accent, #c6ff4a) 20%, transparent); }
+.bb-license { font-size: 10px; color: #6f7a74; text-decoration: none; white-space: nowrap; }
+.bb-license:hover { color: var(--bb-accent, #c6ff4a); }
+.bb-tips { position: absolute; z-index: 2; top: 16px; right: 16px; width: min(360px, calc(100% - 32px)); padding: 18px 18px 16px; border-radius: 18px; color: #e4ebe6; font-size: 12px; line-height: 1.5;
+  background: linear-gradient(155deg, rgba(36, 46, 41, .9), rgba(14, 18, 16, .94)); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 24px 60px -20px rgba(0, 0, 0, .9); transform-origin: top right; animation: bbTips .4s cubic-bezier(.34, 1.56, .64, 1) both; }
+.bb-tips[hidden] { display: none; }
+.bb-tips strong { display: block; margin-bottom: 8px; font-size: 14px; }
+.bb-tips ol { margin: 0 0 10px; padding-left: 18px; display: grid; gap: 4px; }
+.bb-tips p { margin: 0 0 12px; color: #9aa69f; }
+.bb-tips kbd { padding: 1px 5px; border-radius: 5px; background: rgba(255, 255, 255, .1); font: 10px var(--mono, monospace); color: #dfe6e1; }
+@keyframes bbHint { from { opacity: 0; transform: translateY(-3px); } }
+@keyframes bbTips { from { opacity: 0; transform: scale(.92) translateY(-6px); } }
+@media (max-width: 980px) { .bb-title small, .bb-license { display: none; } .bb-step { padding-right: 8px; font-size: 0; gap: 0; } .bb-step b { font-size: 11px; } .bb-bar { gap: 10px; } }
+.bb-stage { position: relative; min-height: 0; }
+.bb-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #060807; }
+.bb-loading { position: absolute; inset: 0; z-index: 1; display: grid; place-content: center; justify-items: center; gap: 14px; color: #a7aeb1; font: 11px var(--mono, monospace); background: #16171a; }
+.bb-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(198, 255, 74, .2); border-top-color: #c6ff4a; animation: bbSpin .9s linear infinite; }
+@keyframes bbSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .bb-layer, .bb-window { transition: none; } .bb-status, .bb-tips { animation: none; } .bb-spinner { animation-duration: 3s; } }
