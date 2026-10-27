@@ -154,30 +154,51 @@ function initializeBackgroundSettings() {
   setBackgroundStyle(selected, false, hasSavedPreference);
 }
 
+// Design picker (same pattern as Minecraft Host): Liquid Glass scenes plus the classic Workshop look.
+const STUDIO_DESIGNS = [
+  { id: 'emerald', skin: 'glass', scene: 'emerald', name: 'Smaragd', note: 'Liquid Glass · Kristallgrün', preview: 'url(glass-scene.webp)' },
+  { id: 'aurora', skin: 'glass', scene: 'aurora', name: 'Polarlicht', note: 'Kühles Glas · Türkis', preview: 'url(glass-scene-aurora.webp)' },
+  { id: 'cherry', skin: 'glass', scene: 'cherry', name: 'Kirschhain', note: 'Warmes Glas · Abendrot', preview: 'url(glass-scene-cherry.webp)' },
+  { id: 'nether', skin: 'glass', scene: 'nether', name: 'Nether', note: 'Glut · ohne Hintergrundbild', preview: 'linear-gradient(160deg,#5a1a12,#1a0609)' },
+  { id: 'workshop', skin: 'workshop', scene: '', name: 'Werkstatt', note: 'Klar · kontraststark · ohne Glas', preview: 'linear-gradient(160deg,#0c0d0e 55%,#c6ff4a 55%)' },
+];
+
 function initializeSkin() {
-  let skin = 'glass';
-  try { skin = localStorage.getItem('modstudio.skin') || 'glass'; } catch {}
-  // One-click switch in the top bar; the appearance dialog keeps the same choice.
+  let design = 'emerald';
+  try {
+    design = localStorage.getItem('modstudio.design') || (localStorage.getItem('modstudio.skin') === 'workshop' ? 'workshop' : 'emerald');
+  } catch {}
   const actions = document.querySelector('.topbar-actions');
-  if (actions && !document.getElementById('skin-toggle')) {
-    const toggle = document.createElement('button');
-    toggle.id = 'skin-toggle'; toggle.type = 'button'; toggle.className = 'icon-button skin-toggle';
-    toggle.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15Z"/><path d="M10 2.5v15" /><path d="M10 6.5h5.8M10 10h7.5M10 13.5h5.8"/></svg>';
-    toggle.addEventListener('click', () => setSkin(document.documentElement.dataset.skin === 'glass' ? 'workshop' : 'glass'));
-    actions.prepend(toggle);
+  if (actions && !document.getElementById('design-toggle')) {
+    const picker = document.createElement('div');
+    picker.className = 'design-picker';
+    picker.innerHTML = `<button class="design-toggle" id="design-toggle" type="button" aria-haspopup="true" aria-expanded="false"><span class="design-swatch" aria-hidden="true"></span><span>Design</span></button><div class="design-menu" id="design-menu" role="menu" hidden>${STUDIO_DESIGNS.map((d) => `<button class="design-option" type="button" role="menuitemradio" aria-checked="false" data-design="${d.id}"><i style="background-image:${d.preview}"></i><span><strong>${d.name}</strong><small>${d.note}</small></span></button>`).join('')}</div>`;
+    actions.prepend(picker);
+    const menu = picker.querySelector('#design-menu'), toggle = picker.querySelector('#design-toggle');
+    // The menu lives on <body>: inside the blurred top bar Chrome paints it below the workbench glass.
+    document.body.appendChild(menu);
+    const place = () => { const r = toggle.getBoundingClientRect(); menu.style.top = `${r.bottom + 10}px`; menu.style.right = `${Math.max(8, innerWidth - r.right)}px`; };
+    const close = () => { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); };
+    toggle.addEventListener('click', (event) => { event.stopPropagation(); place(); menu.hidden = !menu.hidden; toggle.setAttribute('aria-expanded', String(!menu.hidden)); });
+    addEventListener('resize', () => { if (!menu.hidden) place(); });
+    menu.addEventListener('click', (event) => { const option = event.target.closest('.design-option'); if (option) { setDesign(option.dataset.design); close(); } });
+    document.addEventListener('click', (event) => { if (!event.target.closest('.design-picker, .design-menu')) close(); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
   }
-  setSkin(skin, false);
-  document.querySelectorAll('input[name="skin-style"]').forEach((input) => input.addEventListener('change', () => setSkin(input.value)));
+  setDesign(design, false);
+  document.querySelectorAll('input[name="skin-style"]').forEach((input) => input.addEventListener('change', () => setDesign(input.value === 'workshop' ? 'workshop' : 'emerald')));
 }
 
-function setSkin(skin, persist = true) {
-  const selected = skin === 'glass' ? 'glass' : 'workshop';
-  const apply = () => { document.documentElement.dataset.skin = selected; };
+function setDesign(id, persist = true) {
+  const design = STUDIO_DESIGNS.find((d) => d.id === id) || STUDIO_DESIGNS[0];
+  const apply = () => {
+    document.documentElement.dataset.skin = design.skin;
+    if (design.scene) document.documentElement.dataset.scene = design.scene; else delete document.documentElement.dataset.scene;
+  };
   if (persist && document.startViewTransition && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply); else apply();
-  document.querySelectorAll('input[name="skin-style"]').forEach((input) => { input.checked = input.value === selected; });
-  const toggle = document.getElementById('skin-toggle');
-  if (toggle) { const label = selected === 'glass' ? 'Zur Werkstatt-Oberfläche wechseln' : 'Zur Liquid-Glass-Oberfläche wechseln'; toggle.title = label; toggle.setAttribute('aria-label', label); toggle.setAttribute('aria-pressed', String(selected === 'glass')); }
-  if (persist) { try { localStorage.setItem('modstudio.skin', selected); } catch { toast('Die Oberfläche konnte nicht lokal gespeichert werden.'); } }
+  document.querySelectorAll('input[name="skin-style"]').forEach((input) => { input.checked = input.value === design.skin; });
+  document.querySelectorAll('.design-option').forEach((option) => option.setAttribute('aria-checked', String(option.dataset.design === design.id)));
+  if (persist) { try { localStorage.setItem('modstudio.design', design.id); localStorage.setItem('modstudio.skin', design.skin); } catch { toast('Das Design konnte nicht lokal gespeichert werden.'); } }
 }
 
 function setBackgroundStyle(style, persist = true, allowReducedMotion = persist) {
