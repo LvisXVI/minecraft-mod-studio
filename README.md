@@ -18,7 +18,7 @@
 
 Mod Studio is a local workbench for Minecraft Java mods. Describe your idea, paint real 16×16 textures, bring in Blockbench models, edit properties and Java source, and build the project right on your PC. AI is optional: sign in with ChatGPT or use a local Ollama model.
 
-> **Also included in [Modspire 0.3.2](https://lvisxvi.github.io/modspire/):** Modspire launches the real Mod Studio from any of its five layouts, with no separate installation.
+> **Also included in [Modspire 0.3.3](https://lvisxvi.github.io/modspire/):** Modspire launches the real Mod Studio from any of its five layouts, with no separate installation.
 
 > The app interface is currently in German; this documentation is in English.
 
@@ -31,7 +31,7 @@ Mod Studio is a local workbench for Minecraft Java mods. Describe your idea, pai
 | ☕ **Java & resources** | Properties, Java source, `fabric.mod.json` and Gradle files side by side in the workbench. |
 | 🔨 **Build** | Build a Fabric JAR for **Minecraft Java 26.2** or export the source project as a ZIP. JDK and Gradle are bundled. |
 | 🧠 **Mod assistant** | Version-aware explanations, official documentation search on explicit request, and a local, editable memory of your preferences. |
-| 🪟 **Two surfaces** | *Workshop* (clear, high contrast) or *Liquid Glass* (frosted panels over a Minecraft world), plus six animated backgrounds – under **Background** in the app. |
+| 🪟 **Two surfaces** | *Liquid Glass* (default: frosted panels over a Minecraft world) or *Workshop* (clear, high contrast) – switch with one click in the top bar; six animated backgrounds under **Background**. |
 
 <p align="center"><img src="docs/media/studio-code.webp" alt="Files and code view with a generated Java class" width="100%"></p>
 
