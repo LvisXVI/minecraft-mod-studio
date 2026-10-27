@@ -51,4 +51,4 @@ jobs:
             --repo $env:GITHUB_REPOSITORY `
             --title "Mod Studio $version" `
             --latest `
-            --notes "Neu in Alpha 9: Optionale Liquid-Glass-Oberfläche mit Minecraft-Hintergrund, besser lesbare Editor-Tabs und sanfte Übergänge. Folgefragen des Assistenten lassen das Projekt unverändert; Element-IDs werden repariert, ohne vorhandene Blockbench-Modelle zu verlieren. Der Senden-Button funktioniert nach einer KI-Antwort wieder. Website, Browser-Demo und englische Projektdokumentation wurden aktualisiert. Der verifizierte Build-Zielstand bleibt Minecraft Java 26.2 mit Fabric."
+            --notes "New in alpha 10: Liquid Glass is now the default surface, with a one-click switch in the top bar (the classic Workshop look is still one click away). Includes everything from alpha 9: readable editor tabs, smooth view and dialog transitions, assistant follow-ups that leave the project unchanged, element-ID repair that keeps Blockbench models, and a working send button after AI answers. The verified build target remains Minecraft Java 26.2 with Fabric."
