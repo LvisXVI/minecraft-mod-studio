@@ -101,12 +101,18 @@ internal static class ModStudioLauncher
         }));
     }
 
+    private static System.Drawing.Icon TrayIcon()
+    {
+        try { return System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath) ?? System.Drawing.SystemIcons.Application; }
+        catch { return System.Drawing.SystemIcons.Application; }
+    }
+
     private static void SetupTray()
     {
         var menu = new ContextMenuStrip();
         menu.Items.Add("Mod Studio öffnen", null, (sender, e) => { if (!String.IsNullOrEmpty(serverUrl)) Process.Start(new ProcessStartInfo { FileName = serverUrl, UseShellExecute = true }); });
         menu.Items.Add("Mod Studio beenden", null, (sender, e) => Exit());
-        tray = new NotifyIcon { Text = "Mod Studio läuft", Icon = System.Drawing.SystemIcons.Application, ContextMenuStrip = menu, Visible = true };
+        tray = new NotifyIcon { Text = "Mod Studio läuft", Icon = TrayIcon(), ContextMenuStrip = menu, Visible = true };
         tray.DoubleClick += (sender, e) => { if (!String.IsNullOrEmpty(serverUrl)) Process.Start(new ProcessStartInfo { FileName = serverUrl, UseShellExecute = true }); };
     }
 
@@ -174,6 +180,8 @@ if (-not (Test-Path -LiteralPath $compiler)) { $compiler = Join-Path $env:WINDIR
 if (-not (Test-Path -LiteralPath $compiler)) { throw 'Der Windows-.NET-Compiler wurde nicht gefunden.' }
 $sourcePath = Join-Path $env:TEMP 'mod-studio-launcher-build.cs'
 [System.IO.File]::WriteAllText($sourcePath, $ui + $entry, [System.Text.UTF8Encoding]::new($true))
-& $compiler /nologo /codepage:65001 /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
+$icon = Join-Path $root 'branding\mod-studio.ico'
+if (-not (Test-Path -LiteralPath $icon)) { throw "Programmsymbol fehlt: $icon" }
+& $compiler /nologo /codepage:65001 /target:winexe "/win32icon:$icon" "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
 if ($LASTEXITCODE -ne 0) { throw "Launcher-Kompilierung fehlgeschlagen: $LASTEXITCODE" }
 Write-Host "Windows-Launcher mit Ladebildschirm erstellt: $output"

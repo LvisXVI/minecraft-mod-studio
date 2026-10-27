@@ -22,6 +22,7 @@ internal sealed class LoadingForm : Form
 
     public LoadingForm(string title)
     {
+        try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { /* keeps the default icon */ }
         Text = "Mod Studio";
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.None;

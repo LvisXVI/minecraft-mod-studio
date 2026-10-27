@@ -141,7 +141,9 @@ if (-not (Test-Path -LiteralPath $compiler)) { throw 'Der Windows-.NET-Compiler 
 $sourcePath = Join-Path $env:TEMP 'mod-studio-setup-build.cs'
 $cleanupImports = "using System.Collections.Generic;`r`nusing System.Text.RegularExpressions;`r`n"
 [System.IO.File]::WriteAllText($sourcePath, $cleanupImports + $ui + $cleanupSource + $source, [System.Text.UTF8Encoding]::new($true))
-& $compiler /nologo /codepage:65001 /target:winexe "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
+$icon = Join-Path $root 'branding\mod-studio.ico'
+if (-not (Test-Path -LiteralPath $icon)) { throw "Programmsymbol fehlt: $icon" }
+& $compiler /nologo /codepage:65001 /target:winexe "/win32icon:$icon" "/out:$output" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll $sourcePath
 if ($LASTEXITCODE -ne 0) { throw "Setup-Kompilierung fehlgeschlagen: $LASTEXITCODE" }
 $stream = [System.IO.File]::Open($output, [System.IO.FileMode]::Append, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
 try {

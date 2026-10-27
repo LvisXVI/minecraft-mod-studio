@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Mod Studio: a block being textured – pixel-art faces with a lime edge glow on a dark glass tile -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c2a16"/><stop offset=".5" stop-color="#101810"/><stop offset="1" stop-color="#090c09"/></linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".42" r=".55"><stop offset="0" stop-color="#c6ff4a" stop-opacity=".42"/><stop offset="1" stop-color="#c6ff4a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="shadow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".4" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#c6ff4a" stop-opacity=".25"/></linearGradient>
+    <clipPath id="clip"><rect x="8" y="8" width="240" height="240" rx="58"/></clipPath>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="58" fill="url(#tile)"/>
+  <g clip-path="url(#clip)">
+    <rect x="8" y="8" width="240" height="240" fill="url(#glow)"/>
+    <path d="M8 104 L248 24 L248 66 L8 146 Z" fill="#fff" opacity=".04"/>
+    <ellipse cx="128" cy="212" rx="70" ry="14" fill="url(#shadow)"/>
+  </g>
+  <!-- cube: top face 4x4 pixels (lime shades), left/right faces with darker mosaics -->
+  <g transform="translate(128 122)">
+    <!-- top face as 4x4 isometric grid: each cell is a rhombus; cell vectors u=(14,7) v=(-14,7) from (0,-56) -->
+    <g>
+      <path d="M0 -56 l14 7 l-14 7 l-14 -7 Z" fill="#e6ffa8"/>
+      <path d="M14 -49 l14 7 l-14 7 l-14 -7 Z" fill="#c6ff4a"/><path d="M-14 -49 l14 7 l-14 7 l-14 -7 Z" fill="#d9ff7a"/>
+      <path d="M28 -42 l14 7 l-14 7 l-14 -7 Z" fill="#a5e82f"/><path d="M0 -42 l14 7 l-14 7 l-14 -7 Z" fill="#c6ff4a"/><path d="M-28 -42 l14 7 l-14 7 l-14 -7 Z" fill="#b6f23a"/>
+      <path d="M42 -35 l14 7 l-14 7 l-14 -7 Z" fill="#c6ff4a"/><path d="M14 -35 l14 7 l-14 7 l-14 -7 Z" fill="#8fd21f"/><path d="M-14 -35 l14 7 l-14 7 l-14 -7 Z" fill="#d9ff7a"/><path d="M-42 -35 l14 7 l-14 7 l-14 -7 Z" fill="#a5e82f"/>
+      <path d="M28 -28 l14 7 l-14 7 l-14 -7 Z" fill="#b6f23a"/><path d="M0 -28 l14 7 l-14 7 l-14 -7 Z" fill="#e6ffa8"/><path d="M-28 -28 l14 7 l-14 7 l-14 -7 Z" fill="#8fd21f"/>
+      <path d="M14 -21 l14 7 l-14 7 l-14 -7 Z" fill="#c6ff4a"/><path d="M-14 -21 l14 7 l-14 7 l-14 -7 Z" fill="#a5e82f"/>
+      <path d="M0 -14 l14 7 l-14 7 l-14 -7 Z" fill="#d9ff7a"/>
+    </g>
+    <!-- left face -->
+    <path d="M-56 -28 L0 0 L0 66 L-56 38 Z" fill="#3c8f2e"/>
+    <path d="M-56 -28 L-28 -14 L-28 10 L-56 -4 Z M-28 24 L0 38 L0 66 L-28 52 Z" fill="#2f7a26"/>
+    <path d="M-42 4 L-28 11 L-28 24 L-42 17 Z M-14 17 L0 24 L0 38 L-14 31 Z" fill="#56b843"/>
+    <!-- right face -->
+    <path d="M56 -28 L0 0 L0 66 L56 38 Z" fill="#245f1f"/>
+    <path d="M56 -28 L28 -14 L28 10 L56 -4 Z M28 24 L0 38 L0 66 L28 52 Z" fill="#1c4d1a"/>
+    <path d="M42 4 L28 11 L28 24 L42 17 Z M14 17 L0 24 L0 38 L14 31 Z" fill="#33802b"/>
+    <!-- lime wire edges -->
+    <path d="M0 -56 L56 -28 L56 38 L0 66 L-56 38 L-56 -28 Z M-56 -28 L0 0 L56 -28 M0 0 L0 66" fill="none" stroke="#c6ff4a" stroke-width="3" stroke-linejoin="round" opacity=".9"/>
+  </g>
+  <!-- pencil resting on the cube -->
+  <g transform="translate(184 74) rotate(40)">
+    <rect x="-7" y="-46" width="14" height="62" rx="3" fill="#f5d36a"/>
+    <rect x="-7" y="-46" width="5" height="62" rx="2" fill="#fff" opacity=".35"/>
+    <rect x="-7" y="-52" width="14" height="10" rx="3" fill="#e46a6a"/>
+    <path d="M-7 16 L0 32 L7 16 Z" fill="#f3e2bb"/>
+    <path d="M-2.6 26 L0 32 L2.6 26 Z" fill="#2a2a2a"/>
+  </g>
+  <rect x="9.5" y="9.5" width="237" height="237" rx="56.5" fill="none" stroke="url(#rim)" stroke-width="3"/>
+</svg>
