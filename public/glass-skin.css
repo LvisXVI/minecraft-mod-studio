@@ -66,6 +66,29 @@ html[data-skin="glass"] .background-effects { opacity: .55; background: transpar
   #design-view, #code-view, #build-view, dialog[open] .modal-card, .chat-messages > :last-child { animation: none !important; }
 }
 
-/* top-bar surface switch */
-.skin-toggle[aria-pressed="true"] { color: #0c1402; background: #c6ff4a; border-color: #c6ff4a; }
-.skin-toggle svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+/* scenes for the Liquid Glass designs */
+html[data-skin="glass"][data-scene="aurora"] body::before { background: linear-gradient(180deg, rgba(4, 8, 18, .3), rgba(4, 8, 18, .72)), url("glass-scene-aurora.webp") center / cover no-repeat; filter: none; }
+html[data-skin="glass"][data-scene="cherry"] body::before { background: linear-gradient(180deg, rgba(14, 6, 10, .35), rgba(10, 6, 10, .78)), url("glass-scene-cherry.webp") center / cover no-repeat; filter: none; }
+html[data-skin="glass"][data-scene="nether"] body::before { background: radial-gradient(80% 60% at 70% 10%, #ff7a3d55, transparent 60%), radial-gradient(70% 70% at 10% 90%, #8a1e3a88, transparent 60%), linear-gradient(160deg, #2a0b10, #120509 60%, #1d0a05); filter: none; }
+
+/* design picker in the top bar (same look as Minecraft Host) */
+.design-picker { position: relative; }
+.design-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 13px; border-radius: 999px; font: 600 11px var(--mono, monospace); color: #f4f5f6; background: rgba(255, 255, 255, .06); border: 1px solid #2a2e30; cursor: pointer; transition: background .2s, transform .4s cubic-bezier(.34, 1.56, .64, 1); }
+.design-toggle:hover { background: rgba(255, 255, 255, .12); transform: translateY(-1px); }
+.design-swatch { width: 13px; height: 13px; border-radius: 50%; background: linear-gradient(135deg, #c6ff4a, #3fe0b2); box-shadow: 0 0 0 2px rgba(255, 255, 255, .45); }
+.design-menu { position: fixed; z-index: 1000; width: 280px; padding: 8px; border-radius: 22px; display: grid; gap: 4px;
+  /* solid: a backdrop-filter nested in the blurred top bar would only see the bar, not the page */
+  background: linear-gradient(155deg, rgb(34, 41, 38), rgb(14, 18, 16));
+  border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 24px 60px -24px rgba(0, 0, 0, .85); transform-origin: top right; animation: studioDrop .4s cubic-bezier(.34, 1.56, .64, 1) both; }
+.design-menu[hidden] { display: none; }
+.design-option { display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; border-radius: 14px; border: 1px solid transparent; background: transparent; text-align: left; color: #f4f5f6; cursor: pointer; transition: background .2s; }
+.design-option:hover { background: rgba(255, 255, 255, .08); }
+.design-option[aria-checked="true"] { background: rgba(198, 255, 74, .1); border-color: rgba(198, 255, 74, .45); }
+.design-option i { width: 46px; height: 32px; border-radius: 10px; flex: none; background-size: cover; background-position: center; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
+.design-option strong { display: block; font-size: 12px; }
+.design-option small { display: block; font-size: 10px; color: #8a9194; }
+::view-transition-old(root) { animation: .3s ease both studioOut; }
+::view-transition-new(root) { animation: .5s cubic-bezier(.16, 1, .3, 1) both studioIn; }
+@keyframes studioOut { to { opacity: 0; filter: blur(8px); } }
+@keyframes studioIn { from { opacity: 0; filter: blur(8px); } }
+
