@@ -27,9 +27,10 @@ internal static class ModStudioLauncher
         try
         {
             string root = AppDomain.CurrentDomain.BaseDirectory;
-            string runtime = Path.Combine(root, ".runtime");
-            string downloads = Path.Combine(runtime, "downloads");
             string localData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string downloads = Path.Combine(root, ".runtime", "downloads");
+            // unpacked once and shared by every installed version, so an update does not unpack 600 MB again
+            string runtime = Path.Combine(localData, "ModStudio", "runtime");
             string cache = Path.Combine(localData, "ModStudio", "gradle-cache");
             var runtimes = new[] {
                 new RuntimeFile("Node.js", Path.Combine(downloads, "node-v24.21.0-win-x64.zip"), Path.Combine(runtime, "node"), Path.Combine(runtime, "node", "node-v24.21.0-win-x64", "node.exe"), "158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"),
@@ -65,6 +66,7 @@ internal static class ModStudioLauncher
             info.EnvironmentVariables["PATH"] = Path.Combine(javaHome, "bin") + ";" + Environment.GetEnvironmentVariable("PATH");
             info.EnvironmentVariables["GRADLE_USER_HOME"] = cache;
             info.EnvironmentVariables["MOD_STUDIO_EXIT_WHEN_CLOSED"] = "1";
+            info.EnvironmentVariables["MOD_STUDIO_RUNTIME_DIR"] = runtime;
             server = new Process { StartInfo = info, EnableRaisingEvents = true };
             server.OutputDataReceived += (sender, e) => { if (e.Data != null) OnServerOutput(e.Data); };
             server.ErrorDataReceived += (sender, e) => { if (e.Data != null) AppendLog(e.Data); };

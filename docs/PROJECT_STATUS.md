@@ -1,6 +1,6 @@
 # Mod Studio — Project status
 
-As of 28 October 2026 · version `1.1.1` (textures up to 128 px, Blockbench as the main editor, new launcher, quits when the last tab closes)
+As of 28 October 2026 · version `1.1.1` (textures up to 128 px, Blockbench as the main editor, new launcher, quits when the last tab closes, shared runtime and stable shortcuts)
 
 Mod Studio is a local workbench for designing, painting, editing, exporting and – for the currently supported target adapter – building Minecraft Java mods as structured projects. It is deliberately an authoring tool, not a modpack manager or a mod catalogue.
 
@@ -91,3 +91,8 @@ The goal was a standalone, practical mod-creation tool for Minecraft Java that w
 ## 1.1.1
 
 - The Windows launcher now quits Mod Studio (server and tray icon) when the last browser tab is closed. Each tab keeps an event stream open; a reload reconnects within a few seconds. Set `MOD_STUDIO_EXIT_WHEN_CLOSED=1` to get this when starting the server by hand.
+
+## 1.1.2
+
+- The Java, Node and Gradle runtime is unpacked once into `%LOCALAPPDATA%/ModStudio/runtime` and shared by every installed version, so an update no longer unpacks about 600 MB again.
+- Setup keeps the desktop and Start menu shortcuts pointing at the installed version (and creates them if missing), and says "Mod Studio startet" instead of "wird installiert" when the version is already installed.

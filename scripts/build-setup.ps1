@@ -33,7 +33,7 @@ internal static class ModStudioSetup
         try
         {
             string installedLauncher = System.IO.Path.Combine(installDirectory, "Mod-Studio.exe");
-            if (System.IO.File.Exists(installedLauncher)) { Launch(installedLauncher, installDirectory); return; }
+            if (System.IO.File.Exists(installedLauncher)) { splash.SetHeading("Mod Studio startet"); Launch(installedLauncher, installDirectory); return; }
             if (System.IO.Directory.Exists(installDirectory)) throw new System.InvalidOperationException("Der Installationsordner ist unvollständig. Entferne den Ordner " + installDirectory + " und starte die Setup-Datei erneut.");
             System.IO.Directory.CreateDirectory(baseDirectory);
             splash.SetProgress(2, "Installationspaket wird geprüft.");
@@ -116,8 +116,47 @@ internal static class ModStudioSetup
         }
     }
 
+    private static object Com(string progId) { return System.Activator.CreateInstance(System.Type.GetTypeFromProgID(progId)); }
+    private static object ComCall(object target, string name, params object[] args) { return target.GetType().InvokeMember(name, System.Reflection.BindingFlags.InvokeMethod, null, target, args); }
+    private static object ComGet(object target, string name) { return target.GetType().InvokeMember(name, System.Reflection.BindingFlags.GetProperty, null, target, null); }
+    private static void ComSet(object target, string name, object value) { target.GetType().InvokeMember(name, System.Reflection.BindingFlags.SetProperty, null, target, new object[] { value }); }
+
+    // Shortcuts to an older installed version would break on every update; keep them pointing at the current launcher.
+    private static void UpdateShortcuts(string launcher, string workingDirectory)
+    {
+        try
+        {
+            object shell = Com("WScript.Shell");
+            string desktop = System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory);
+            string programs = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.StartMenu), "Programs");
+            string marker = System.IO.Path.DirectorySeparatorChar + "Programs" + System.IO.Path.DirectorySeparatorChar + "ModStudio" + System.IO.Path.DirectorySeparatorChar;
+            bool desktopHas = false, menuHas = false;
+            foreach (string folder in new[] { desktop, programs })
+            {
+                if (!System.IO.Directory.Exists(folder)) continue;
+                foreach (string file in System.IO.Directory.GetFiles(folder, "*.lnk"))
+                {
+                    object link = ComCall(shell, "CreateShortcut", file);
+                    string target = System.Convert.ToString(ComGet(link, "TargetPath"));
+                    if (target.IndexOf(marker, System.StringComparison.OrdinalIgnoreCase) < 0) continue;
+                    ComSet(link, "TargetPath", launcher); ComSet(link, "WorkingDirectory", workingDirectory); ComSet(link, "IconLocation", launcher + ",0"); ComCall(link, "Save");
+                    if (folder == desktop) desktopHas = true; else menuHas = true;
+                }
+            }
+            System.Action<string> create = path =>
+            {
+                object link = ComCall(shell, "CreateShortcut", path);
+                ComSet(link, "TargetPath", launcher); ComSet(link, "WorkingDirectory", workingDirectory); ComSet(link, "IconLocation", launcher + ",0"); ComSet(link, "Description", "Mod Studio"); ComCall(link, "Save");
+            };
+            if (!desktopHas) create(System.IO.Path.Combine(desktop, "Mod Studio.lnk"));
+            if (!menuHas) { System.IO.Directory.CreateDirectory(programs); create(System.IO.Path.Combine(programs, "Mod Studio.lnk")); }
+        }
+        catch { /* shortcuts are a convenience only */ }
+    }
+
     private static void Launch(string launcher, string workingDirectory)
     {
+        UpdateShortcuts(launcher, workingDirectory);
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = launcher, WorkingDirectory = workingDirectory, UseShellExecute = true });
         string installationRoot = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Programs", "ModStudio");
         InstallCleanup.CleanupPreviousVersions(installationRoot, workingDirectory);

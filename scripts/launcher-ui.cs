@@ -16,7 +16,7 @@ internal sealed class LoadingForm : Form
     private static readonly Color Lime = Color.FromArgb(198, 255, 74);
     private static readonly Color Emerald = Color.FromArgb(46, 204, 133);
 
-    private readonly string headingText;
+    private string headingText;
     private string detailText = "Deine lokale Mod-Werkstatt wird gestartet.";
     private int progressValue;
     private float shown;               // eased progress that the bar actually draws
@@ -87,6 +87,13 @@ internal sealed class LoadingForm : Form
         Top = finalLocation.Y + 16;
         openingClock.Restart();
         openingTimer.Start();
+    }
+
+    public void SetHeading(string text)
+    {
+        if (InvokeRequired) { BeginInvoke(new Action<string>(SetHeading), text); return; }
+        headingText = text;
+        Invalidate();
     }
 
     public void SetProgress(int value, string message)

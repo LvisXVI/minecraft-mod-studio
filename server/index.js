@@ -29,10 +29,11 @@ function defaultDataDirectory() {
 }
 
 function defaultRuntimeDirectory(rootDir) {
+  const base = process.env.MOD_STUDIO_RUNTIME_DIR || join(rootDir, '.runtime');
   return {
-    node: join(rootDir, '.runtime', 'node', 'node-v24.21.0-win-x64'),
-    jdk: join(rootDir, '.runtime', 'jdk', 'jdk-25.0.4.1+1'),
-    gradle: join(rootDir, '.runtime', 'gradle', 'gradle-9.8.2'),
+    node: join(base, 'node', 'node-v24.21.0-win-x64'),
+    jdk: join(base, 'jdk', 'jdk-25.0.4.1+1'),
+    gradle: join(base, 'gradle', 'gradle-9.8.2'),
   };
 }
 
