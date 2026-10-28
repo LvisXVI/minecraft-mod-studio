@@ -96,3 +96,7 @@ The goal was a standalone, practical mod-creation tool for Minecraft Java that w
 
 - The Java, Node and Gradle runtime is unpacked once into `%LOCALAPPDATA%/ModStudio/runtime` and shared by every installed version, so an update no longer unpacks about 600 MB again.
 - Setup keeps the desktop and Start menu shortcuts pointing at the installed version (and creates them if missing), and says "Mod Studio startet" instead of "wird installiert" when the version is already installed.
+
+## 1.1.3
+
+- Fixed the Blockbench card in the Shapes tab: the description text no longer runs under the button.
