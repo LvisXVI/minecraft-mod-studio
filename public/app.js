@@ -1,6 +1,8 @@
 import { api, jsonBody } from './api.js';
 import { createPixelEditor, renderVoxelPreview } from './editor.js';
 import { openEmbeddedBlockbench } from './blockbench-embed.js';
+import { createColorPicker } from './color-picker.js';
+let colorPicker = null;
 import { createBlockbenchProject, importBlockbenchProject } from './blockbench.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -26,6 +28,15 @@ let timerTickAt = null;
 let timerSaveAt = Date.now();
 let timerDirty = false;
 let targetCatalog = null;
+
+// start animation: stays at least ~1.2 s so it reads as a launch, ends once the app is ready (or after 6 s)
+const launchStarted = Date.now();
+function endLaunch() {
+  const el = document.getElementById('launch'); if (!el || el.classList.contains('done')) return;
+  setTimeout(() => { el.classList.add('done'); setTimeout(() => el.remove(), 900); }, Math.max(0, 1200 - (Date.now() - launchStarted)));
+}
+setTimeout(endLaunch, 6000);
+document.getElementById('launch')?.addEventListener('click', endLaunch);
 
 async function initialize() {
   // keeps one stream open so the local app knows a tab is still using it (it quits after the last tab closes)
@@ -70,7 +81,12 @@ function wireShell() {
   $('#redo-button').addEventListener('click', () => editor?.redo());
   $('#clear-canvas-button').addEventListener('click', () => editor?.clear());
   $('#rotate-preview-button').addEventListener('click', () => { previewRotation = (previewRotation + 1) % 4; drawPreview(); });
-  $('#color-picker').addEventListener('input', (event) => { editor?.setColor(event.target.value); $('#color-swatch').style.background = event.target.value; });
+  colorPicker = createColorPicker({ button: $('#color-swatch'), initial: '#465E84', onChange: (value) => editor?.setColor(value) });
+  $('#brush-size').addEventListener('input', (event) => { editor?.setBrush(event.target.value); $('#brush-size-value').textContent = `${event.target.value} px`; });
+  $('#rotate-ccw').addEventListener('click', () => editor?.rotate('ccw'));
+  $('#rotate-cw').addEventListener('click', () => editor?.rotate('cw'));
+  $('#flip-h').addEventListener('click', () => editor?.flip('h'));
+  $('#flip-v').addEventListener('click', () => editor?.flip('v'));
   document.querySelectorAll('[data-tool]').forEach((button) => button.addEventListener('click', () => {
     document.querySelectorAll('[data-tool]').forEach((item) => item.classList.toggle('selected', item === button)); editor?.setTool(button.dataset.tool);
   }));
@@ -259,6 +275,7 @@ async function selectProject(id) {
     renderChat(); renderElements(); await refreshProjects(); await refreshAiMemoryCount();
     if (editor) editor.destroy();
     editor = createPixelEditor($('#pixel-canvas'), project.elements.find((item) => item.id === project.activeElementId)?.texture || { size: 16, pixels: Array(256).fill(null) }, onTextureChange);
+    editor.setBrush($('#brush-size').value); editor.setPickHandler((value) => colorPicker?.set(value));
     renderPalette(); updateSelection();
     history.replaceState(null, '', `/?project=${encodeURIComponent(id)}`);
     setSaveStatus('Gespeichert');
@@ -357,7 +374,7 @@ function onTextureChange(texture) { const element = selectedElement(); if (!elem
 function drawPreview() { const element = selectedElement(); renderVoxelPreview($('#voxel-canvas'), element?.texture?.pixels || Array(256).fill(null), element, previewRotation); $('#preview-empty').hidden = Boolean(element && element.texture.pixels.some(Boolean)); $('#model-preview-caption').textContent = element?.javaModel?.elements?.length ? `Blockbench-Geometrie · ${element.javaModel.elements.length} Cubes` : 'Modellvorschau aus deiner Textur'; }
 function renderPalette() {
   const palette = $('#palette'); palette.replaceChildren();
-  for (const color of editor.getPalette()) { const button = document.createElement('button'); button.type='button'; button.className='palette-swatch'; button.style.background=color; button.setAttribute('aria-label',`Farbe ${color}`); button.addEventListener('click',()=>{editor.setColor(color);$('#color-picker').value=color;$('#color-swatch').style.background=color;}); palette.append(button); }
+  for (const color of editor.getPalette()) { const button = document.createElement('button'); button.type='button'; button.className='palette-swatch'; button.style.background=color; button.setAttribute('aria-label',`Farbe ${color}`); button.addEventListener('click',()=>{editor.setColor(color);colorPicker?.set(color);}); palette.append(button); }
 }
 function paintThumbnail(canvas, pixels) { const side=Math.round(Math.sqrt(pixels.length))||16; canvas.width=side; canvas.height=side; const ctx=canvas.getContext('2d'); const image=ctx.createImageData(side,side); pixels.forEach((color,index)=>{if(!color)return;const n=parseInt(color.slice(1,7),16),at=index*4;image.data[at]=(n>>16)&255;image.data[at+1]=(n>>8)&255;image.data[at+2]=n&255;image.data[at+3]=color.length===9?parseInt(color.slice(7,9),16):255;});ctx.putImageData(image,0,0); }
 
@@ -529,4 +546,4 @@ async function saveAiMemory(event){event.preventDefault();if(!project)return;con
 function toast(message){const region=$('#toast-region');const item=document.createElement('div');item.className='toast';item.textContent=message;region.append(item);setTimeout(()=>item.remove(),3800);}
 function escapeHtml(text){const div=document.createElement('div');div.textContent=text;return div.innerHTML;}
 
-initialize().catch((error)=>toast(error.message));
+initialize().then(endLaunch, (error)=>{ endLaunch(); toast(error.message); });

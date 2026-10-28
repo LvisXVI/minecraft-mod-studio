@@ -100,3 +100,8 @@ The goal was a standalone, practical mod-creation tool for Minecraft Java that w
 ## 1.1.3
 
 - Fixed the Blockbench card in the Shapes tab: the description text no longer runs under the button.
+
+## 1.2.0
+
+- Launch animation in the browser tab (glass veil, logo, scanning bar; ends when the app is ready, click or reduced-motion respected).
+- Quick editor: own colour picker (saturation/brightness square, hue, hex, recent colours) instead of the system dialog, eyedropper, brush size 1-6 px, rotate 90° left/right and mirror horizontally/vertically.

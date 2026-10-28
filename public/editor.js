@@ -1,4 +1,5 @@
 export const TEXTURE_SIZES = [16, 32, 64, 128];
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 export function createPixelEditor(canvas, initialTexture, onChange) {
   const context = canvas.getContext('2d', { alpha: false });
@@ -6,6 +7,8 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
   let pixels = [...initialTexture.pixels];
   let color = '#465E84';
   let tool = 'pencil';
+  let brush = 1;
+  let onPick = null;
   let isDrawing = false;
   let undoStack = [];
   let redoStack = [];
@@ -60,11 +63,24 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
   }
 
   function setPixel(x, y) {
-    const index = y * SIZE + x;
     const next = tool === 'eraser' ? null : color;
-    if (pixels[index] === next) return;
-    pixels[index] = next;
-    draw();
+    const from = -Math.floor((brush - 1) / 2), to = Math.ceil((brush - 1) / 2);
+    let changed = false;
+    for (let dy = from; dy <= to; dy += 1) for (let dx = from; dx <= to; dx += 1) {
+      const px = x + dx, py = y + dy;
+      if (px < 0 || px >= SIZE || py < 0 || py >= SIZE) continue;
+      const index = py * SIZE + px;
+      if (pixels[index] !== next) { pixels[index] = next; changed = true; }
+    }
+    if (changed) draw();
+  }
+
+  function transform(map) {
+    snapshot();
+    const next = Array(SIZE * SIZE).fill(null);
+    for (let y = 0; y < SIZE; y += 1) for (let x = 0; x < SIZE; x += 1) { const [nx, ny] = map(x, y); next[ny * SIZE + nx] = pixels[y * SIZE + x]; }
+    pixels = next;
+    commit();
   }
 
   function fillAt(startX, startY) {
@@ -88,6 +104,7 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
     event.preventDefault();
     const { x, y } = coordinate(event);
     if (tool === 'fill') return fillAt(x, y);
+    if (tool === 'picker') { const picked = pixels[y * SIZE + x]; if (picked) { color = picked.slice(0, 7).toUpperCase(); onPick?.(color); } return; }
     snapshot();
     isDrawing = true;
     canvas.setPointerCapture(event.pointerId);
@@ -113,7 +130,12 @@ export function createPixelEditor(canvas, initialTexture, onChange) {
   draw();
 
   return {
-    setTool(value) { tool = ['pencil', 'eraser', 'fill'].includes(value) ? value : 'pencil'; },
+    setTool(value) { tool = ['pencil', 'eraser', 'fill', 'picker'].includes(value) ? value : 'pencil'; },
+    setBrush(value) { brush = clamp(Math.round(Number(value)) || 1, 1, 8); },
+    getBrush() { return brush; },
+    setPickHandler(callback) { onPick = callback; },
+    rotate(direction) { if (direction === 'ccw') transform((x, y) => [y, SIZE - 1 - x]); else transform((x, y) => [SIZE - 1 - y, x]); },
+    flip(axis) { if (axis === 'v') transform((x, y) => [x, SIZE - 1 - y]); else transform((x, y) => [SIZE - 1 - x, y]); },
     setColor(value) { if (/^#[\da-f]{6}$/i.test(value)) color = value.toUpperCase(); },
     setTexture(texture) { SIZE = TEXTURE_SIZES.includes(texture.size) ? texture.size : 16; pixels = [...texture.pixels]; undoStack = []; redoStack = []; draw(); },
     getSize() { return SIZE; },

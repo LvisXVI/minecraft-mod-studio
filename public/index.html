@@ -15,6 +15,7 @@
     <script type="module" src="/app.js"></script>
   </head>
   <body>
+    <div id="launch" class="launch" role="status" aria-live="polite"><div class="launch-core"><div class="launch-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="launch-title">Mod Studio</div><div class="launch-sub">Deine Werkstatt wird vorbereitet</div><div class="launch-bar"><span></span></div></div></div>
     <div class="app-shell">
       <div id="background-effects" class="background-effects" aria-hidden="true"><span class="ambient-orb orb-a"></span><span class="ambient-orb orb-b"></span><span class="ambient-orb orb-c"></span><span class="ambient-orb orb-d"></span><span class="ambient-orb orb-e"></span><span class="ambient-orb orb-f"></span><span class="ambient-orb orb-g"></span><span class="ambient-orb orb-h"></span></div>
       <aside class="sidebar" aria-label="Projekt-Navigation">
@@ -142,7 +143,12 @@
                       <button class="tool-button" data-tool="eraser" title="Radierer (E)" aria-label="Radierer" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 11 7-7a2 2 0 0 1 2.8 0l2 2a2 2 0 0 1 0 2.8L9 15.1H6.4L3.8 12.5A1.1 1.1 0 0 1 4.5 11Z"/><path d="m7.7 7.8 4.5 4.5"/></svg><span>Radierer</span></button>
                       <button class="tool-button" data-tool="fill" title="Fläche füllen (G)" aria-label="Fläche füllen" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 9 6-6 6 6-6 6-6-6Z"/><path d="m11 15 2 2h4v-4l-2-2"/></svg><span>Füllen</span></button>
                       <span class="tool-divider"></span>
-                      <label class="color-input-wrap" title="Farbe auswählen"><input id="color-picker" type="color" value="#465E84" aria-label="Zeichenfarbe wählen"><span id="color-swatch" class="color-swatch"></span></label>
+                      <button class="tool-button" data-tool="picker" title="Pipette: Farbe aus der Textur aufnehmen" aria-label="Pipette" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 16 .7-3.2L12 5.5l2.5 2.5-7.3 7.3L4 16Z"/><path d="m13 3 4 4"/></svg><span>Pipette</span></button>
+                      <span class="tool-divider"></span>
+                      <button class="color-trigger" id="color-swatch" type="button" title="Farbe wählen" aria-label="Zeichenfarbe wählen"></button>
+                      <label class="brush-size" title="Pinselgröße"><span>Pinsel</span><input id="brush-size" type="range" min="1" max="6" step="1" value="1" aria-label="Pinselgröße"><output id="brush-size-value">1 px</output></label>
+                      <span class="tool-divider"></span>
+                      <button class="tool-button" id="rotate-ccw" title="90° nach links drehen" aria-label="Nach links drehen" type="button"><span>⟲</span></button><button class="tool-button" id="rotate-cw" title="90° nach rechts drehen" aria-label="Nach rechts drehen" type="button"><span>⟳</span></button><button class="tool-button" id="flip-h" title="Horizontal spiegeln" aria-label="Horizontal spiegeln" type="button"><span>⇋</span></button><button class="tool-button" id="flip-v" title="Vertikal spiegeln" aria-label="Vertikal spiegeln" type="button"><span>⇅</span></button>
                       <div class="palette" id="palette" aria-label="Farbpalette"></div>
                     </div>
                   

@@ -59,3 +59,28 @@ test('item preview renders its transparent texture as a floating sprite without 
   assert.equal(calls.filter(([name]) => name === 'drawImage').length, 1);
   assert.equal(calls.some(([name]) => name === 'beginPath'), false);
 });
+
+test('brush size, rotation and flipping change the texture as expected', async () => {
+  const { createPixelEditor } = await import('../public/editor.js');
+  const canvas = { width: 320, height: 320, getContext: () => new Proxy({}, { get: () => () => {}, set: () => true }), addEventListener() {}, removeEventListener() {}, getBoundingClientRect: () => ({ left: 0, top: 0, width: 320, height: 320 }), setPointerCapture() {} };
+  let latest = null;
+  const editor = createPixelEditor(canvas, { size: 16, pixels: Array(256).fill(null) }, (texture) => { latest = texture; });
+  const first = Array(256).fill(null); first[0] = '#FF0000';
+  editor.setTexture({ size: 16, pixels: first });
+  editor.rotate('cw');
+  assert.equal(latest.pixels[15], '#FF0000', 'top-left pixel moves to top-right after a clockwise turn');
+  editor.rotate('ccw');
+  assert.equal(latest.pixels[0], '#FF0000', 'a counter-clockwise turn undoes it');
+  editor.flip('h');
+  assert.equal(latest.pixels[15], '#FF0000', 'horizontal flip mirrors left to right');
+  editor.flip('v');
+  assert.equal(latest.pixels[255], '#FF0000', 'vertical flip mirrors top to bottom');
+  editor.setBrush(3);
+  assert.equal(editor.getBrush(), 3);
+  editor.setBrush(99);
+  assert.equal(editor.getBrush(), 8, 'brush size is capped');
+  const size32 = Array(1024).fill(null); size32[1] = '#00FF00';
+  editor.setTexture({ size: 32, pixels: size32 });
+  editor.rotate('cw');
+  assert.equal(latest.pixels[31 + 32], '#00FF00', 'rotation works for 32 px textures too');
+});
