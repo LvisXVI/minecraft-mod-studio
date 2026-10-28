@@ -625,3 +625,15 @@ button, select, input, textarea, .project-link, .new-project-button, .icon-butto
   .element-inspector { grid-template-columns: 1fr; gap: 10px; padding: 12px; }
   .element-advanced { border-left: 0; border-top: 1px solid #2b3032; padding: 10px 0 0; }
 }
+
+/* review round: even top bar, readable small text */
+.topbar-actions { gap: 8px; align-items: center; }
+.topbar-actions :is(.design-toggle, .update-check-button) { height: 34px; }
+.breadcrumb { color: #a9b0b3; font-size: 11px; }
+.breadcrumb svg { color: #6b7275; }
+.save-status, .target-select-wrap span { font-size: 11px; }
+.sidebar-empty, .count-badge { color: #a0a7aa; font-size: 11px; }
+.eyebrow, .node-state, .hero-visual-footer { font-size: 10px; color: #9aa2a5; }
+.mode-tab:focus-visible { outline: 2px solid #c6ff4a; outline-offset: 2px; }
+#hero-title { text-wrap: balance; }
+#hero-title em > span:last-child { white-space: nowrap; }

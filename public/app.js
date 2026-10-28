@@ -100,9 +100,13 @@ function wireShell() {
   $('#build-button').addEventListener('click', startBuild);
   document.addEventListener('keydown', (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); saveNow(); }
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openNewProject(); }
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') { event.preventDefault(); editor?.undo(); }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && !document.querySelector('dialog[open], .bb-layer')) { event.preventDefault(); openNewProject(); }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.target.closest?.('input, textarea, select, [contenteditable]')) { event.preventDefault(); editor?.undo(); }
   });
+  // a click on the dimmed area closes a dialog, like Escape does (the update dialog stays while it installs)
+  document.querySelectorAll('dialog').forEach((dialog) => dialog.addEventListener('mousedown', (event) => {
+    if (event.target === dialog && dialog.id !== 'update-dialog') dialog.close();
+  }));
 }
 
 async function checkForUpdates({ silent = false } = {}) {
