@@ -27,7 +27,7 @@ Mod Studio is a local workbench for Minecraft Java mods. Describe your idea, pai
 | | |
 |---|---|
 | 🎨 **16×16 textures** | Pen, eraser, fill, palette and a live 3D preview – every stroke goes straight into the project texture. |
-| 🧊 **Blockbench** | Open `.bbmodel` files or import Java block/item JSON; texture and cube geometry are imported locally. |
+| 🧊 **Blockbench** | The main place to paint and model: it opens right inside Mod Studio with your texture (16, 32, 64 or 128 px). `.bbmodel` files and Java block/item JSON still import locally. |
 | ☕ **Java & resources** | Properties, Java source, `fabric.mod.json` and Gradle files side by side in the workbench. |
 | 🔨 **Build** | Build a Fabric JAR for **Minecraft Java 26.2** or export the source project as a ZIP. JDK and Gradle are bundled. |
 | 🧠 **Mod assistant** | Version-aware explanations, official documentation search on explicit request, and a local, editable memory of your preferences. |

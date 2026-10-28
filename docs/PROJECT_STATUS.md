@@ -1,6 +1,6 @@
 # Mod Studio — Project status
 
-As of 28 October 2026 · version `1.0.0` (first full release: Liquid Glass, embedded Blockbench, app icon)
+As of 28 October 2026 · version `1.1.0` (textures up to 128 px, Blockbench as the main editor, new launcher)
 
 Mod Studio is a local workbench for designing, painting, editing, exporting and – for the currently supported target adapter – building Minecraft Java mods as structured projects. It is deliberately an authoring tool, not a modpack manager or a mod catalogue.
 
@@ -81,3 +81,9 @@ These checks do not replace a live test with the end user's ChatGPT account or a
 ## Origin and product scope
 
 The goal was a standalone, practical mod-creation tool for Minecraft Java that will eventually span versions and loaders and produces real editable sketches. It is distinct from Modspire: the focus is creating and building your own mod projects, not modpacks or mod search. The linked design reference CreativeMod.net was offline / redirected to an unrelated site during research; no content was copied. The visual direction follows the design rules supplied by the user.
+
+## 1.1.0
+
+- Textures can be 16, 32, 64 or 128 px square (per element, resize keeps pixels crisp); the Blockbench bridge, Java build and AI sketches follow the chosen size.
+- Blockbench is the primary editor in the Shapes tab; the old 16×16 pixel editor stays as a collapsible quick editor. The first element opens straight in Blockbench.
+- New glass-style launcher window.
