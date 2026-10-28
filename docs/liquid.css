@@ -58,8 +58,8 @@ button { font: inherit; color: inherit; }
 .lg-scene::after {
   content: ""; position: absolute; inset: 0;
   background:
-    radial-gradient(120% 80% at 50% 0%, transparent 0 30%, rgba(4, 8, 20, .55) 70%),
-    linear-gradient(180deg, rgba(5, 9, 19, .25) 0%, rgba(5, 9, 19, .55) 45%, rgba(5, 9, 19, .9) 100%);
+    radial-gradient(120% 80% at 50% 0%, transparent 0 30%, rgba(4, 8, 20, .3) 70%),
+    linear-gradient(180deg, rgba(5, 9, 19, .12) 0%, rgba(5, 9, 19, .28) 45%, rgba(5, 9, 19, .6) 100%);
 }
 
 
@@ -415,3 +415,8 @@ pre { margin: 0; padding: 18px 20px; border-radius: 18px; background: rgba(0, 0,
   .music-player--ambient.is-open .music-player__label { display: none; }
   .dl-main { padding: 22px; }
 }
+/* Living backgrounds (living-bg.js) */
+.living { background-size: cover; background-position: center 42%; }
+.living > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.living__gl { opacity: 0; transition: opacity 1.2s ease; }
+.living__gl.is-ready { opacity: 1; }
