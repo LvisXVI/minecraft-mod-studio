@@ -64,6 +64,7 @@ internal static class ModStudioLauncher
             info.EnvironmentVariables["JAVA_HOME"] = javaHome;
             info.EnvironmentVariables["PATH"] = Path.Combine(javaHome, "bin") + ";" + Environment.GetEnvironmentVariable("PATH");
             info.EnvironmentVariables["GRADLE_USER_HOME"] = cache;
+            info.EnvironmentVariables["MOD_STUDIO_EXIT_WHEN_CLOSED"] = "1";
             server = new Process { StartInfo = info, EnableRaisingEvents = true };
             server.OutputDataReceived += (sender, e) => { if (e.Data != null) OnServerOutput(e.Data); };
             server.ErrorDataReceived += (sender, e) => { if (e.Data != null) AppendLog(e.Data); };
@@ -93,6 +94,14 @@ internal static class ModStudioLauncher
     private static void OnServerExit()
     {
         if (exiting) return;
+        int exitCode = -1;
+        try { exitCode = server.ExitCode; } catch { }
+        if (exitCode == 0) {
+            // the last browser tab was closed: the server left on purpose, so the launcher leaves too, silently
+            exiting = true;
+            if (splash.IsHandleCreated) splash.BeginInvoke(new Action(() => { if (tray != null) tray.Visible = false; Application.Exit(); })); else Application.Exit();
+            return;
+        }
         if (splash.IsHandleCreated) splash.BeginInvoke(new Action(() => {
             if (tray != null) tray.Visible = false;
             splash.Show(); splash.Activate(); Update(100, "Der lokale Mod-Server wurde beendet.");

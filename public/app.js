@@ -28,6 +28,8 @@ let timerDirty = false;
 let targetCatalog = null;
 
 async function initialize() {
+  // keeps one stream open so the local app knows a tab is still using it (it quits after the last tab closes)
+  try { new EventSource('/api/lifecycle'); } catch { /* not available */ }
   wireShell();
   await refreshCapabilityLabel();
   await refreshProjects();
