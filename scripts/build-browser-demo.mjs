@@ -36,10 +36,10 @@ html = html.replace('<html lang="de">', '<html lang="de" data-browser-demo="true
     </script>`);
 await writeFile(join(destination, 'index.html'), html);
 await writeFile(join(destination, 'browser-demo.css'), `
-.browser-demo-banner{position:fixed;z-index:30;inset:0 0 auto;min-height:42px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:6px 14px;border-bottom:1px solid #34402d;background:#10140d;color:#dfe8d4;font:11px/1.4 var(--mono)}
-.browser-demo-banner .banner-copy{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}.browser-demo-banner strong{color:#c6ff4a}
-.browser-demo-banner button,.browser-demo-banner a{min-height:28px;border:1px solid #3a4531;border-radius:6px;background:#171d12;color:#eef7e5;padding:4px 9px;font:inherit;text-decoration:none;cursor:pointer;white-space:nowrap}
-.browser-demo-banner button:hover,.browser-demo-banner a:hover{border-color:#c6ff4a}
+.browser-demo-banner{position:fixed;z-index:30;inset:0 0 auto;min-height:42px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:6px 14px;border-bottom:1px solid #3c3d36;background:#171817;color:#b4b5ac;font:11px/1.4 var(--mono,monospace)}
+.browser-demo-banner .banner-copy{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}.browser-demo-banner strong{color:#e6c44b}
+.browser-demo-banner button,.browser-demo-banner a{min-height:28px;border:1px solid #606152;border-radius:2px;background:#22241e;color:#f2f1eb;padding:4px 9px;font:inherit;text-decoration:none;cursor:pointer;white-space:nowrap}
+.browser-demo-banner button:hover,.browser-demo-banner a:hover{border-color:#e6c44b}.browser-demo-banner button:focus-visible,.browser-demo-banner a:focus-visible{outline:2px solid #e6c44b;outline-offset:2px}
 body{padding-top:42px}.app-shell{min-height:calc(100vh - 42px)}.sidebar{top:42px;height:calc(100vh - 42px)}
 @media(max-width:760px){.browser-demo-banner{grid-template-columns:minmax(0,1fr) auto auto;gap:5px;padding-inline:7px;font-size:9px}.browser-demo-banner button,.browser-demo-banner a{padding-inline:6px;font-size:9px}}
 @media(prefers-reduced-motion:reduce){.browser-demo-banner *{scroll-behavior:auto!important}}
